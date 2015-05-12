@@ -1,4 +1,4 @@
-package puc.rio.inf1636.hglm.war;
+package org.puc.rio.inf1636.hglm.war;
 
 public class Main {
 	public static void main(String args[]) {
