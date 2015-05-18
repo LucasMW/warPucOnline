@@ -1,2 +1,6 @@
 # inf1636-2015.1-war
-Jogo de War para desktop feito em Java (Swing)
+War game made in Java (Swing)
+
+## Authors
+* Hugo Grochau
+* Lucas Menezes
