@@ -8,15 +8,6 @@ public class WarGame {
 
 	public WarGame()
 	{
-		WarFrame gameFrame = new WarFrame();
-		gameFrame.setTitle("War - by Hugo Grochau and Lucas Menezes");
-		gameFrame.setVisible(true);
-		Rectangle bounds = new Rectangle();
-		bounds.height=500;
-		bounds.width=1000;
-		gameFrame.setBounds(bounds );
-		gameFrame.setDefaultCloseOperation(0);
-		
-		
+		WarFrame gameFrame = new WarFrame();		
 	}
 }
