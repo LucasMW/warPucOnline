@@ -3,7 +3,6 @@ package org.puc.rio.inf1636.hglm.war.viewcontroller;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 
@@ -25,7 +24,10 @@ public class MapPanel extends JPanel {
 			return;
 		}
 		Dimension mapSize = new Dimension(1024, 768);
+		this.setPreferredSize(mapSize);
+		this.setSize(mapSize);
 		this.setMaximumSize(mapSize);
+		this.setMinimumSize(mapSize);
 		this.addMouseListener(new MapPanelMouseListener());
 	}
 

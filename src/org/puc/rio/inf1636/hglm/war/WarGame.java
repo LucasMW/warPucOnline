@@ -44,15 +44,17 @@ public class WarGame {
 			e.printStackTrace();
 			return;
 		}
-		java.util.Map<String, Object> territories = new Gson().fromJson(jsonContent, java.util.Map.class);
+		java.util.Map<String, Object> territories = new Gson().fromJson(
+				jsonContent, java.util.Map.class);
 		Iterator it = territories.entrySet().iterator();
 		while (it.hasNext()) {
 			java.util.Map.Entry pair = (java.util.Map.Entry) it.next();
 			ArrayList values = (ArrayList) pair.getValue();
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
-			for (Object point: values) {
+			for (Object point : values) {
 				ArrayList pointArray = (ArrayList) point;
-				points.add(new Point2D.Double((double) pointArray.get(0), (double) pointArray.get(1)));
+				points.add(new Point2D.Double((double) pointArray.get(0),
+						(double) pointArray.get(1)));
 			}
 			this.map.addTerritory(new Territory((String) pair.getKey(), points));
 			it.remove();
