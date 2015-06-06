@@ -75,6 +75,11 @@ public class UIPanel extends JPanel {
 			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
 			playerName.setBackground(Player.playerColors[i]);
 			playerNameTextFields.add(playerName);
+			if(Player.playerColors[i] == Color.blue || Player.playerColors[i] == Color.black)
+			{ 
+				playerName.setCaretColor(Color.white);
+				playerName.setForeground(Color.white);
+			}
 			startPanel.add(playerName);
 		}
 
@@ -88,6 +93,7 @@ public class UIPanel extends JPanel {
 					JTextField playerNameTextField = playerNameTextFields.get(i);
 					if (playerNameTextField.getText().length() > 0) {
 						WarGame.getInstance().addPlayer(new Player(playerNameTextField.getText(), Player.playerColors[i]));
+						
 					}
 				}
 				if (WarGame.getInstance().getPlayers().size() >= WarGame.MIN_PLAYERS) {
