@@ -30,6 +30,9 @@ public class UIPanel extends JPanel {
 	private JPanel gamePanel;
 	private JLabel playerTurnLabel;
 
+	public static double multX=1.0;
+	public static double multY=1.0/3.0;
+	
 	public UIPanel() {
 		this.layout = new CardLayout();
 		this.setLayout(layout);
@@ -40,9 +43,10 @@ public class UIPanel extends JPanel {
 			System.out.println(e.getMessage());
 			return;
 		}
-		Dimension uiSize = Toolkit.getDefaultToolkit().getScreenSize();
-		uiSize.height = 200;
-		this.setMinimumSize(uiSize);
+		Dimension uiSize = WarFrame.getGameSize();
+		uiSize.height = (int) (uiSize.height*multY);
+		uiSize.width= (int) (uiSize.width* multX);
+		this.setMaximumSize(uiSize);
 		addStartUIPanel();
 		addGameUIPanel();
 		layout.show(this, "Starting UI");

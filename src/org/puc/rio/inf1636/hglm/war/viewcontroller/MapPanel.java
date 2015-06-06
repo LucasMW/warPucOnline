@@ -15,7 +15,9 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 public class MapPanel extends JPanel {
 
 	Image backgroundImage;
-
+	public static double multX=1.0;
+	public static double multY=0.5;
+	static Dimension mapSize;
 	public MapPanel() {
 		try {
 			backgroundImage = new ImageIcon("resources/maps/war_tabuleiro_com_nomes.png").getImage();
@@ -23,7 +25,7 @@ public class MapPanel extends JPanel {
 			System.out.println(e.getMessage());
 			return;
 		}
-		Dimension mapSize = new Dimension(1024, 768);
+		 mapSize = new Dimension((int) (WarFrame.getGameSize().width*multX),(int)(WarFrame.getGameSize().height*multY));
 		this.setPreferredSize(mapSize);
 		this.setSize(mapSize);
 		this.setMaximumSize(mapSize);
@@ -36,15 +38,22 @@ public class MapPanel extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 	}
+	public static Dimension getMapSize()
+	{	System.out.printf("as %d %d\n",mapSize.width,mapSize.height);
+		return mapSize;
+	}
 }
+
 
 class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
+		System.out.printf("clicked point <%d,%d>\n",me.getX(),me.getY());
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			if (t.getPolygon().contains(me.getX(), me.getY())) {
 				System.out.println(t.getName());
+				
 			}
 		}
 

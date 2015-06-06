@@ -15,9 +15,11 @@ import java.util.List;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
+import org.puc.rio.inf1636.hglm.war.viewcontroller.MapPanel;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 import com.google.gson.Gson;
+
 
 public class WarGame {
 
@@ -27,11 +29,17 @@ public class WarGame {
 	private int currentPlayerIndex = 0;
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
-
+	
+	private static double multiplyerX;
+	private static double multiplyerY;
 
 	public WarGame() {
 		WarFrame gameFrame = new WarFrame();
+		
+		
 		this.map = new Map();
+		multiplyerX = (MapPanel.getMapSize().width/1024.0);
+		multiplyerY = (MapPanel.getMapSize().height/768.0);
 		loadTerritories();
 	}
 
@@ -79,10 +87,13 @@ public class WarGame {
 			java.util.Map.Entry<String, List<List<Double>>> pair = (java.util.Map.Entry<String, List<List<Double>>>) it
 					.next();
 			List<List<Double>> values = pair.getValue();
+			System.out.println(pair.getKey());
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
 			for (List<Double> point : values) {
-				points.add(new Point2D.Double((double) point.get(0),
-						(double) point.get(1)));
+				points.add(new Point2D.Double((double) point.get(0) *multiplyerX ,
+						(double) point.get(1)*multiplyerY));
+				System.out.printf("px<%f %f> ",point.get(0),point.get(1));
+				System.out.printf("VS px<%f %f>\n",point.get(0) *multiplyerX ,point.get(1) * multiplyerY);
 			}
 			this.map.addTerritory(new Territory(pair.getKey(), points));
 			it.remove();
