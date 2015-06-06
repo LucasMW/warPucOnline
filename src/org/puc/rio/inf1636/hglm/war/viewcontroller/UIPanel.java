@@ -31,7 +31,7 @@ public class UIPanel extends JPanel {
 	private JLabel playerTurnLabel;
 
 	public static double multX=1.0;
-	public static double multY=1.0/3.0;
+	public static double multY=1.0/2.0;
 	
 	public UIPanel() {
 		this.layout = new CardLayout();
@@ -71,7 +71,7 @@ public class UIPanel extends JPanel {
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
 		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) {
 			JTextField playerName = new JTextField();
-			playerName.setMaximumSize(new Dimension(400, 50));
+			playerName.setMaximumSize(new Dimension(400, (int)(50*multY)));
 			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
 			playerName.setBackground(Player.playerColors[i]);
 			playerNameTextFields.add(playerName);

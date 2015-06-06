@@ -16,7 +16,7 @@ public class MapPanel extends JPanel {
 
 	Image backgroundImage;
 	public static double multX=1.0;
-	public static double multY=0.5;
+	public static double multY=0.6;
 	static Dimension mapSize;
 	public MapPanel() {
 		try {
