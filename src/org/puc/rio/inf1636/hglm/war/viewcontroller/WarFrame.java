@@ -10,6 +10,8 @@ public class WarFrame extends JFrame {
 
 	public static double multX=1.0;
 	public static double multY=1.0;
+	private UIPanel ui;
+	private MapPanel map;
 	private static Dimension gameSize;
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -28,14 +30,18 @@ public class WarFrame extends JFrame {
 	}
 
 	private void addPanels() {
-		MapPanel map = new MapPanel();
-		UIPanel ui = new UIPanel();
+		 map = new MapPanel();
+		 ui = new UIPanel();
 		this.getContentPane().add(map);
 		this.getContentPane().add(ui);
 	}
 	public static Dimension getGameSize()
 	{
 		return gameSize;
+	}
+	public void selectedTerritory()
+	{
+		ui.updateSelectedLabel();
 	}
 	
 }

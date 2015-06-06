@@ -21,6 +21,7 @@ import javax.swing.JTextField;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Player;
+import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 public class UIPanel extends JPanel {
 
@@ -29,6 +30,8 @@ public class UIPanel extends JPanel {
 	private JPanel startPanel;
 	private JPanel gamePanel;
 	private JLabel playerTurnLabel;
+	private JLabel selectedTerritoryLabel;
+	private JButton attackButton;
 
 	public static double multX=1.0;
 	public static double multY=1.0/2.0;
@@ -115,9 +118,15 @@ public class UIPanel extends JPanel {
 	private void addGameUIPanel() {
 		gamePanel = new JPanel();
 		playerTurnLabel = new JLabel("");
+		selectedTerritoryLabel = new JLabel ("No Territory Selected");
+		attackButton = new JButton("Attack!");
+		attackButton.setEnabled(false);
 		gamePanel.add(playerTurnLabel);
+		gamePanel.add(selectedTerritoryLabel);
+		gamePanel.add(attackButton);
 		this.add(gamePanel, "Game UI");
 	}
+	
 	
 	private void switchCard(String name) {
 		layout.show(this, name);
@@ -127,7 +136,21 @@ public class UIPanel extends JPanel {
 		playerTurnLabel.setText(String.format("%s's turn", WarGame.getInstance().getCurrentPlayer().getName()));
 		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer().getColor());
 	}
-
+	public void updateSelectedLabel()
+	{
+		Territory t =WarGame.getInstance().getCurrentTerritory();
+		if(t==null)
+		{
+			selectedTerritoryLabel.setText("No Territory Selected");
+			attackButton.setEnabled(false);
+		}
+		else
+		{
+			selectedTerritoryLabel.setText(String.format("selected %s",t.getName()));
+			attackButton.setEnabled(true);
+		}
+		
+	}
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

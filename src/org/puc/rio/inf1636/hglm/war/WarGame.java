@@ -29,12 +29,14 @@ public class WarGame {
 	private int currentPlayerIndex = 0;
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
+	private Territory currentTerritory = null;
+	public WarFrame gameFrame =null;
 	
 	private static double multiplyerX;
 	private static double multiplyerY;
 
 	public WarGame() {
-		WarFrame gameFrame = new WarFrame();
+		gameFrame= new WarFrame();
 		
 		
 		this.map = new Map();
@@ -57,7 +59,16 @@ public class WarGame {
 	public Map getMap() {
 		return this.map;
 	}
-
+	
+	public void selectTerritory(Territory t)
+	{
+		currentTerritory = t;
+		gameFrame.selectedTerritory();
+	}
+	public Territory getCurrentTerritory()
+	{
+		return currentTerritory;
+	}
 	public void addPlayer(Player p) {
 		players.add(p);
 	}

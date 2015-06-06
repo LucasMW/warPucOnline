@@ -17,6 +17,7 @@ public class MapPanel extends JPanel {
 	Image backgroundImage;
 	public static double multX=1.0;
 	public static double multY=0.6;
+	
 	static Dimension mapSize;
 	public MapPanel() {
 		try {
@@ -49,13 +50,18 @@ class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
+		boolean flag=false;
 		System.out.printf("clicked point <%d,%d>\n",me.getX(),me.getY());
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			if (t.getPolygon().contains(me.getX(), me.getY())) {
 				System.out.println(t.getName());
+				flag=true;
+				WarGame.getInstance().selectTerritory(t);
 				
+				return; //Cannot select twice
 			}
 		}
+		WarGame.getInstance().selectTerritory(null); //none selected
 
 	}
 
