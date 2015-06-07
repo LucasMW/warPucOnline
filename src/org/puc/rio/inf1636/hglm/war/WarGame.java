@@ -39,7 +39,7 @@ public class WarGame {
 	public final static int MIN_PLAYERS = 3;
 	public final static int MAX_DICES = 3;
 
-	public WarGame() {
+	private WarGame() {
 		this.warFrame = new WarFrame();
 		this.map = new Map();
 		Dimension mapSize = this.getWarFrame().getMapPanel().getMapSize();
