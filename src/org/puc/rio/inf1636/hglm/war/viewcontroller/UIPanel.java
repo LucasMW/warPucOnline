@@ -32,6 +32,7 @@ public class UIPanel extends JPanel {
 	private JLabel playerTurnLabel;
 	private JLabel selectedTerritoryLabel;
 	private JButton attackButton;
+	private DiceFrame diceFrame;
 
 	public static double multX=1.0;
 	public static double multY=1.0/2.0;
@@ -124,6 +125,19 @@ public class UIPanel extends JPanel {
 		gamePanel.add(playerTurnLabel);
 		gamePanel.add(selectedTerritoryLabel);
 		gamePanel.add(attackButton);
+		
+		ActionListener actLis = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent ae) 
+			{
+				System.out.println("attack!");
+				diceFrame = new DiceFrame();
+				diceFrame.setVisible(true);
+				
+			}
+		};
+		attackButton.addActionListener(actLis);
 		this.add(gamePanel, "Game UI");
 	}
 	
@@ -133,7 +147,20 @@ public class UIPanel extends JPanel {
 	}
 	
 	private void switchPlayer() {
-		playerTurnLabel.setText(String.format("%s's turn", WarGame.getInstance().getCurrentPlayer().getName()));
+		Player p;
+		p=WarGame.getInstance().getCurrentPlayer();
+		playerTurnLabel.setText(String.format("%s's turn", p.getName()));
+		if(p.getColor() == Color.blue || p.getColor() == Color.black)
+		{ 
+			//playerTurnLabel.setCaretColor(Color.white);
+			playerTurnLabel.setForeground(Color.white);
+			selectedTerritoryLabel.setForeground(Color.white);
+		}
+		else
+		{
+			playerTurnLabel.setForeground(null);
+			selectedTerritoryLabel.setForeground(null); //revert to default
+		}
 		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer().getColor());
 	}
 	public void updateSelectedLabel()
