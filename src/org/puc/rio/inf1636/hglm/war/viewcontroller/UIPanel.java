@@ -6,7 +6,6 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.Image;
-import java.awt.Toolkit;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -34,9 +33,9 @@ public class UIPanel extends JPanel {
 	private JButton attackButton;
 	private DiceFrame diceFrame;
 
-	public static double multX=1.0;
-	public static double multY=1.0/2.0;
-	
+	public static double multX = 1.0;
+	public static double multY = 1.0 / 2.0;
+
 	public UIPanel() {
 		this.layout = new CardLayout();
 		this.setLayout(layout);
@@ -47,9 +46,9 @@ public class UIPanel extends JPanel {
 			System.out.println(e.getMessage());
 			return;
 		}
-		Dimension uiSize = WarFrame.getGameSize();
-		uiSize.height = (int) (uiSize.height*multY);
-		uiSize.width= (int) (uiSize.width* multX);
+		Dimension uiSize = WarGame.getGameSize();
+		uiSize.height = (int) (uiSize.height * multY);
+		uiSize.width = (int) (uiSize.width * multX);
 		this.setMaximumSize(uiSize);
 		addStartUIPanel();
 		addGameUIPanel();
@@ -59,28 +58,27 @@ public class UIPanel extends JPanel {
 	private void addStartUIPanel() {
 		startPanel = new JPanel();
 		startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
-		
-		JLabel l1 = new JLabel(
-				"Welcome to War. Enter the name of each player:");
+
+		JLabel l1 = new JLabel("Welcome to War. Enter the name of each player:");
 		l1.setAlignmentX(Component.CENTER_ALIGNMENT);
 		startPanel.add(l1);
-		
+
 		final JLabel error = new JLabel(String.format(
 				"You must enter at least %d players", WarGame.MIN_PLAYERS));
 		error.setAlignmentX(Component.CENTER_ALIGNMENT);
 		error.setBackground(Color.RED);
 		error.setVisible(false);
 		startPanel.add(error);
-		
+
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
 		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) {
 			JTextField playerName = new JTextField();
-			playerName.setMaximumSize(new Dimension(400, (int)(50*multY)));
+			playerName.setMaximumSize(new Dimension(400, (int) (50 * multY)));
 			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
 			playerName.setBackground(Player.playerColors[i]);
 			playerNameTextFields.add(playerName);
-			if(Player.playerColors[i] == Color.blue || Player.playerColors[i] == Color.black)
-			{ 
+			if (Player.playerColors[i] == Color.blue
+					|| Player.playerColors[i] == Color.black) {
 				playerName.setCaretColor(Color.white);
 				playerName.setForeground(Color.white);
 			}
@@ -94,10 +92,13 @@ public class UIPanel extends JPanel {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				for (int i = 0; i < WarGame.MAX_PLAYERS; i++) {
-					JTextField playerNameTextField = playerNameTextFields.get(i);
+					JTextField playerNameTextField = playerNameTextFields
+							.get(i);
 					if (playerNameTextField.getText().length() > 0) {
-						WarGame.getInstance().addPlayer(new Player(playerNameTextField.getText(), Player.playerColors[i]));
-						
+						WarGame.getInstance().addPlayer(
+								new Player(playerNameTextField.getText(),
+										Player.playerColors[i]));
+
 					}
 				}
 				if (WarGame.getInstance().getPlayers().size() >= WarGame.MIN_PLAYERS) {
@@ -119,67 +120,61 @@ public class UIPanel extends JPanel {
 	private void addGameUIPanel() {
 		gamePanel = new JPanel();
 		playerTurnLabel = new JLabel("");
-		selectedTerritoryLabel = new JLabel ("No Territory Selected");
+		selectedTerritoryLabel = new JLabel("No Territory Selected");
 		attackButton = new JButton("Attack!");
 		attackButton.setEnabled(false);
 		gamePanel.add(playerTurnLabel);
 		gamePanel.add(selectedTerritoryLabel);
 		gamePanel.add(attackButton);
-		
-		ActionListener actLis = new ActionListener() 
-		{
+
+		ActionListener actLis = new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent ae) 
-			{
+			public void actionPerformed(ActionEvent ae) {
 				System.out.println("attack!");
 				diceFrame = new DiceFrame();
 				diceFrame.setVisible(true);
-				
+
 			}
 		};
 		attackButton.addActionListener(actLis);
 		this.add(gamePanel, "Game UI");
 	}
-	
-	
+
 	private void switchCard(String name) {
 		layout.show(this, name);
 	}
-	
+
 	public void switchPlayer() {
-		//player should be switched
+		// player should be switched
 		System.out.println("SWITCHED?");
 		Player p;
-		p=WarGame.getInstance().getCurrentPlayer();
+		p = WarGame.getInstance().getCurrentPlayer();
 		playerTurnLabel.setText(String.format("%s's turn", p.getName()));
-		if(p.getColor() == Color.blue || p.getColor() == Color.black)
-		{ 
-			//playerTurnLabel.setCaretColor(Color.white);
+		if (p.getColor() == Color.blue || p.getColor() == Color.black) {
+			// playerTurnLabel.setCaretColor(Color.white);
 			playerTurnLabel.setForeground(Color.white);
 			selectedTerritoryLabel.setForeground(Color.white);
-		}
-		else
-		{
+		} else {
 			playerTurnLabel.setForeground(null);
-			selectedTerritoryLabel.setForeground(null); //revert to default
+			selectedTerritoryLabel.setForeground(null); // revert to default
 		}
-		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer().getColor());
+		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer()
+				.getColor());
 	}
-	public void updateSelectedLabel()
-	{
-		Territory t =WarGame.getInstance().getCurrentTerritory();
-		if(t==null)
-		{
+
+	public void updateSelectedLabel() {
+		Territory t = WarGame.getInstance().getCurrentTerritory();
+		if (t == null) {
 			selectedTerritoryLabel.setText("No Territory Selected");
 			attackButton.setEnabled(false);
-		}
-		else
-		{
-			selectedTerritoryLabel.setText(String.format("selected %s",t.getName()));
+		} else {
+			selectedTerritoryLabel.setText(String.format("selected %s",
+					t.getName()));
 			attackButton.setEnabled(true);
 		}
-		
+
 	}
+
 	@Override
 	protected void paintComponent(Graphics g) {
 		super.paintComponent(g);

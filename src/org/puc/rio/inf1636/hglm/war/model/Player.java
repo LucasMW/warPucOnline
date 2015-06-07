@@ -1,7 +1,6 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
 import java.awt.Color;
-import java.util.Random;
 
 public class Player {
 
@@ -18,7 +17,7 @@ public class Player {
 	public String getName() {
 		return this.name;
 	}
-	
+
 	public Color getColor() {
 		return this.color;
 	}

@@ -1,5 +1,6 @@
 package org.puc.rio.inf1636.hglm.war;
 
+import java.awt.Dimension;
 import java.awt.geom.Point2D;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -15,33 +16,35 @@ import java.util.List;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
-import org.puc.rio.inf1636.hglm.war.viewcontroller.MapPanel;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 import com.google.gson.Gson;
 
-
 public class WarGame {
 
-	private static WarGame instance = null;
+	private static WarGame instance;
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
 	private int currentPlayerIndex = 0;
+	private Territory currentTerritory;
+	private double multiplierX;
+	private double multiplierY;
+	
+	public static final double MULTIPLIER_X = 1.0;
+	public static final double MULTIPLIER_Y = 1.0;
+	
+	private WarFrame warFrame;
+	
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
-	private Territory currentTerritory = null;
-	public WarFrame gameFrame =null;
-	
-	private static double multiplyerX;
-	private static double multiplyerY;
+	public final static int MAX_DICES = 3;
 
 	public WarGame() {
-		gameFrame= new WarFrame();
-		
-		
+		this.warFrame = new WarFrame();
 		this.map = new Map();
-		multiplyerX = (MapPanel.getMapSize().width/1024.0);
-		multiplyerY = (MapPanel.getMapSize().height/768.0);
+		Dimension mapSize = this.getWarFrame().getMapPanel().getMapSize();
+		this.multiplierX = (mapSize.width / 1024.0);
+		this.multiplierY = (mapSize.height / 768.0);
 		loadTerritories();
 	}
 
@@ -51,45 +54,55 @@ public class WarGame {
 		}
 		return WarGame.instance;
 	}
-	
+
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 	}
-	
+
 	public Map getMap() {
 		return this.map;
 	}
-	
-	public void selectTerritory(Territory t)
-	{
+
+	public void selectTerritory(Territory t) {
 		currentTerritory = t;
-		gameFrame.selectedTerritory();
+		warFrame.selectedTerritory();
 	}
-	public Territory getCurrentTerritory()
-	{
+
+	public Territory getCurrentTerritory() {
 		return currentTerritory;
 	}
+
 	public void addPlayer(Player p) {
 		players.add(p);
 	}
-	
+
 	public List<Player> getPlayers() {
 		return this.players;
 	}
-	
+
 	public Player getCurrentPlayer() {
 		return this.players.get(this.currentPlayerIndex);
 	}
-	public void nextTurn()
-	{	
-		this.currentPlayerIndex++ ;
-		System.out.println(this.currentPlayerIndex);
-		if(this.currentPlayerIndex >= players.size())
-			this.currentPlayerIndex=0;
-		gameFrame.battleEnded();
-		
-	}
 
+	public void nextTurn() {
+		this.currentPlayerIndex++;
+		System.out.println(this.currentPlayerIndex);
+		if (this.currentPlayerIndex >= players.size())
+			this.currentPlayerIndex = 0;
+		warFrame.battleEnded();
+
+	}
+	
+	public WarFrame getWarFrame() {
+		return this.warFrame;
+	}
+	
+	public static Dimension getGameSize() {
+		Dimension screenSize = java.awt.Toolkit.getDefaultToolkit()
+				.getScreenSize();
+		return new Dimension((int) (screenSize.width * MULTIPLIER_X),
+				(int) (screenSize.height * MULTIPLIER_Y));
+	}
 
 	private void loadTerritories() {
 		String jsonContent;
@@ -110,19 +123,20 @@ public class WarGame {
 			System.out.println(pair.getKey());
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
 			for (List<Double> point : values) {
-				points.add(new Point2D.Double((double) point.get(0) *multiplyerX ,
-						(double) point.get(1)*multiplyerY));
-				System.out.printf("px<%f %f> ",point.get(0),point.get(1));
-				System.out.printf("VS px<%f %f>\n",point.get(0) *multiplyerX ,point.get(1) * multiplyerY);
+				points.add(new Point2D.Double((double) point.get(0)
+						* multiplierX, (double) point.get(1) * multiplierY));
+				System.out.printf("px<%f %f> ", point.get(0), point.get(1));
+				System.out.printf("VS px<%f %f>\n", point.get(0) * multiplierX,
+						point.get(1) * multiplierY);
 			}
 			this.map.addTerritory(new Territory(pair.getKey(), points));
 			it.remove();
 		}
 	}
 
-	static String readFile(String path, Charset encoding) throws IOException {
+	private static String readFile(String path, Charset encoding) throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}
-	
+
 }

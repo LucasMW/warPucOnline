@@ -15,18 +15,21 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 public class MapPanel extends JPanel {
 
 	Image backgroundImage;
-	public static double multX=1.0;
-	public static double multY=0.6;
-	
-	static Dimension mapSize;
+	private final double MULTIPLIER_X = 1.0;
+	private final double MULTIPLIER_Y = 0.6;
+	private Dimension mapSize;
+
 	public MapPanel() {
 		try {
-			backgroundImage = new ImageIcon("resources/maps/war_tabuleiro_com_nomes.png").getImage();
+			backgroundImage = new ImageIcon(
+					"resources/maps/war_tabuleiro_com_nomes.png").getImage();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return;
 		}
-		 mapSize = new Dimension((int) (WarFrame.getGameSize().width*multX),(int)(WarFrame.getGameSize().height*multY));
+		Dimension gameSize = WarGame.getGameSize();
+		this.mapSize = new Dimension((int) (gameSize.width * MULTIPLIER_X),
+				(int) (gameSize.height * MULTIPLIER_Y));
 		this.setPreferredSize(mapSize);
 		this.setSize(mapSize);
 		this.setMaximumSize(mapSize);
@@ -39,29 +42,29 @@ public class MapPanel extends JPanel {
 		super.paintComponent(g);
 		g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
 	}
-	public static Dimension getMapSize()
-	{	System.out.printf("as %d %d\n",mapSize.width,mapSize.height);
+
+	public Dimension getMapSize() {
+		System.out.printf("as %d %d\n", mapSize.width, mapSize.height);
 		return mapSize;
 	}
 }
-
 
 class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		boolean flag=false;
-		System.out.printf("clicked point <%d,%d>\n",me.getX(),me.getY());
+		boolean flag = false;
+		System.out.printf("clicked point <%d,%d>\n", me.getX(), me.getY());
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			if (t.getPolygon().contains(me.getX(), me.getY())) {
 				System.out.println(t.getName());
-				flag=true;
+				flag = true;
 				WarGame.getInstance().selectTerritory(t);
-				
-				return; //Cannot select twice
+
+				return; // Cannot select twice
 			}
 		}
-		WarGame.getInstance().selectTerritory(null); //none selected
+		WarGame.getInstance().selectTerritory(null); // none selected
 
 	}
 
