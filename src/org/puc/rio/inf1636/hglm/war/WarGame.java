@@ -82,7 +82,9 @@ public class WarGame {
 	}
 	public void nextTurn()
 	{	
-		if(this.currentPlayerIndex++ >= players.size())
+		this.currentPlayerIndex++ ;
+		System.out.println(this.currentPlayerIndex);
+		if(this.currentPlayerIndex >= players.size())
 			this.currentPlayerIndex=0;
 		gameFrame.battleEnded();
 		
