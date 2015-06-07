@@ -37,7 +37,7 @@ public class DiceFrame extends JFrame {
 	private List<Integer> defenseResults = new LinkedList<Integer>();
 
 	public DiceFrame() {
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setTitle(String.format("%s is attacking %s", "Territory1",
 				"Territory2"));
 		this.setSize(new Dimension(300, 400));
