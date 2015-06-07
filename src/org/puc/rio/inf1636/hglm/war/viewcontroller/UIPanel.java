@@ -26,11 +26,16 @@ public class UIPanel extends JPanel {
 
 	private Image backgroundImage;
 	private CardLayout layout;
+	
 	private JPanel startPanel;
 	private JPanel gamePanel;
+	
 	private JLabel playerTurnLabel;
 	private JLabel selectedTerritoryLabel;
+	
 	private JButton attackButton;
+	private JButton endTurnButton;
+	
 	private DiceFrame diceFrame;
 
 	public static double multX = 1.0;
@@ -56,22 +61,22 @@ public class UIPanel extends JPanel {
 	}
 
 	private void addStartUIPanel() {
-		startPanel = new JPanel();
-		startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
+		this.startPanel = new JPanel();
+		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
 
 		JLabel l1 = new JLabel("Welcome to War. Enter the name of each player:");
 		l1.setAlignmentX(Component.CENTER_ALIGNMENT);
-		startPanel.add(l1);
+		this.startPanel.add(l1);
 
 		final JLabel error = new JLabel(String.format(
 				"You must enter at least %d players", WarGame.MIN_PLAYERS));
 		error.setAlignmentX(Component.CENTER_ALIGNMENT);
 		error.setBackground(Color.RED);
 		error.setVisible(false);
-		startPanel.add(error);
+		this.startPanel.add(error);
 
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
-		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) {
+		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) { // 6 textFields for each possible player
 			JTextField playerName = new JTextField();
 			playerName.setMaximumSize(new Dimension(400, (int) (50 * multY)));
 			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -82,7 +87,7 @@ public class UIPanel extends JPanel {
 				playerName.setCaretColor(Color.white);
 				playerName.setForeground(Color.white);
 			}
-			startPanel.add(playerName);
+			this.startPanel.add(playerName);
 		}
 
 		JButton submitButton = new JButton("Submit");
@@ -118,16 +123,14 @@ public class UIPanel extends JPanel {
 	}
 
 	private void addGameUIPanel() {
-		gamePanel = new JPanel();
-		playerTurnLabel = new JLabel("");
-		selectedTerritoryLabel = new JLabel("No Territory Selected");
-		attackButton = new JButton("Attack!");
-		attackButton.setEnabled(false);
-		gamePanel.add(playerTurnLabel);
-		gamePanel.add(selectedTerritoryLabel);
-		gamePanel.add(attackButton);
+		this.gamePanel = new JPanel();
+		this.playerTurnLabel = new JLabel();
+		this.selectedTerritoryLabel = new JLabel("No Territory Selected");
+		this.attackButton = new JButton("Attack!");
+		this.endTurnButton = new JButton("End Turn");
 
-		ActionListener actLis = new ActionListener() {
+		this.attackButton.setEnabled(false);
+		ActionListener attackButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
 				System.out.println("attack!");
@@ -136,7 +139,22 @@ public class UIPanel extends JPanel {
 
 			}
 		};
-		attackButton.addActionListener(actLis);
+		attackButton.addActionListener(attackButtonListener);
+		
+		ActionListener endTurnButtonListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				System.out.println("end turn");
+				WarGame.getInstance().nextTurn();
+			}
+		};
+		this.endTurnButton.addActionListener(endTurnButtonListener);
+		
+		this.gamePanel.add(this.playerTurnLabel);
+		this.gamePanel.add(this.selectedTerritoryLabel);
+		this.gamePanel.add(this.attackButton);
+		this.gamePanel.add(this.endTurnButton);
+		
 		this.add(gamePanel, "Game UI");
 	}
 

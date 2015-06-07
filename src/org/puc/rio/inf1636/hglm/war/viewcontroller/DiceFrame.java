@@ -48,12 +48,6 @@ public class DiceFrame extends JFrame {
 		this.defenderPanel.setLayout(new BoxLayout(defenderPanel,
 				BoxLayout.Y_AXIS));
 
-		// this.frameSize = WarGame.getGameSize();
-		// this.frameSize.height = (int) (frameSize.height);
-		// this.frameSize.width = frameSize.height;
-		// System.out.print(frameSize);
-		// this.setSize(frameSize);
-
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -92,7 +86,7 @@ public class DiceFrame extends JFrame {
 		ActionListener actLisC = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				nextTurn();
+				dispose();
 			}
 		};
 		confirmButton.addActionListener(actLisC);
@@ -100,11 +94,6 @@ public class DiceFrame extends JFrame {
 		this.getContentPane().add(attackerPanel);
 		this.getContentPane().add(defenderPanel);
 		this.getContentPane().add(confirmPanel);
-	}
-
-	private void nextTurn() {
-		WarGame.getInstance().nextTurn();
-		this.dispose();
 	}
 
 	private void generateDices() {
@@ -155,7 +144,7 @@ public class DiceFrame extends JFrame {
 			dice.setIcon(imgX);
 			dice.setVisible(true);
 			i++;
-		}		
+		}
 	}
 
 	private int[] calculateLosses() {
