@@ -3,8 +3,11 @@ package org.puc.rio.inf1636.hglm.war.viewcontroller;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import javax.swing.BoxLayout;
 import javax.swing.ImageIcon;
@@ -13,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.JLabel;
 import javax.swing.JButton;
 
+import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
 //This class controls battle. Attacker and Defender Dices etc.
@@ -21,13 +25,19 @@ public class DiceFrame extends JFrame
 {
 	private JPanel attackerPanel;
 	private JPanel defenderPanel;
+	private JPanel confirmPanel;
+
 	private List<JLabel> attackerDices = new ArrayList<JLabel>();
 	private List<JLabel> defenderDices = new ArrayList<JLabel>();
 	private int numberOfAttackDices=3; //the rules I remember
 	private JButton attackButton;
 	private JButton defendButton;
-	
+	private JButton confirmButton;
+	private int attackTotal;
+	private int defendTotal;
+	private boolean flagA=false,flagB=false;
 	Dimension frameSize;
+	
 	public DiceFrame()
 	{
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -50,46 +60,129 @@ public class DiceFrame extends JFrame
 		this.getContentPane().add(defenderPanel);
 		this.attackButton = new JButton("attack");
 		this.defendButton = new JButton("defend");
-		
-		
+		ActionListener actLisA = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent ae) 
+			{
+				System.out.println("attack!");
+				attackButton();
+				checkVictory();
+			}
+		};
+		ActionListener actLisB = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent ae) 
+			{
+				System.out.println("defend!");
+				defendButton();
+				checkVictory();
+			}
+		};
+		attackButton.addActionListener(actLisA);
+		defendButton.addActionListener(actLisB);
 		attackerPanel.add(attackButton);
-		
 		defenderPanel.add(defendButton);
 		this.generateDices();
 		
+		confirmPanel = new JPanel();
+		this.getContentPane().add(confirmPanel);
+		this.confirmButton = new JButton("confirm");
+		confirmButton.setVisible(false);
+		confirmPanel.add(confirmButton);
+		ActionListener actLisC = new ActionListener() 
+		{
+			@Override
+			public void actionPerformed(ActionEvent ae) 
+			{
+				System.out.println("Confirm");
+				nextTurn();
+			}
+		};
+		confirmButton.addActionListener(actLisC);
+		
+	}
+	private void nextTurn()
+	{
+		WarGame.getInstance().nextTurn();
+		this.dispose();
 	}
 	private void generateDices()
 	{
 		 for(int i=0; i<numberOfAttackDices; i++)
 		 {
-
-			 JLabel diceA = new JLabel("dice");
-			 diceA.setBackground(Color.red);
-			 JLabel diceB = new JLabel("dice");
-			 diceB.setBackground(Color.yellow);
+			 
+			 Image imgA=  new ImageIcon("resources/dices/dado_ataque_1.png").getImage(); //this generates an image file
+			 Image imgB=  new ImageIcon("resources/dices/dado_defesa_1.png").getImage();
+			 ImageIcon iconA = new ImageIcon(imgA);
+			 ImageIcon iconB=  new ImageIcon(imgB);			 
+			 JLabel diceA = new JLabel(iconA);
+			 //diceA.setBackground(Color.red);
+			 JLabel diceB = new JLabel(iconB);
+			 //diceB.setBackground(Color.yellow);
+			 diceA.setVisible(false);
+			 diceB.setVisible(false);
+			 
 			 attackerDices.add(diceA);
 			 attackerPanel.add(diceA);
 			 defenderDices.add(diceB);
 			 defenderPanel.add(diceB);
-			 try // I don`t understand why it`s not working
-			 {
-				 Image imgA=  new ImageIcon("resources/Dados/dado_ataque_1.png").getImage(); //this generates an image file
-				 Image imgB=  new ImageIcon("resources/Dados/dado_defesa_1.png").getImage();
-				 ImageIcon iconA = new ImageIcon(imgA);
-				 ImageIcon iconB=  new ImageIcon(imgB);
-				 diceA.setIcon(iconA);
-				 diceB.setIcon(iconB);
-			 }
-			 catch( Exception e)
-			 {
-				 System.out.println(e.getMessage());
-			 }
-			
-			 
-			
 			 
 		 }
 		
+	}
+	private int attackButton()
+	{
+		int sum=0;
+		Random rand = new Random();
+		for(int i=0; i<numberOfAttackDices; i++)
+		{	
+			JLabel dice = attackerDices.get(i);
+			ImageIcon imgX;
+			int x = rand.nextInt((6 - 1) + 1) + 1;
+			imgX = new ImageIcon(String.format("resources/dices/dado_ataque_%d.png",x));
+			dice.setIcon(imgX);
+			dice.setVisible(true);
+			sum+=x;
+		}
+		flagA=true;
+		return sum;
+	}
+	private int defendButton()
+	{
+		Random rand = new Random();
+		int sum=0;
+		for (JLabel dice:defenderDices )
+		{	
+			ImageIcon imgX;
+			int x = rand.nextInt((6 - 1) + 1) + 1;
+			imgX = new ImageIcon(String.format("resources/dices/dado_defesa_%d.png",x));
+			dice.setIcon(imgX);
+			dice.setVisible(true);
+			sum+=x;
+			 
+		}
+		flagB=true;
+		return sum;
+	}
+	private void checkVictory()
+	{
+		int answer;
+		if(flagA && flagB)
+		{
+			answer=attackTotal-defendTotal;
+			if(answer>0)//attacker wins
+			{
+				System.out.println("Attacker wins");
+			}
+			else //defenders have priority
+			{
+				System.out.println("Defender wins");
+			}
+			confirmButton.setVisible(true);
+			
+		}
 	}
 
 }

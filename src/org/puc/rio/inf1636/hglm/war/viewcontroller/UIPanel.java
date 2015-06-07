@@ -146,7 +146,9 @@ public class UIPanel extends JPanel {
 		layout.show(this, name);
 	}
 	
-	private void switchPlayer() {
+	public void switchPlayer() {
+		//player should be switched
+		System.out.println("SWITCHED?");
 		Player p;
 		p=WarGame.getInstance().getCurrentPlayer();
 		playerTurnLabel.setText(String.format("%s's turn", p.getName()));

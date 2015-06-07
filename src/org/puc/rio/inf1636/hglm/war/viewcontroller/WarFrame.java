@@ -43,5 +43,9 @@ public class WarFrame extends JFrame {
 	{
 		ui.updateSelectedLabel();
 	}
+	public void battleEnded()
+	{
+		ui.switchPlayer();
+	}
 	
 }

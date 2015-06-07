@@ -80,6 +80,13 @@ public class WarGame {
 	public Player getCurrentPlayer() {
 		return this.players.get(this.currentPlayerIndex);
 	}
+	public void nextTurn()
+	{	
+		if(this.currentPlayerIndex++ >= players.size())
+			this.currentPlayerIndex=0;
+		gameFrame.battleEnded();
+		
+	}
 
 
 	private void loadTerritories() {
@@ -115,4 +122,5 @@ public class WarGame {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}
+	
 }
