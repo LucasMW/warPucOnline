@@ -31,7 +31,6 @@ public class UIPanel extends JPanel {
 	private JPanel gamePanel;
 	
 	private JLabel playerTurnLabel;
-	private JLabel selectedTerritoryLabel;
 	
 	private JButton attackButton;
 	private JButton endTurnButton;
@@ -124,10 +123,13 @@ public class UIPanel extends JPanel {
 
 	private void addGameUIPanel() {
 		this.gamePanel = new JPanel();
+		this.gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.Y_AXIS));
 		this.playerTurnLabel = new JLabel();
-		this.selectedTerritoryLabel = new JLabel("No Territory Selected");
+		this.playerTurnLabel.setAlignmentX(CENTER_ALIGNMENT);
 		this.attackButton = new JButton("Attack!");
+		this.attackButton.setAlignmentX(CENTER_ALIGNMENT);
 		this.endTurnButton = new JButton("End Turn");
+		this.endTurnButton.setAlignmentX(CENTER_ALIGNMENT);
 
 		this.attackButton.setEnabled(false);
 		ActionListener attackButtonListener = new ActionListener() {
@@ -151,7 +153,6 @@ public class UIPanel extends JPanel {
 		this.endTurnButton.addActionListener(endTurnButtonListener);
 		
 		this.gamePanel.add(this.playerTurnLabel);
-		this.gamePanel.add(this.selectedTerritoryLabel);
 		this.gamePanel.add(this.attackButton);
 		this.gamePanel.add(this.endTurnButton);
 		
@@ -171,10 +172,8 @@ public class UIPanel extends JPanel {
 		if (p.getColor() == Color.blue || p.getColor() == Color.black) {
 			// playerTurnLabel.setCaretColor(Color.white);
 			playerTurnLabel.setForeground(Color.white);
-			selectedTerritoryLabel.setForeground(Color.white);
 		} else {
 			playerTurnLabel.setForeground(null);
-			selectedTerritoryLabel.setForeground(null); // revert to default
 		}
 		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer()
 				.getColor());
@@ -183,10 +182,10 @@ public class UIPanel extends JPanel {
 	public void updateSelectedLabel() {
 		Territory t = WarGame.getInstance().getCurrentTerritory();
 		if (t == null) {
-			selectedTerritoryLabel.setText("No Territory Selected");
+			attackButton.setText("Attack!");
 			attackButton.setEnabled(false);
 		} else {
-			selectedTerritoryLabel.setText(String.format("selected %s",
+			attackButton.setText(String.format("Attack %s!",
 					t.getName()));
 			attackButton.setEnabled(true);
 		}

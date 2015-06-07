@@ -37,7 +37,7 @@ public class WarGame {
 	
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
-	public final static int MAX_DICES = 3;
+	public final static int MAX_DICE = 3;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
