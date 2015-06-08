@@ -29,7 +29,6 @@ public class UIPanel extends JPanel {
 	
 	private JPanel startPanel;
 	private JPanel gamePanel;
-	private JPanel playerOrderPanel;
 	private JLabel playerOrderLabel;
 	private JLabel playerTurnLabel;
 	
@@ -192,59 +191,12 @@ public class UIPanel extends JPanel {
 		this.gamePanel.add(this.endTurnButton);
 		playerOrderLabel = new JLabel("order here");
 		playerOrderLabel.setAlignmentX(CENTER_ALIGNMENT);
-		gamePanel.add(playerOrderLabel);
+		this.gamePanel.add(this.playerOrderLabel);
 		
 		this.add(gamePanel, "Game UI");
 	}
 
-	private void addPlayerOrderPanel()
-	{
-		this.playerOrderPanel = new JPanel();
-		this.playerOrderPanel.setAlignmentX(LEFT_ALIGNMENT);
-		
-		System.out.println("ORDER IS");
-		List<Player> players=WarGame.getInstance().getPlayers();
-		Player current;
-		current = WarGame.getInstance().getCurrentPlayer();
-		String s="";
-		
-		
-		for(int i=0;i<players.size();i++)
-		{
-			JLabel pLabel;
-			Player p = players.get(i);
-			String pStr;
-			pStr=String.format("%s", p.getName());
-			if(i==0)
-			{	
-				pLabel =new JLabel(p.getName());
-				pLabel.setBackground(p.getColor());
-				
-			}
-			else
-			{
-				pLabel =new JLabel(String.format(" => %s", p.getName()));
-				pLabel.setBackground(p.getColor());
-				
-			}
-			if(p==current)
-			{
-				pLabel.setForeground(p.getColor());
-				pStr=String.format("<strong>%s</strong>", pStr);
-			}
-			this.playerOrderPanel.add(pLabel);
-			if(i>0)
-			{
-				s = String.format("%s => %s",s,pStr);
-			}
-			else 
-			{
-				s=String.format("%s", pStr);
-			}
-		}
-		System.out.println(s);
-		this.gamePanel.add(this.playerOrderPanel);
-	}
+	
 	private void switchCard(String name) {
 		layout.show(this, name);
 		
