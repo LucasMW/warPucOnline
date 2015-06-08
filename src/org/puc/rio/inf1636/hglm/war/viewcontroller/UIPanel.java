@@ -189,8 +189,8 @@ public class UIPanel extends JPanel {
 		this.gamePanel.add(this.playerTurnLabel);
 		this.gamePanel.add(this.attackButton);
 		this.gamePanel.add(this.endTurnButton);
-		playerOrderLabel = new JLabel("order here");
-		playerOrderLabel.setAlignmentX(CENTER_ALIGNMENT);
+		this.playerOrderLabel = new JLabel("order here");
+		this.playerOrderLabel.setAlignmentX(CENTER_ALIGNMENT);
 		this.gamePanel.add(this.playerOrderLabel);
 		
 		this.add(gamePanel, "Game UI");
@@ -208,16 +208,19 @@ public class UIPanel extends JPanel {
 		Player p;
 		p = WarGame.getInstance().getCurrentPlayer();
 		playerTurnLabel.setText(String.format("%s's turn", p.getName()));
+		this.playerOrderLabel.setText(this.generateOrderString());
 		if (p.getColor() == Color.blue || p.getColor() == Color.black) {
 			// playerTurnLabel.setCaretColor(Color.white);
 			playerTurnLabel.setForeground(Color.white);
+			this.playerOrderLabel.setForeground(Color.white);
 		} else {
 			playerTurnLabel.setForeground(null);
+			this.playerOrderLabel.setForeground(null);
 		}
 		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer()
 				.getColor());
 		System.out.println(this.generateOrderString());
-		this.playerOrderLabel.setText(this.generateOrderString());
+		
 	}
 
 	public void updateSelectedLabel() {
