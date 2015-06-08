@@ -29,14 +29,16 @@ public class UIPanel extends JPanel {
 	
 	private JPanel startPanel;
 	private JPanel gamePanel;
-	
+	private JPanel playerOrderPanel;
+	private JLabel playerOrderLabel;
 	private JLabel playerTurnLabel;
+	
 	
 	private JButton attackButton;
 	private JButton endTurnButton;
 	
 	private DiceFrame diceFrame;
-
+	
 	public static double multX = 1.0;
 	public static double multY = 1.0 / 2.0;
 
@@ -56,9 +58,38 @@ public class UIPanel extends JPanel {
 		this.setMaximumSize(uiSize);
 		addStartUIPanel();
 		addGameUIPanel();
+		
 		layout.show(this, "Starting UI");
 	}
 
+	private String generateOrderString()
+	{
+		List<Player> players=WarGame.getInstance().getPlayers();
+		
+		String s="";
+		int currentIndex = WarGame.getInstance().getCurrentPlayerIndex();
+		
+		for(int i=0;i<players.size();i++)
+		{
+			Player p = players.get(i);
+			String pStr;
+			pStr=String.format("%s", p.getName());
+			if(i == currentIndex)
+			{
+				pStr=String.format("<strong>%s</strong>", pStr);
+			}
+			if(i>0)
+			{
+				s = String.format("%s => %s",s,pStr);
+			}
+			else 
+			{
+				s=String.format("%s", pStr);
+			}
+		}
+		s = String.format("<html>%s</html>", s);
+		return s;
+	}
 	private void addStartUIPanel() {
 		this.startPanel = new JPanel();
 		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
@@ -108,14 +139,18 @@ public class UIPanel extends JPanel {
 				if (WarGame.getInstance().getPlayers().size() >= WarGame.MIN_PLAYERS) {
 					WarGame.getInstance().startGame();
 					switchPlayer();
+					//addPlayerOrderPanel();
+					
 					switchCard("Game UI");
 				} else {
 					WarGame.getInstance().getPlayers().clear();
 					error.setVisible(true);
 				}
-
+				
 			}
 		});
+		
+		
 
 		startPanel.add(submitButton);
 		this.add(startPanel, "Starting UI");
@@ -155,12 +190,64 @@ public class UIPanel extends JPanel {
 		this.gamePanel.add(this.playerTurnLabel);
 		this.gamePanel.add(this.attackButton);
 		this.gamePanel.add(this.endTurnButton);
+		playerOrderLabel = new JLabel("order here");
+		playerOrderLabel.setAlignmentX(CENTER_ALIGNMENT);
+		gamePanel.add(playerOrderLabel);
 		
 		this.add(gamePanel, "Game UI");
 	}
 
+	private void addPlayerOrderPanel()
+	{
+		this.playerOrderPanel = new JPanel();
+		this.playerOrderPanel.setAlignmentX(LEFT_ALIGNMENT);
+		
+		System.out.println("ORDER IS");
+		List<Player> players=WarGame.getInstance().getPlayers();
+		Player current;
+		current = WarGame.getInstance().getCurrentPlayer();
+		String s="";
+		
+		
+		for(int i=0;i<players.size();i++)
+		{
+			JLabel pLabel;
+			Player p = players.get(i);
+			String pStr;
+			pStr=String.format("%s", p.getName());
+			if(i==0)
+			{	
+				pLabel =new JLabel(p.getName());
+				pLabel.setBackground(p.getColor());
+				
+			}
+			else
+			{
+				pLabel =new JLabel(String.format(" => %s", p.getName()));
+				pLabel.setBackground(p.getColor());
+				
+			}
+			if(p==current)
+			{
+				pLabel.setForeground(p.getColor());
+				pStr=String.format("<strong>%s</strong>", pStr);
+			}
+			this.playerOrderPanel.add(pLabel);
+			if(i>0)
+			{
+				s = String.format("%s => %s",s,pStr);
+			}
+			else 
+			{
+				s=String.format("%s", pStr);
+			}
+		}
+		System.out.println(s);
+		this.gamePanel.add(this.playerOrderPanel);
+	}
 	private void switchCard(String name) {
 		layout.show(this, name);
+		
 	}
 
 	public void switchPlayer() {
@@ -177,6 +264,8 @@ public class UIPanel extends JPanel {
 		}
 		gamePanel.setBackground(WarGame.getInstance().getCurrentPlayer()
 				.getColor());
+		System.out.println(this.generateOrderString());
+		this.playerOrderLabel.setText(this.generateOrderString());
 	}
 
 	public void updateSelectedLabel() {

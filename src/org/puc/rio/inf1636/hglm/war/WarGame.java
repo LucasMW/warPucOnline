@@ -83,6 +83,9 @@ public class WarGame {
 	public Player getCurrentPlayer() {
 		return this.players.get(this.currentPlayerIndex);
 	}
+	public int getCurrentPlayerIndex() {
+		return this.currentPlayerIndex;
+	}
 
 	public void nextTurn() {
 		this.currentPlayerIndex++;
