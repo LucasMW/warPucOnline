@@ -22,4 +22,11 @@ public class Player {
 		return this.color;
 	}
 
+	public Color getForegroundColor() {
+		if (this.color == Color.BLUE || this.color == Color.BLACK) {
+			return Color.WHITE;
+		} else {
+			return Color.BLACK;
+		}
+	}
 }
