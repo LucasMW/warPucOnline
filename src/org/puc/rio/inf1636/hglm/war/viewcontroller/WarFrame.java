@@ -7,7 +7,6 @@ import org.puc.rio.inf1636.hglm.war.WarGame;
 
 public class WarFrame extends JFrame {
 
-
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
 
@@ -29,11 +28,11 @@ public class WarFrame extends JFrame {
 		this.getContentPane().add(mapPanel);
 		this.getContentPane().add(uiPanel);
 	}
-	
+
 	public MapPanel getMapPanel() {
 		return this.mapPanel;
 	}
-	
+
 	public UIPanel getUIPanel() {
 		return this.uiPanel;
 	}

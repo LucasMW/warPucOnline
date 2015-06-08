@@ -44,7 +44,6 @@ public class MapPanel extends JPanel {
 	}
 
 	public Dimension getMapSize() {
-		System.out.printf("as %d %d\n", mapSize.width, mapSize.height);
 		return mapSize;
 	}
 }

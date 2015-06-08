@@ -4,15 +4,12 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.Graphics;
-import java.awt.Image;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
 import java.util.List;
 
 import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -37,7 +34,7 @@ public class UIPanel extends JPanel {
 	private JButton endTurnButton;
 
 	private DiceFrame diceFrame;
-	
+
 	private Dimension size;
 
 	private final double MULTIPLIER_X = 1.0;
@@ -75,7 +72,8 @@ public class UIPanel extends JPanel {
 		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) { // 6 textFields for each
 														// possible player
 			JTextField playerName = new JTextField();
-			playerName.setMaximumSize(new Dimension(400, (int) (50 * MULTIPLIER_Y)));
+			playerName.setMaximumSize(new Dimension(400,
+					(int) (50 * MULTIPLIER_Y)));
 			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
 			playerName.setBackground(Player.playerColors[i]);
 			playerNameTextFields.add(playerName);
@@ -122,11 +120,14 @@ public class UIPanel extends JPanel {
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
 		this.gamePanel = new JPanel();
 		this.gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
-		
+
 		this.optionsPanel = new JPanel();
-		this.optionsPanel.setLayout(new BoxLayout(optionsPanel, BoxLayout.Y_AXIS));
-		this.optionsPanel.setMaximumSize(new Dimension(this.size.width/2, this.size.height));
-		this.playerTurnLabel = new JLabel(String.format("%s's turn", currentPlayer.getName()));
+		this.optionsPanel.setLayout(new BoxLayout(optionsPanel,
+				BoxLayout.Y_AXIS));
+		this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 2,
+				this.size.height));
+		this.playerTurnLabel = new JLabel(String.format("%s's turn",
+				currentPlayer.getName()));
 		this.playerTurnLabel.setOpaque(true);
 		this.playerTurnLabel.setBackground(currentPlayer.getColor());
 		this.playerTurnLabel.setForeground(currentPlayer.getForegroundColor());
@@ -156,18 +157,21 @@ public class UIPanel extends JPanel {
 		this.optionsPanel.add(this.playerTurnLabel);
 		this.optionsPanel.add(this.attackButton);
 		this.optionsPanel.add(this.endTurnButton);
-		
+
 		this.namesPanel = new JPanel();
 		this.namesPanel.setLayout(new BoxLayout(namesPanel, BoxLayout.Y_AXIS));
-		this.namesPanel.setMaximumSize(new Dimension(this.size.width/2, this.size.height));
-		
+		this.namesPanel.setMaximumSize(new Dimension(this.size.width / 2,
+				this.size.height));
+
 		JLabel playersLabel = new JLabel("Players:");
 		this.namesPanel.add(playersLabel);
-		
+
 		int i = 0;
-		for (Player p: WarGame.getInstance().getPlayers()) {
-			boolean isCurrentPlayer = WarGame.getInstance().getCurrentPlayerIndex() == i;
-			JLabel playerLabel = new JLabel(String.format("%s%s", isCurrentPlayer ? "*" : "", p.getName()));
+		for (Player p : WarGame.getInstance().getPlayers()) {
+			boolean isCurrentPlayer = WarGame.getInstance()
+					.getCurrentPlayerIndex() == i;
+			JLabel playerLabel = new JLabel(String.format("%s%s",
+					isCurrentPlayer ? "*" : "", p.getName()));
 			playerLabel.setOpaque(true);
 			playerLabel.setBackground(p.getColor());
 			playerLabel.setForeground(p.getForegroundColor());
@@ -179,7 +183,6 @@ public class UIPanel extends JPanel {
 		this.gamePanel.add(this.namesPanel);
 		this.gamePanel.add(this.optionsPanel);
 
-
 		this.add(gamePanel, "Game UI");
 	}
 
@@ -187,19 +190,21 @@ public class UIPanel extends JPanel {
 		this.addGameUIPanel();
 		layout.show(this, "Game UI");
 	}
-	
+
 	public void switchPlayer() {
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
 		int currentPlayerIndex = WarGame.getInstance().getCurrentPlayerIndex();
-		
-		this.playerTurnLabel.setText(String.format("%s's turn", currentPlayer.getName()));
+
+		this.playerTurnLabel.setText(String.format("%s's turn",
+				currentPlayer.getName()));
 		this.playerTurnLabel.setBackground(currentPlayer.getColor());
 		this.playerTurnLabel.setForeground(currentPlayer.getForegroundColor());
-		
-		for (JLabel l: playerLabels) {
+
+		for (JLabel l : playerLabels) {
 			l.setText(l.getText().replace("*", ""));
 		}
-		playerLabels.get(currentPlayerIndex).setText(String.format("*%s", currentPlayer.getName()));
+		playerLabels.get(currentPlayerIndex).setText(
+				String.format("*%s", currentPlayer.getName()));
 	}
 
 	public void updateSelectedLabel() {

@@ -89,7 +89,6 @@ public class WarGame {
 
 	public void nextTurn() {
 		this.currentPlayerIndex++;
-		System.out.println(this.currentPlayerIndex);
 		if (this.currentPlayerIndex >= players.size())
 			this.currentPlayerIndex = 0;
 		warFrame.battleEnded();
@@ -123,14 +122,10 @@ public class WarGame {
 			java.util.Map.Entry<String, List<List<Double>>> pair = (java.util.Map.Entry<String, List<List<Double>>>) it
 					.next();
 			List<List<Double>> values = pair.getValue();
-			System.out.println(pair.getKey());
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
 			for (List<Double> point : values) {
 				points.add(new Point2D.Double((double) point.get(0)
 						* multiplierX, (double) point.get(1) * multiplierY));
-				System.out.printf("px<%f %f> ", point.get(0), point.get(1));
-				System.out.printf("VS px<%f %f>\n", point.get(0) * multiplierX,
-						point.get(1) * multiplierY);
 			}
 			this.map.addTerritory(new Territory(pair.getKey(), points));
 			it.remove();

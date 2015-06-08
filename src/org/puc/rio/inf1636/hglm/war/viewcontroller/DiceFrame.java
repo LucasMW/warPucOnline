@@ -38,8 +38,8 @@ public class DiceFrame extends JFrame {
 
 	public DiceFrame() {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setTitle(String.format("%s is attacking %s", "Territory1",
-				"Territory2"));
+		this.setTitle(String.format("%s is attacking %s", "Territory1", WarGame
+				.getInstance().getCurrentTerritory().getName()));
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -54,7 +54,6 @@ public class DiceFrame extends JFrame {
 		ActionListener actLisA = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				System.out.println("attack!");
 				rollDice(true);
 				checkEnd();
 			}
@@ -71,7 +70,6 @@ public class DiceFrame extends JFrame {
 		ActionListener actLisB = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				System.out.println("defend!");
 				rollDice(false);
 				checkEnd();
 			}
@@ -120,7 +118,7 @@ public class DiceFrame extends JFrame {
 
 	private void rollDice(boolean attack) {
 		// if dice are rolled already
-		if ((attack && this.attackResults.size() == 3) 
+		if ((attack && this.attackResults.size() == 3)
 				|| (!attack && this.defenseResults.size() == 3)) {
 			return;
 		}
@@ -141,9 +139,8 @@ public class DiceFrame extends JFrame {
 		int i = 0;
 		for (int result : attack ? this.attackResults : this.defenseResults) {
 			ImageIcon imgX;
-			imgX = new ImageIcon(String.format(
-					"resources/dice/dado_%s_%d.png", attack ? "ataque"
-							: "defesa", result));
+			imgX = new ImageIcon(String.format("resources/dice/dado_%s_%d.png",
+					attack ? "ataque" : "defesa", result));
 			JLabel dice = attack ? attackerDice.get(i) : defenderDice.get(i);
 			dice.setIcon(imgX);
 			dice.setVisible(true);
