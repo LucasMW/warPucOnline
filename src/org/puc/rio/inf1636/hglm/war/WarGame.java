@@ -29,12 +29,12 @@ public class WarGame {
 	private Territory currentTerritory;
 	private double multiplierX;
 	private double multiplierY;
-	
+
 	public static final double MULTIPLIER_X = 1.0;
 	public static final double MULTIPLIER_Y = 1.0;
-	
+
 	private WarFrame warFrame;
-	
+
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
 	public final static int MAX_DICE = 3;
@@ -42,9 +42,6 @@ public class WarGame {
 	private WarGame() {
 		this.warFrame = new WarFrame();
 		this.map = new Map();
-		Dimension mapSize = this.getWarFrame().getMapPanel().getMapSize();
-		this.multiplierX = (mapSize.width / 1024.0);
-		this.multiplierY = (mapSize.height / 768.0);
 		loadTerritories();
 	}
 
@@ -57,6 +54,9 @@ public class WarGame {
 
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
+		this.loadTerritories();
+		this.giveAwayTerritories();
+		this.getWarFrame().getMapPanel().renderTroopLabels(true);
 	}
 
 	public Map getMap() {
@@ -83,6 +83,7 @@ public class WarGame {
 	public Player getCurrentPlayer() {
 		return this.players.get(this.currentPlayerIndex);
 	}
+
 	public int getCurrentPlayerIndex() {
 		return this.currentPlayerIndex;
 	}
@@ -94,11 +95,11 @@ public class WarGame {
 		warFrame.battleEnded();
 
 	}
-	
+
 	public WarFrame getWarFrame() {
 		return this.warFrame;
 	}
-	
+
 	public static Dimension getGameSize() {
 		Dimension screenSize = java.awt.Toolkit.getDefaultToolkit()
 				.getScreenSize();
@@ -124,15 +125,34 @@ public class WarGame {
 			List<List<Double>> values = pair.getValue();
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
 			for (List<Double> point : values) {
-				points.add(new Point2D.Double((double) point.get(0)
-						* multiplierX, (double) point.get(1) * multiplierY));
+				points.add(new Point2D.Double(
+						(double) point.get(0)
+								* this.getWarFrame().getMapPanel().coordinatesMultiplierX,
+						(double) point.get(1)
+								* this.getWarFrame().getMapPanel().coordinatesMultiplierY));
 			}
 			this.map.addTerritory(new Territory(pair.getKey(), points));
 			it.remove();
 		}
 	}
 
-	private static String readFile(String path, Charset encoding) throws IOException {
+	private void giveAwayTerritories() {
+		List<Integer> indexes = new ArrayList<Integer>();
+		Iterator<Player> pi = this.getPlayers().iterator();
+		for (int i = 0; i < this.getMap().getTerritories().size(); i++) {
+			indexes.add(i);
+		}
+		Collections.shuffle(indexes);
+		for (Integer i : indexes) {
+			if (!pi.hasNext()) {
+				pi = this.getPlayers().iterator(); //loop back
+			}
+				this.getMap().getTerritories().get(i).setOwner(pi.next());
+		}
+	}
+
+	private static String readFile(String path, Charset encoding)
+			throws IOException {
 		byte[] encoded = Files.readAllBytes(Paths.get(path));
 		return new String(encoded, encoding);
 	}

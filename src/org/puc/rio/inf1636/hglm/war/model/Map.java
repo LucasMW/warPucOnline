@@ -1,12 +1,12 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Map {
 
-	private Set<Territory> territories = new HashSet<Territory>();
-
+	private List<Territory> territories = new ArrayList<Territory>();
+	
 	public Map() {
 
 	}
@@ -15,7 +15,7 @@ public class Map {
 		this.territories.add(t);
 	}
 
-	public Set<Territory> getTerritories() {
+	public List<Territory> getTerritories() {
 		return this.territories;
 	}
 }
