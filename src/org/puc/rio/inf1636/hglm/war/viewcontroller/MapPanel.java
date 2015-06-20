@@ -2,7 +2,6 @@ package org.puc.rio.inf1636.hglm.war.viewcontroller;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
@@ -15,17 +14,17 @@ import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.SwingConstants;
-import javax.swing.border.Border;
 
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
+import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 public class MapPanel extends JPanel {
 
 	Image backgroundImage;
 	private final double MULTIPLIER_X = 1.0;
-	private final double MULTIPLIER_Y = 0.6;
+	private final double MULTIPLIER_Y = 0.8;
 	public double coordinatesMultiplierX;
 	public double coordinatesMultiplierY;
 	private Dimension mapSize;
@@ -69,25 +68,30 @@ public class MapPanel extends JPanel {
 			if (first) {
 				centerLabel = new JLabel("", SwingConstants.CENTER);
 				centerLabel.setBounds((int) (t.getCenter().x),
-						(int) (t.getCenter().y), 100, 20);
+						(int) (t.getCenter().y), 130, 20);
 				centerLabel.setOpaque(true);
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
 			} else {
 				centerLabel = this.troopsLabels.get(i);
 			}
+			centerLabel.setBackground(t.getOwner().getColor());
+			centerLabel.setForeground(Player.getForegroundColor(t.getOwner().getColor()));
+			centerLabel.setText(String.format("(%d) %s", t.getTroopCount(), t.getName()));
+			centerLabel.setBorder(BorderFactory.createLineBorder(this.calculateBorderColor(t), 3));
 			if (WarGame.getInstance().getMap().getCurrentTerritory() != null) {
 				if (WarGame.getInstance().getMap().getCurrentTerritory().equals(t)) {
 					this.setComponentZOrder(centerLabel, 0);
+					centerLabel.setBackground(t.getOwner().getColor().darker());
 				} else {
 					this.setComponentZOrder(centerLabel, 2);
 				}
+				if (WarGame.getInstance().getMap().getCurrentTerritory().getNeighbors().contains(t)) {
+					centerLabel.setBackground(t.getOwner().getColor().brighter());
+				}
 			}
-			centerLabel.setBackground(t.getOwner().getColor());
-			centerLabel.setForeground(t.getOwner().getForegroundColor());
-			centerLabel.setText(String.format("%s (%d)", t.getName(), t.getTroopCount()));
-			centerLabel.setBorder(BorderFactory.createLineBorder(this.calculateBorderColor(t), 3));
 			this.repaint();
+			centerLabel.repaint();
 			i++;
 		}
 	}

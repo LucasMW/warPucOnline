@@ -7,8 +7,8 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
-	public final static Color[] playerColors = { Color.RED, Color.GREEN,
-			Color.BLUE, Color.YELLOW, Color.PINK, Color.BLACK };
+	public final static Color[] playerColors = { new Color(128,0,0) /* MAROON */, Color.GREEN.darker(),
+			Color.BLUE, Color.YELLOW, new Color(255,0,255).darker() /* FUSCIA */, Color.BLACK };
 
 	public Player(String name, Color color) {
 		this.name = name;
@@ -35,8 +35,8 @@ public class Player {
 		return this.numberOfTerritories;
 	}
 	
-	public Color getForegroundColor() {
-		if (this.color == Color.BLUE || this.color == Color.BLACK) {
+	public static Color getForegroundColor(Color c) {
+		if (c == Color.BLUE || c == Color.BLACK || c.equals(new Color(128,0,0))) {
 			return Color.WHITE;
 		} else {
 			return Color.BLACK;

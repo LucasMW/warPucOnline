@@ -39,7 +39,7 @@ public class UIPanel extends JPanel {
 	private Dimension size;
 
 	private final double MULTIPLIER_X = 1.0;
-	private final double MULTIPLIER_Y = 1.0 / 2.0;
+	private final double MULTIPLIER_Y = 0.2;
 
 	public UIPanel() {
 		this.layout = new CardLayout();
@@ -56,15 +56,12 @@ public class UIPanel extends JPanel {
 
 	private void addStartUIPanel() {
 		this.startPanel = new JPanel();
-		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
-
+		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.X_AXIS));
 		JLabel l1 = new JLabel("Welcome to War. Enter the name of each player:");
-		l1.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.startPanel.add(l1);
 
 		final JLabel error = new JLabel(String.format(
 				"You must enter at least %d players", WarGame.MIN_PLAYERS));
-		error.setAlignmentX(Component.CENTER_ALIGNMENT);
 		error.setBackground(Color.RED);
 		error.setVisible(false);
 		this.startPanel.add(error);
@@ -73,21 +70,18 @@ public class UIPanel extends JPanel {
 		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) { // 6 textFields for each
 														// possible player
 			JTextField playerName = new JTextField();
-			playerName.setMaximumSize(new Dimension(400,
-					(int) (50 * MULTIPLIER_Y)));
-			playerName.setAlignmentX(Component.CENTER_ALIGNMENT);
+			playerName.setMaximumSize(new Dimension(400, (int) (30)));
 			playerName.setBackground(Player.playerColors[i]);
 			playerNameTextFields.add(playerName);
-			if (Player.playerColors[i] == Color.blue
-					|| Player.playerColors[i] == Color.black) {
-				playerName.setCaretColor(Color.white);
-				playerName.setForeground(Color.white);
-			}
+			playerName.setCaretColor(Player
+					.getForegroundColor(Player.playerColors[i]));
+			playerName.setForeground(Player
+					.getForegroundColor(Player.playerColors[i]));
+
 			this.startPanel.add(playerName);
 		}
 
 		JButton submitButton = new JButton("Submit");
-		submitButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		submitButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -131,7 +125,8 @@ public class UIPanel extends JPanel {
 				currentPlayer.getName()));
 		this.playerTurnLabel.setOpaque(true);
 		this.playerTurnLabel.setBackground(currentPlayer.getColor());
-		this.playerTurnLabel.setForeground(currentPlayer.getForegroundColor());
+		this.playerTurnLabel.setForeground(Player
+				.getForegroundColor(currentPlayer.getColor()));
 		this.playerTurnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.attackButton = new JButton("Attack!");
 		this.attackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
@@ -185,7 +180,8 @@ public class UIPanel extends JPanel {
 		this.playerTurnLabel.setText(String.format("%s's turn",
 				currentPlayer.getName()));
 		this.playerTurnLabel.setBackground(currentPlayer.getColor());
-		this.playerTurnLabel.setForeground(currentPlayer.getForegroundColor());
+		this.playerTurnLabel.setForeground(Player
+				.getForegroundColor(currentPlayer.getColor()));
 		updatePlayerLabels(false);
 	}
 
@@ -199,7 +195,8 @@ public class UIPanel extends JPanel {
 				playerLabel = new JLabel();
 				playerLabel.setOpaque(true);
 				playerLabel.setBackground(p.getColor());
-				playerLabel.setForeground(p.getForegroundColor());
+				playerLabel.setForeground(Player.getForegroundColor(p
+						.getColor()));
 				playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
 				this.playerLabels.add(playerLabel);
 				this.namesPanel.add(playerLabel);
@@ -207,8 +204,7 @@ public class UIPanel extends JPanel {
 				playerLabel = this.playerLabels.get(i);
 			}
 			playerLabel.setText(String.format("%s (%d territorios em total)%s",
-					p.getName(),
-					p.getNumberOfTerritories(),
+					p.getName(), p.getNumberOfTerritories(),
 					isCurrentPlayer ? "*" : ""));
 			i++;
 		}
