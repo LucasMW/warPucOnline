@@ -103,12 +103,12 @@ public class MapPanel extends JPanel {
 	}
 	
 	private Color calculateBorderColor(Territory t) {
-		Color color = Color.BLACK;
+		Color color = Color.WHITE;
 		Territory currentTerritory = WarGame.getInstance().getMap().getCurrentTerritory();
 		if (currentTerritory == null) {
-			color = Color.BLACK;
-		} else if (currentTerritory.equals(t)){
 			color = Color.WHITE;
+		} else if (currentTerritory.equals(t)){
+			color = Color.BLACK;
 		} else if (currentTerritory.getNeighbors().contains(t)) {
 			color = Color.RED;
 		}
