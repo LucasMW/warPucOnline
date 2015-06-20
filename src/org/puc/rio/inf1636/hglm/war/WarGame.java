@@ -26,7 +26,6 @@ public class WarGame {
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
 	private int currentPlayerIndex = 0;
-	private Territory currentTerritory;
 	private double multiplierX;
 	private double multiplierY;
 
@@ -42,7 +41,6 @@ public class WarGame {
 	private WarGame() {
 		this.warFrame = new WarFrame();
 		this.map = new Map();
-		loadTerritories();
 	}
 
 	public static WarGame getInstance() {
@@ -56,20 +54,11 @@ public class WarGame {
 		Collections.shuffle(players); // randomize player order
 		this.loadTerritories();
 		this.giveAwayTerritories();
-		this.getWarFrame().getMapPanel().renderTroopLabels(true);
+		this.getWarFrame().getMapPanel().updateTroopLabels(true);
 	}
 
 	public Map getMap() {
 		return this.map;
-	}
-
-	public void selectTerritory(Territory t) {
-		currentTerritory = t;
-		warFrame.selectedTerritory();
-	}
-
-	public Territory getCurrentTerritory() {
-		return currentTerritory;
 	}
 
 	public void addPlayer(Player p) {
@@ -147,7 +136,9 @@ public class WarGame {
 			if (!pi.hasNext()) {
 				pi = this.getPlayers().iterator(); //loop back
 			}
-				this.getMap().getTerritories().get(i).setOwner(pi.next());
+			Player p = pi.next();
+			this.getMap().getTerritories().get(i).setOwner(p);
+			p.addTerritory();
 		}
 	}
 

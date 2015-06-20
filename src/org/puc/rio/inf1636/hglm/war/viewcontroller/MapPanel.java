@@ -9,9 +9,12 @@ import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.Border;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
@@ -57,68 +60,81 @@ public class MapPanel extends JPanel {
 		return mapSize;
 	}
 
-	public void renderTroopLabels(boolean first) {
+	public void updateTroopLabels(boolean first) {
 		int i = 0;
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			JLabel centerLabel;
+			Border border;
 			if (first) {
-				centerLabel = new JLabel();
+				centerLabel = new JLabel("", SwingConstants.CENTER);
 				centerLabel.setBounds((int) (t.getCenter().x),
-						(int) (t.getCenter().y), 10, 10);
+						(int) (t.getCenter().y), 20, 20);
 				centerLabel.setOpaque(true);
+				border = BorderFactory.createLineBorder(Color.BLACK, 2);
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
 			} else {
 				centerLabel = this.troopsLabels.get(i);
+				border = BorderFactory.createLineBorder(WarGame.getInstance()
+						.getMap().getCurrentTerritory().equals(t) ? Color.WHITE
+						: Color.BLACK, 2);
 			}
 			centerLabel.setBackground(t.getOwner().getColor());
+			centerLabel.setForeground(t.getOwner().getForegroundColor());
 			centerLabel.setText(((Integer) t.getTroopCount()).toString());
+			centerLabel.setBorder(border);
 			centerLabel.repaint();
 
 			i++;
 		}
 	}
+
+	public void selectTerritory(Territory t) {
+		WarGame.getInstance().getMap().setCurrentTerritory(t);
+		this.updateTroopLabels(false);
+		WarGame.getInstance().getWarFrame().getUIPanel().updateSelectedLabel();
+	}
+
 }
 
 class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseClicked(MouseEvent me) {
-		System.out.printf("clicked point <%d,%d>\n", me.getX(), me.getY());
+		System.out
+				.printf("clicked point <%f,%f>\n",
+						me.getX()
+								/ WarGame.getInstance().getWarFrame()
+										.getMapPanel().coordinatesMultiplierX,
+						me.getY()
+								/ WarGame.getInstance().getWarFrame()
+										.getMapPanel().coordinatesMultiplierY);
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			if (t.getPolygon().contains(me.getX(), me.getY())) {
-				System.out.println(t.getName());
-				WarGame.getInstance().selectTerritory(t);
-
+				WarGame.getInstance().getWarFrame().getMapPanel()
+						.selectTerritory(t);
 				return; // Cannot select twice
 			}
 		}
-		WarGame.getInstance().selectTerritory(null); // none selected
+		WarGame.getInstance().getMap().setCurrentTerritory(null); // none
+																	// selected
 
 	}
 
 	@Override
-	public void mouseEntered(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseEntered(MouseEvent me) {
 	}
 
 	@Override
-	public void mouseExited(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseExited(MouseEvent me) {
 	}
 
 	@Override
-	public void mousePressed(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mousePressed(MouseEvent me) {
 	}
 
 	@Override
-	public void mouseReleased(MouseEvent arg0) {
-		// TODO Auto-generated method stub
-
+	public void mouseReleased(MouseEvent me) {
 	}
 
 }

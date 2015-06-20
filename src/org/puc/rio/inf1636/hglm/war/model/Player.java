@@ -6,6 +6,7 @@ public class Player {
 
 	private String name;
 	private Color color;
+	private int numberOfTerritories = 0;
 	public final static Color[] playerColors = { Color.RED, Color.GREEN,
 			Color.BLUE, Color.YELLOW, Color.PINK, Color.BLACK };
 
@@ -21,7 +22,19 @@ public class Player {
 	public Color getColor() {
 		return this.color;
 	}
+	
+	public int addTerritory() {
+		return ++this.numberOfTerritories;
+	}
+	
+	public int removeTerritory() {
+		return --this.numberOfTerritories;
+	}
 
+	public int getNumberOfTerritories() {
+		return this.numberOfTerritories;
+	}
+	
 	public Color getForegroundColor() {
 		if (this.color == Color.BLUE || this.color == Color.BLACK) {
 			return Color.WHITE;

@@ -165,21 +165,8 @@ public class UIPanel extends JPanel {
 
 		JLabel playersLabel = new JLabel("Players:");
 		this.namesPanel.add(playersLabel);
+		updatePlayerLabels(true);
 
-		int i = 0;
-		for (Player p : WarGame.getInstance().getPlayers()) {
-			boolean isCurrentPlayer = WarGame.getInstance()
-					.getCurrentPlayerIndex() == i;
-			JLabel playerLabel = new JLabel(String.format("%s%s",
-					isCurrentPlayer ? "*" : "", p.getName()));
-			playerLabel.setOpaque(true);
-			playerLabel.setBackground(p.getColor());
-			playerLabel.setForeground(p.getForegroundColor());
-			playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-			this.playerLabels.add(playerLabel);
-			this.namesPanel.add(playerLabel);
-			i++;
-		}
 		this.gamePanel.add(this.namesPanel);
 		this.gamePanel.add(this.optionsPanel);
 
@@ -193,22 +180,41 @@ public class UIPanel extends JPanel {
 
 	public void switchPlayer() {
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
-		int currentPlayerIndex = WarGame.getInstance().getCurrentPlayerIndex();
 
 		this.playerTurnLabel.setText(String.format("%s's turn",
 				currentPlayer.getName()));
 		this.playerTurnLabel.setBackground(currentPlayer.getColor());
 		this.playerTurnLabel.setForeground(currentPlayer.getForegroundColor());
+		updatePlayerLabels(false);
+	}
 
-		for (JLabel l : playerLabels) {
-			l.setText(l.getText().replace("*", ""));
+	public void updatePlayerLabels(boolean first) {
+		int i = 0;
+		for (Player p : WarGame.getInstance().getPlayers()) {
+			boolean isCurrentPlayer = WarGame.getInstance()
+					.getCurrentPlayerIndex() == i;
+			JLabel playerLabel;
+			if (first) {
+				playerLabel = new JLabel();
+				playerLabel.setOpaque(true);
+				playerLabel.setBackground(p.getColor());
+				playerLabel.setForeground(p.getForegroundColor());
+				playerLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+				this.playerLabels.add(playerLabel);
+				this.namesPanel.add(playerLabel);
+			} else {
+				playerLabel = this.playerLabels.get(i);
+			}
+			playerLabel.setText(String.format("%s (%d territorios em total)%s",
+					p.getName(),
+					p.getNumberOfTerritories(),
+					isCurrentPlayer ? "*" : ""));
+			i++;
 		}
-		playerLabels.get(currentPlayerIndex).setText(
-				String.format("*%s", currentPlayer.getName()));
 	}
 
 	public void updateSelectedLabel() {
-		Territory t = WarGame.getInstance().getCurrentTerritory();
+		Territory t = WarGame.getInstance().getMap().getCurrentTerritory();
 		if (t == null) {
 			attackButton.setText("Attack!");
 			attackButton.setEnabled(false);

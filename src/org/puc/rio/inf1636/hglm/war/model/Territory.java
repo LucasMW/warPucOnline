@@ -4,7 +4,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Point2D;
 import java.util.List;
 
-public class Territory {
+public class Territory extends Object {
 
 	private String name;
 	private GeneralPath polygon;
@@ -64,5 +64,10 @@ public class Territory {
 
 	public String getName() {
 		return this.name;
+	}
+		
+	@Override
+	public boolean equals(Object another) {
+		return this.name == ((Territory) another).getName();
 	}
 }

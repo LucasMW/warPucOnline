@@ -13,7 +13,6 @@ public class WarFrame extends JFrame {
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("War - by Hugo Grochau and Lucas Menezes");
-		System.out.print(WarGame.getGameSize());
 		this.setSize(WarGame.getGameSize());
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -38,11 +37,11 @@ public class WarFrame extends JFrame {
 	}
 
 	public void selectedTerritory() {
-		uiPanel.updateSelectedLabel();
+		this.uiPanel.updateSelectedLabel();
 	}
 
 	public void battleEnded() {
-		uiPanel.switchPlayer();
+		this.uiPanel.switchPlayer();
 	}
 
 }
