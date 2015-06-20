@@ -2,6 +2,7 @@ package org.puc.rio.inf1636.hglm.war.viewcontroller;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
@@ -33,7 +34,7 @@ public class MapPanel extends JPanel {
 	public MapPanel() {
 		try {
 			backgroundImage = new ImageIcon(
-					"resources/maps/war_tabuleiro_com_nomes.png").getImage();
+					"resources/maps/war_tabuleiro_completo.png").getImage();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
 			return;
@@ -68,18 +69,25 @@ public class MapPanel extends JPanel {
 			if (first) {
 				centerLabel = new JLabel("", SwingConstants.CENTER);
 				centerLabel.setBounds((int) (t.getCenter().x),
-						(int) (t.getCenter().y), 20, 20);
+						(int) (t.getCenter().y), 100, 20);
 				centerLabel.setOpaque(true);
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
 			} else {
 				centerLabel = this.troopsLabels.get(i);
 			}
+			if (WarGame.getInstance().getMap().getCurrentTerritory() != null) {
+				if (WarGame.getInstance().getMap().getCurrentTerritory().equals(t)) {
+					this.setComponentZOrder(centerLabel, 0);
+				} else {
+					this.setComponentZOrder(centerLabel, 2);
+				}
+			}
 			centerLabel.setBackground(t.getOwner().getColor());
 			centerLabel.setForeground(t.getOwner().getForegroundColor());
-			centerLabel.setText(((Integer) t.getTroopCount()).toString());
+			centerLabel.setText(String.format("%s (%d)", t.getName(), t.getTroopCount()));
 			centerLabel.setBorder(BorderFactory.createLineBorder(this.calculateBorderColor(t), 3));
-			centerLabel.repaint();
+			this.repaint();
 			i++;
 		}
 	}
