@@ -58,6 +58,7 @@ public class UIPanel extends JPanel {
 		this.startPanel = new JPanel();
 		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.X_AXIS));
 		JLabel l1 = new JLabel("Welcome to War. Enter the name of each player:");
+		l1.setAlignmentY(Component.TOP_ALIGNMENT);
 		this.startPanel.add(l1);
 
 		final JLabel error = new JLabel(String.format(
@@ -77,7 +78,7 @@ public class UIPanel extends JPanel {
 					.getForegroundColor(Player.playerColors[i]));
 			playerName.setForeground(Player
 					.getForegroundColor(Player.playerColors[i]));
-
+			playerName.setAlignmentY(Component.TOP_ALIGNMENT);
 			this.startPanel.add(playerName);
 		}
 
@@ -93,7 +94,6 @@ public class UIPanel extends JPanel {
 						WarGame.getInstance().addPlayer(
 								new Player(playerNameTextField.getText(),
 										Player.playerColors[i]));
-
 					}
 				}
 				if (WarGame.getInstance().getPlayers().size() >= WarGame.MIN_PLAYERS) {
@@ -106,7 +106,7 @@ public class UIPanel extends JPanel {
 
 			}
 		});
-
+		submitButton.setAlignmentY(Component.TOP_ALIGNMENT);
 		startPanel.add(submitButton);
 		this.add(startPanel, "Starting UI");
 	}
