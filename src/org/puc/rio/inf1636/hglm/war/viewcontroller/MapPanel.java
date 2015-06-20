@@ -83,7 +83,7 @@ public class MapPanel extends JPanel {
 			}
 			if (currentTerritory != null) {
 				if (currentTerritory.equals(t)) { // selected territory
-					zOrder = 2;
+					zOrder = 0;
 					backgroundColor = backgroundColor.darker(); 
 					border = BorderFactory.createLineBorder(Color.BLACK, 3);
 				} else if (currentTerritory.getNeighbors().contains(t) && !currentTerritory.getOwner().equals(t.getOwner())) { // neighboring territories
