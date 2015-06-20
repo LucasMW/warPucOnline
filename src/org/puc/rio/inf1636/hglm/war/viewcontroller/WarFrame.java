@@ -3,7 +3,7 @@ package org.puc.rio.inf1636.hglm.war.viewcontroller;
 import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
-import org.puc.rio.inf1636.hglm.war.WarGame;
+import org.puc.rio.inf1636.hglm.war.Util;
 
 public class WarFrame extends JFrame {
 
@@ -13,7 +13,7 @@ public class WarFrame extends JFrame {
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setTitle("War - by Hugo Grochau and Lucas Menezes");
-		this.setSize(WarGame.getGameSize());
+		this.setSize(Util.getGameSize());
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setResizable(false);

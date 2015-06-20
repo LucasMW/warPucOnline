@@ -16,6 +16,7 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 
+import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
@@ -37,7 +38,7 @@ public class MapPanel extends JPanel {
 			System.out.println(e.getMessage());
 			return;
 		}
-		Dimension gameSize = WarGame.getGameSize();
+		Dimension gameSize = Util.getGameSize();
 		this.mapSize = new Dimension((int) (gameSize.width * MULTIPLIER_X),
 				(int) (gameSize.height * MULTIPLIER_Y));
 		this.setPreferredSize(mapSize);
@@ -64,27 +65,21 @@ public class MapPanel extends JPanel {
 		int i = 0;
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			JLabel centerLabel;
-			Border border;
 			if (first) {
 				centerLabel = new JLabel("", SwingConstants.CENTER);
 				centerLabel.setBounds((int) (t.getCenter().x),
 						(int) (t.getCenter().y), 20, 20);
 				centerLabel.setOpaque(true);
-				border = BorderFactory.createLineBorder(Color.BLACK, 2);
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
 			} else {
 				centerLabel = this.troopsLabels.get(i);
-				border = BorderFactory.createLineBorder(WarGame.getInstance()
-						.getMap().getCurrentTerritory().equals(t) ? Color.WHITE
-						: Color.BLACK, 2);
 			}
 			centerLabel.setBackground(t.getOwner().getColor());
 			centerLabel.setForeground(t.getOwner().getForegroundColor());
 			centerLabel.setText(((Integer) t.getTroopCount()).toString());
-			centerLabel.setBorder(border);
+			centerLabel.setBorder(BorderFactory.createLineBorder(this.calculateBorderColor(t), 3));
 			centerLabel.repaint();
-
 			i++;
 		}
 	}
@@ -93,6 +88,19 @@ public class MapPanel extends JPanel {
 		WarGame.getInstance().getMap().setCurrentTerritory(t);
 		this.updateTroopLabels(false);
 		WarGame.getInstance().getWarFrame().getUIPanel().updateSelectedLabel();
+	}
+	
+	private Color calculateBorderColor(Territory t) {
+		Color color = Color.BLACK;
+		Territory currentTerritory = WarGame.getInstance().getMap().getCurrentTerritory();
+		if (currentTerritory == null) {
+			color = Color.BLACK;
+		} else if (currentTerritory.equals(t)){
+			color = Color.WHITE;
+		} else if (currentTerritory.getNeighbors().contains(t)) {
+			color = Color.RED;
+		}
+		return color;
 	}
 
 }
@@ -116,9 +124,7 @@ class MapPanelMouseListener implements MouseListener {
 				return; // Cannot select twice
 			}
 		}
-		WarGame.getInstance().getMap().setCurrentTerritory(null); // none
-																	// selected
-
+		WarGame.getInstance().getMap().setCurrentTerritory(null); // none selected
 	}
 
 	@Override

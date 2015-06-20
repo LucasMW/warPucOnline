@@ -15,6 +15,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
+import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
@@ -44,7 +45,7 @@ public class UIPanel extends JPanel {
 		this.layout = new CardLayout();
 		this.setLayout(layout);
 
-		this.size = WarGame.getGameSize();
+		this.size = Util.getGameSize();
 		this.size.height = (int) (this.size.height * MULTIPLIER_Y);
 		this.size.width = (int) (this.size.width * MULTIPLIER_X);
 		this.setMaximumSize(this.size);
