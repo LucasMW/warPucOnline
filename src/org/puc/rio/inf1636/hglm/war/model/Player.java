@@ -13,8 +13,10 @@ public class Player {
 	private static final Color LIGHT_BLUE = new Color(0, 128, 128);
 	private static final Color PURPLE = new Color(128, 0, 128);
 	private static final Color BROWN = new Color(128, 128, 0);
-	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE, PURPLE, BROWN };
-	private int numberOfUnsetArmies; //represents number of armies to be replaced
+	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE,
+			PURPLE, BROWN };
+	private int unplacedArmies = 0; // represents number of armies to be
+										// placed
 
 	public Player(String name, Color color) {
 		this.name = name;
@@ -28,11 +30,11 @@ public class Player {
 	public Color getColor() {
 		return this.color;
 	}
-	
+
 	public int addTerritory() {
 		return ++this.numberOfTerritories;
 	}
-	
+
 	public int removeTerritory() {
 		return --this.numberOfTerritories;
 	}
@@ -40,21 +42,29 @@ public class Player {
 	public int getNumberOfTerritories() {
 		return this.numberOfTerritories;
 	}
-	
+
 	public static Color getForegroundColor(Color c) {
-		if (c == BLUE || c == PURPLE || c == RED) { 
+		if (c == BLUE || c == PURPLE || c == RED) {
 			return Color.WHITE;
 		} else {
 			return Color.BLACK;
 		}
 	}
-	public int getUnsetArmiesNumber()
-	{
-		return this.numberOfUnsetArmies;
+
+	public int getUnplacedArmies() {
+		return this.unplacedArmies;
 	}
-	public void setUnsetArmiesNumber(int number)
-	{
-		this.numberOfUnsetArmies = number;
+
+	public void setUnplacedArmies(int number) {
+		this.unplacedArmies = number;
 	}
 	
+	public void giveArmies(int number) {
+		this.unplacedArmies += number;
+	}
+	
+	public void removeArmies(int number) {
+		this.unplacedArmies -= number;
+	}
+
 }

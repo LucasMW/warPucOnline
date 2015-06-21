@@ -1,61 +1,66 @@
 package org.puc.rio.inf1636.hglm.war.viewcontroller;
 
-import java.awt.Color;
-
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
 public class WarLogic {
-	WarGame game; // this will be accessed too many times
+	/* this will be accessed too many times */
+	private final static WarGame game = WarGame.getInstance();
+	private Player currentPlayer;
+	private TurnState currentState;
 
 	public enum TurnState {
-		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER
-	}
-
-	private int currentStateIndex;
-
-	public TurnState getCurrentState() {
-		return TurnState.values()[this.currentStateIndex];
+		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
 	}
 
 	public WarLogic() {
-		this.game = WarGame.getInstance();
 	}
 
-	public int getCurrentTurnStateIndex() {
-		return this.currentStateIndex;
+	public TurnState getCurrentState() {
+		return currentState;
+	}
+
+	public Player getCurrentPlayer() {
+		return this.currentPlayer;
+	}
+
+	public void nextTurn() {
+		int currentPlayerIndex = game.getPlayers().indexOf(this.currentPlayer);
+		if (currentPlayerIndex == game.getPlayers().size() - 1) {
+			this.currentPlayer = game.getPlayers().get(0);
+		} else {
+			game.getPlayers().get(currentPlayerIndex + 1);
+		}
 	}
 
 	public boolean giveReinforcements() {
 		if (this.getCurrentState() != TurnState.PLACING_NEW_ARMIES) {
-			System.out.printf(
-					"Error In Call: State %d differs from state %d \n", 1,
-					this.currentStateIndex);
-			return false; // this cannot be called
-
+			/* this should never be called */
+			System.out.printf("Must be placing new armies to receive reinforcements");
+			return false; 
 		}
 		Player currentPlayer = game.getCurrentPlayer();
-		currentPlayer.setUnsetArmiesNumber(currentPlayer
-				.getNumberOfTerritories() / 2); // integer division as specified
-												// in manual
+		/* integer division as specified in manual */
+		currentPlayer.giveArmies(currentPlayer.getNumberOfTerritories() / 2); 
 		return true;
 	}
 
-	private void advanceState() {
-		this.currentStateIndex++;
-		if (this.currentStateIndex >= TurnState.values().length) {
-			this.currentStateIndex = 0;
-		}
-	}
-
-	public boolean reinforcementsPlaced() {
-		if (game.getCurrentPlayer().getUnsetArmiesNumber() != 0) {
-			System.out.println("Should Place All reinforcements first");
+	public boolean attack() {
+		if (game.getCurrentPlayer().getUnplacedArmies() != 0) {
+			System.out.println("Should place all reinforcements first");
 			return false;
 		}
-		this.advanceState(); // Time to attack
+		this.currentState = TurnState.ATTACKING;
 		return true;
-
 	}
 
+	public boolean moveArmy() {
+		if (!this.currentState.equals(TurnState.ATTACKING)) {
+			System.out.println("Must be attacking before moving");
+			return false;
+		} else {
+			this.nextTurn();
+			return true;
+		}
+	}
 }
