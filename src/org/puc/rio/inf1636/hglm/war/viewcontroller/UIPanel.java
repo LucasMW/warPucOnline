@@ -21,6 +21,7 @@ import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
+@SuppressWarnings("serial")
 public class UIPanel extends JPanel {
 
 	private CardLayout layout;
@@ -225,9 +226,9 @@ public class UIPanel extends JPanel {
 				statusString = "Select a country to attack from";
 			} else {
 				statusString = "Select a country to attack";
-				actionString = "Clear selection";
-				actionButton.setEnabled(true);
 			}
+			actionString = "Stop attacking";
+			this.actionButton.setEnabled(true);
 			break;
 		case MOVING_ARMIES:
 			statusString = "Select a country to move from";

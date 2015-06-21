@@ -102,7 +102,7 @@ public class WarGame {
 	public void actionPerformed() {
 		switch (this.getTurnState()) {
 		case ATTACKING:
-			this.warState.unselectTerritory();
+			this.warState.startMovingArmies();
 			this.warFrame.update(false);
 			break;
 		case MOVING_ARMIES:

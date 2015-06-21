@@ -6,6 +6,7 @@ import javax.swing.JFrame;
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
+@SuppressWarnings("serial")
 public class WarFrame extends JFrame {
 
 	private UIPanel uiPanel;
