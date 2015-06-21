@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
+import org.puc.rio.inf1636.hglm.war.model.WarState;
+import org.puc.rio.inf1636.hglm.war.model.WarState.TurnState;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 public class WarGame {
@@ -14,8 +16,8 @@ public class WarGame {
 	private static WarGame instance;
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
-	private int currentPlayerIndex = 0;
 	private WarFrame warFrame;
+	private WarState warState = null;
 
 	public final static int MAX_PLAYERS = 6;
 	public final static int MIN_PLAYERS = 3;
@@ -36,6 +38,7 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map);
+		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getWarFrame().getMapPanel().updateTroopLabels(true);
 		this.getMap().calculateNeighbors();
@@ -54,24 +57,21 @@ public class WarGame {
 	}
 
 	public Player getCurrentPlayer() {
-		return this.players.get(this.currentPlayerIndex);
+		return this.warState.getCurrentPlayer();
 	}
 
 	public int getCurrentPlayerIndex() {
-		return this.currentPlayerIndex;
+		return this.getPlayers().indexOf(warState.getCurrentPlayer());
 	}
 
 	public void nextTurn() {
-		this.currentPlayerIndex++;
-		if (this.currentPlayerIndex >= players.size()) { //means it once repeated
-			this.currentPlayerIndex = 0;
-		}
-		Player p = this.getCurrentPlayer();
+		warState.nextTurn();
 		warFrame.turnEnded();
-
 	}
 	
-
+	public TurnState getTurnState() {
+		return this.warState.getCurrentState();
+	}
 	public WarFrame getWarFrame() {
 		return this.warFrame;
 	}
