@@ -17,6 +17,7 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
+import org.puc.rio.inf1636.hglm.war.WarLogic;
 
 //This class controls battle. Attacker and Defender Dice etc.
 
@@ -39,7 +40,7 @@ public class DiceFrame extends JFrame {
 	public DiceFrame() {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setTitle(String.format("%s is attacking %s", "Territory1", WarGame
-				.getInstance().getMap().getCurrentTerritory().getName()));
+				.getInstance().getWarState().getSelectedTerritory().getName()));
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -99,7 +100,7 @@ public class DiceFrame extends JFrame {
 	}
 
 	private void generateDice() {
-		for (int i = 0; i < WarGame.MAX_DICE; i++) {
+		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
 			ImageIcon iconA = new ImageIcon("resources/dice/dado_ataque_1.png");
 			ImageIcon iconB = new ImageIcon("resources/dice/dado_defesa_1.png");
 			JLabel diceA = new JLabel(iconA);
@@ -124,7 +125,7 @@ public class DiceFrame extends JFrame {
 		}
 
 		Random rand = new Random();
-		for (int i = 0; i < WarGame.MAX_DICE; i++) {
+		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
 			int result = rand.nextInt(6) + 1;
 			if (attack) {
 				this.attackResults.add(result);
@@ -151,7 +152,7 @@ public class DiceFrame extends JFrame {
 	private int[] calculateLosses() {
 		int attackLosses = 0;
 		int defenseLosses = 0;
-		for (int i = 0; i < WarGame.MAX_DICE; i++) {
+		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
 			if (this.attackResults.get(i) <= this.defenseResults.get(i)) {
 				attackLosses++;
 			} else {

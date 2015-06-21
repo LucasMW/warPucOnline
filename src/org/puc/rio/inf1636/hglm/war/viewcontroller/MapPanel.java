@@ -59,8 +59,8 @@ public class MapPanel extends JPanel {
 
 	public void updateTroopLabels(boolean first) {
 		int i = 0;
-		Territory currentTerritory = WarGame.getInstance().getMap()
-				.getCurrentTerritory();
+		Territory currentTerritory = WarGame.getInstance().getWarState()
+				.getSelectedTerritory();
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			JLabel centerLabel;
 			Border border = BorderFactory.createLineBorder(Color.WHITE, 3);
@@ -107,16 +107,10 @@ public class MapPanel extends JPanel {
 		}
 	}
 
-	public void selectTerritory(Territory t) {
-		WarGame.getInstance().getMap().setCurrentTerritory(t);
-		this.updateTroopLabels(false);
-		WarGame.getInstance().getWarFrame().getUIPanel().updateSelectedLabel();
-	}
-
 	private Color calculateBorderColor(Territory t) {
 		Color color = Color.WHITE;
-		Territory currentTerritory = WarGame.getInstance().getMap()
-				.getCurrentTerritory();
+		Territory currentTerritory = WarGame.getInstance().getWarState()
+				.getSelectedTerritory();
 		if (currentTerritory == null) {
 			color = Color.WHITE;
 		} else if (currentTerritory.equals(t)) {
@@ -147,6 +141,10 @@ public class MapPanel extends JPanel {
 		this.updateTroopLabels(false);
 	}
 
+	public void update(boolean first) {
+		updateTroopLabels(first);
+	}
+
 }
 
 class MapPanelMouseListener implements MouseListener {
@@ -163,13 +161,11 @@ class MapPanelMouseListener implements MouseListener {
 										.getMapPanel().coordinatesMultiplierY);
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			if (t.getPolygon().contains(me.getX(), me.getY())) {
-				WarGame.getInstance().getWarFrame().getMapPanel()
-						.selectTerritory(t);
+				WarGame.getInstance().selectTerritory(t);
 				return; // Cannot select twice
 			}
 		}
-		WarGame.getInstance().getMap().setCurrentTerritory(null); // none
-																	// selected
+		WarGame.getInstance().getWarState().unselectTerritory();
 	}
 
 	@Override

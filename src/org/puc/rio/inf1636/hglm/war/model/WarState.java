@@ -7,6 +7,7 @@ public class WarState {
 	private final static WarGame game = WarGame.getInstance();
 	private Player currentPlayer;
 	private TurnState currentState;
+	private Territory selectedTerritory;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -23,6 +24,10 @@ public class WarState {
 
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
+	}
+
+	public boolean isAttacking() {
+		return this.getCurrentState().equals(TurnState.ATTACKING);
 	}
 
 	public void nextTurn() {
@@ -52,6 +57,18 @@ public class WarState {
 			this.currentState = TurnState.MOVING_ARMIES;
 			return true;
 		}
+	}
+
+	public void selectTerritory(Territory t) {
+		this.selectedTerritory = t;
+	}
+
+	public void unselectTerritory() {
+		this.selectedTerritory = null;
+	}
+
+	public Territory getSelectedTerritory() {
+		return this.selectedTerritory;
 	}
 
 }

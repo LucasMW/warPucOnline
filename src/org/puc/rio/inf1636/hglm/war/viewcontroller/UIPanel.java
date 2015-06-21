@@ -17,6 +17,7 @@ import javax.swing.JTextField;
 
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
+import org.puc.rio.inf1636.hglm.war.WarLogic;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
@@ -29,13 +30,11 @@ public class UIPanel extends JPanel {
 	private JPanel optionsPanel;
 	private JPanel namesPanel;
 	private List<JLabel> playerLabels = new LinkedList<JLabel>();
-	private JLabel playerTurnLabel;
+	private JLabel statusLabel;
 
-	private JButton attackButton;
+	private JButton actionButton;
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
-
-	private DiceFrame diceFrame;
 
 	private Dimension size;
 
@@ -63,14 +62,15 @@ public class UIPanel extends JPanel {
 		this.startPanel.add(l1);
 
 		final JLabel error = new JLabel(String.format(
-				"You must enter at least %d players", WarGame.MIN_PLAYERS));
+				"You must enter at least %d players", WarLogic.MIN_PLAYERS));
 		error.setBackground(Color.RED);
 		error.setVisible(false);
 		this.startPanel.add(error);
 
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
-		for (int i = 0; i < WarGame.MAX_PLAYERS; i++) { // 6 textFields for each
-														// possible player
+		for (int i = 0; i < WarLogic.MAX_PLAYERS; i++) { // 6 textFields for
+															// each
+															// possible player
 			JTextField playerName = new JTextField();
 			playerName.setMaximumSize(new Dimension(400, (int) (30)));
 			playerName.setBackground(Player.playerColors[i]);
@@ -88,7 +88,7 @@ public class UIPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				for (int i = 0; i < WarGame.MAX_PLAYERS; i++) {
+				for (int i = 0; i < WarLogic.MAX_PLAYERS; i++) {
 					JTextField playerNameTextField = playerNameTextFields
 							.get(i);
 					if (playerNameTextField.getText().length() > 0) {
@@ -97,9 +97,8 @@ public class UIPanel extends JPanel {
 										Player.playerColors[i]));
 					}
 				}
-				if (WarGame.getInstance().getPlayers().size() >= WarGame.MIN_PLAYERS) {
+				if (WarGame.getInstance().getPlayers().size() >= WarLogic.MIN_PLAYERS) {
 					WarGame.getInstance().startGame();
-					startGame();
 				} else {
 					WarGame.getInstance().getPlayers().clear();
 					error.setVisible(true);
@@ -112,96 +111,35 @@ public class UIPanel extends JPanel {
 		this.add(startPanel, "Starting UI");
 	}
 
-	private void addGameUIPanel() {
-		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
-		this.gamePanel = new JPanel();
-		this.gamePanel.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
-
-		this.optionsPanel = new JPanel();
-		this.optionsPanel.setLayout(new BoxLayout(optionsPanel,
-				BoxLayout.Y_AXIS));
-		this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 2,
-				this.size.height));
-		this.playerTurnLabel = new JLabel(String.format("%s's turn",
-				currentPlayer.getName()));
-		this.playerTurnLabel.setOpaque(true);
-		this.playerTurnLabel.setBackground(currentPlayer.getColor());
-		this.playerTurnLabel.setForeground(Player
-				.getForegroundColor(currentPlayer.getColor()));
-		this.playerTurnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-		
-		this.attackButton = new JButton("Attack!");
-		this.attackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.attackButton.setEnabled(false);
-		ActionListener attackButtonListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				diceFrame = new DiceFrame();
-				diceFrame.setVisible(true);
-
-			}
-		};
-		attackButton.addActionListener(attackButtonListener);
-		
-		this.endTurnButton = new JButton("End Turn");
-		this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		ActionListener endTurnButtonListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				System.out.println("end turn");
-				WarGame.getInstance().nextTurn();
-			}
-		};
-		this.endTurnButton.addActionListener(endTurnButtonListener);
-		
-		this.toggleMapDisplayButton = new JButton("Toggle Map Display");
-		this.toggleMapDisplayButton.setAlignmentX(Component.LEFT_ALIGNMENT);	
-		ActionListener toggleMapDisplayButtonListener = new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent ae) {
-				WarGame.getInstance().getWarFrame().getMapPanel().toggleMapDisplay();
-			}
-		};
-		
-		toggleMapDisplayButton.addActionListener(toggleMapDisplayButtonListener);
-		
-		this.optionsPanel.add(this.playerTurnLabel);
-		this.optionsPanel.add(this.attackButton);
-		this.optionsPanel.add(this.endTurnButton);
-		this.optionsPanel.add(this.toggleMapDisplayButton);
-
-		this.namesPanel = new JPanel();
-		this.namesPanel.setLayout(new BoxLayout(namesPanel, BoxLayout.Y_AXIS));
-		this.namesPanel.setMaximumSize(new Dimension(this.size.width / 2,
-				this.size.height));
-
-		JLabel playersLabel = new JLabel("Players:");
-		this.namesPanel.add(playersLabel);
-		updatePlayerLabels(true);
-
-		this.gamePanel.add(this.namesPanel);
-		this.gamePanel.add(this.optionsPanel);
-
-		this.add(gamePanel, "Game UI");
+	public void update(boolean first) {
+		this.updateGameUI(first);
+		if (first) {
+			layout.show(this, "Game UI");
+		}
 	}
 
-	private void startGame() {
-		this.addGameUIPanel();
-		layout.show(this, "Game UI");
+	public void updateGameUI(boolean first) {
+		if (first) {
+			this.gamePanel = new JPanel();
+			this.gamePanel
+					.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
+			this.add(gamePanel, "Game UI");
+		}
+		this.updateNamesPanel(first);
+		this.updateOptionsPanel(first);
 	}
 
-	public void switchPlayer() {
-		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
-
-		this.playerTurnLabel.setText(String.format("%s's turn",
-				currentPlayer.getName()));
-		this.playerTurnLabel.setBackground(currentPlayer.getColor());
-		this.playerTurnLabel.setForeground(Player
-				.getForegroundColor(currentPlayer.getColor()));
-		updatePlayerLabels(false);
-	}
-
-	public void updatePlayerLabels(boolean first) {
+	private void updateNamesPanel(boolean first) {
+		if (first) {
+			this.namesPanel = new JPanel();
+			this.namesPanel.setLayout(new BoxLayout(namesPanel,
+					BoxLayout.Y_AXIS));
+			this.namesPanel.setMaximumSize(new Dimension(this.size.width / 2,
+					this.size.height));
+			JLabel playersLabel = new JLabel("Players:");
+			this.namesPanel.add(playersLabel);
+			this.gamePanel.add(this.namesPanel);
+		}
 		int i = 0;
 		for (Player p : WarGame.getInstance().getPlayers()) {
 			boolean isCurrentPlayer = WarGame.getInstance()
@@ -219,22 +157,97 @@ public class UIPanel extends JPanel {
 			} else {
 				playerLabel = this.playerLabels.get(i);
 			}
-			playerLabel.setText(String.format("%s (%d territorios em total)%s",
+			playerLabel.setText(String.format("%s (%d territories in total)%s",
 					p.getName(), p.getNumberOfTerritories(),
 					isCurrentPlayer ? "*" : ""));
 			i++;
 		}
 	}
 
-	public void updateSelectedLabel() {
-		Territory t = WarGame.getInstance().getMap().getCurrentTerritory();
-		if (t == null) {
-			attackButton.setText("Attack!");
-			attackButton.setEnabled(false);
-		} else {
-			attackButton.setText(String.format("Attack %s!", t.getName()));
-			attackButton.setEnabled(true);
+	public void updateOptionsPanel(boolean first) {
+		if (first) {
+			this.optionsPanel = new JPanel();
+			this.optionsPanel.setLayout(new BoxLayout(optionsPanel,
+					BoxLayout.Y_AXIS));
+			this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 2,
+					this.size.height));
+			this.statusLabel = new JLabel();
+			this.statusLabel.setOpaque(true);
+			this.statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+			this.actionButton = new JButton();
+			this.actionButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.actionButton.setEnabled(false);
+			ActionListener actionButtonListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					WarGame.getInstance().actionPerformed();
+				}
+			};
+			actionButton.addActionListener(actionButtonListener);
+
+			this.endTurnButton = new JButton("End Turn");
+			this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			ActionListener endTurnButtonListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					WarGame.getInstance().nextTurn();
+				}
+			};
+			this.endTurnButton.addActionListener(endTurnButtonListener);
+
+			this.toggleMapDisplayButton = new JButton("Toggle Map Display");
+			this.toggleMapDisplayButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			ActionListener toggleMapDisplayButtonListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					WarGame.getInstance().getWarFrame().getMapPanel()
+							.toggleMapDisplay();
+				}
+			};
+			toggleMapDisplayButton
+					.addActionListener(toggleMapDisplayButtonListener);
+
+			this.optionsPanel.add(this.statusLabel);
+			this.optionsPanel.add(this.actionButton);
+			this.optionsPanel.add(this.endTurnButton);
+			this.optionsPanel.add(this.toggleMapDisplayButton);
+
+			this.gamePanel.add(this.optionsPanel);
 		}
 
+		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
+		String actionString = "No action";
+		String statusString = "No status";
+		this.actionButton.setEnabled(false);
+		switch (WarGame.getInstance().getTurnState()) {
+		case ATTACKING:
+			statusString = "Select a country to attack from";
+			break;
+		case MOVING_ARMIES:
+			statusString = "Select a country to move from";
+			break;
+		case PLACING_NEW_ARMIES:
+			statusString = String
+					.format("Select a country place armies in (You have %d armies left to place)",
+							currentPlayer.getUnplacedArmies());
+			if (WarGame.getInstance().getWarState().getSelectedTerritory() != null) {
+				actionString = String.format("Place armies in %s", WarGame
+						.getInstance().getWarState().getSelectedTerritory()
+						.getName());
+				this.actionButton.setEnabled(true);
+			}
+			break;
+		case RECEIVING_LETTER:
+			break;
+		default:
+			break;
+		}
+		this.statusLabel.setText(String.format("(%s's turn) %s",
+				currentPlayer.getName(), statusString));
+		this.statusLabel.setBackground(currentPlayer.getColor());
+		this.statusLabel.setForeground(Player.getForegroundColor(currentPlayer
+				.getColor()));
+		this.actionButton.setText(actionString);
 	}
 }

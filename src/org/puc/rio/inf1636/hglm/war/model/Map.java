@@ -9,7 +9,6 @@ import org.puc.rio.inf1636.hglm.war.Util;
 public class Map extends Object {
 
 	private List<Territory> territories = new ArrayList<Territory>();
-	private Territory currentTerritory;
 	
 	public Map() {
 
@@ -21,15 +20,7 @@ public class Map extends Object {
 
 	public List<Territory> getTerritories() {
 		return this.territories;
-	}
-	
-	public void setCurrentTerritory(Territory t) {
-		this.currentTerritory = t;
-	}
-	
-	public Territory getCurrentTerritory() {
-		return this.currentTerritory;
-	}
+	}	
 	
 	public void calculateNeighbors() {
         ArrayList<Line2D.Double> tLines = new ArrayList<>();

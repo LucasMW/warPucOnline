@@ -9,6 +9,7 @@ public class WarFrame extends JFrame {
 
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
+	private DiceFrame diceFrame;
 
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -36,12 +37,13 @@ public class WarFrame extends JFrame {
 		return this.uiPanel;
 	}
 
-	public void selectedTerritory() {
-		this.uiPanel.updateSelectedLabel();
+	public void update(boolean first) {
+		this.uiPanel.update(first);
+		this.mapPanel.update(first);
 	}
 
-	public void turnEnded() {
-		this.uiPanel.switchPlayer();
+	public void attack() {
+		this.diceFrame = new DiceFrame();
+		this.diceFrame.setVisible(true);
 	}
-
 }
