@@ -33,6 +33,7 @@ public class UIPanel extends JPanel {
 
 	private JButton attackButton;
 	private JButton endTurnButton;
+	private JButton toggleMapDisplayButton;
 
 	private DiceFrame diceFrame;
 
@@ -128,10 +129,9 @@ public class UIPanel extends JPanel {
 		this.playerTurnLabel.setForeground(Player
 				.getForegroundColor(currentPlayer.getColor()));
 		this.playerTurnLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+		
 		this.attackButton = new JButton("Attack!");
 		this.attackButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-		this.endTurnButton = new JButton("End Turn");
-		this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		this.attackButton.setEnabled(false);
 		ActionListener attackButtonListener = new ActionListener() {
 			@Override
@@ -142,6 +142,9 @@ public class UIPanel extends JPanel {
 			}
 		};
 		attackButton.addActionListener(attackButtonListener);
+		
+		this.endTurnButton = new JButton("End Turn");
+		this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 		ActionListener endTurnButtonListener = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
@@ -150,9 +153,22 @@ public class UIPanel extends JPanel {
 			}
 		};
 		this.endTurnButton.addActionListener(endTurnButtonListener);
+		
+		this.toggleMapDisplayButton = new JButton("Toggle Map Display");
+		this.toggleMapDisplayButton.setAlignmentX(Component.LEFT_ALIGNMENT);	
+		ActionListener toggleMapDisplayButtonListener = new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent ae) {
+				WarGame.getInstance().getWarFrame().getMapPanel().toggleMapDisplay();
+			}
+		};
+		
+		toggleMapDisplayButton.addActionListener(toggleMapDisplayButtonListener);
+		
 		this.optionsPanel.add(this.playerTurnLabel);
 		this.optionsPanel.add(this.attackButton);
 		this.optionsPanel.add(this.endTurnButton);
+		this.optionsPanel.add(this.toggleMapDisplayButton);
 
 		this.namesPanel = new JPanel();
 		this.namesPanel.setLayout(new BoxLayout(namesPanel, BoxLayout.Y_AXIS));
