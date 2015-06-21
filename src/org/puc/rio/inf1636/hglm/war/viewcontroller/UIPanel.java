@@ -4,6 +4,7 @@ import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.LinkedList;
@@ -19,7 +20,6 @@ import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
 import org.puc.rio.inf1636.hglm.war.model.Player;
-import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 public class UIPanel extends JPanel {
 
@@ -57,23 +57,19 @@ public class UIPanel extends JPanel {
 	private void addStartUIPanel() {
 		this.startPanel = new JPanel();
 		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.X_AXIS));
-		JLabel l1 = new JLabel("Welcome to War. Enter the name of each player:");
+		final JLabel l1 = new JLabel(
+				"Welcome to War. Enter the name of each player:");
+		l1.setMaximumSize(new Dimension(300, 50));
 		l1.setAlignmentY(Component.TOP_ALIGNMENT);
 		this.startPanel.add(l1);
 
-		final JLabel error = new JLabel(String.format(
-				"You must enter at least %d players", WarLogic.MIN_PLAYERS));
-		error.setBackground(Color.RED);
-		error.setVisible(false);
-		this.startPanel.add(error);
-
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
-		for (int i = 0; i < WarLogic.MAX_PLAYERS; i++) { // 6 textFields for
-															// each
-															// possible player
+		/* 6 textFields for each possible player */
+		for (int i = 0; i < WarLogic.MAX_PLAYERS; i++) {
 			JTextField playerName = new JTextField();
-			playerName.setMaximumSize(new Dimension(400, (int) (30)));
+			playerName.setMaximumSize(new Dimension(400, 50));
 			playerName.setBackground(Player.playerColors[i]);
+			playerName.setFont(new Font("Arial", Font.PLAIN, 34));
 			playerNameTextFields.add(playerName);
 			playerName.setCaretColor(Player
 					.getForegroundColor(Player.playerColors[i]));
@@ -84,6 +80,7 @@ public class UIPanel extends JPanel {
 		}
 
 		JButton submitButton = new JButton("Submit");
+		submitButton.setMaximumSize(new Dimension(100, 50));
 		submitButton.addActionListener(new ActionListener() {
 
 			@Override
@@ -101,7 +98,9 @@ public class UIPanel extends JPanel {
 					WarGame.getInstance().startGame();
 				} else {
 					WarGame.getInstance().getPlayers().clear();
-					error.setVisible(true);
+					l1.setText("<html>Welcome to War. Enter the name of each player:<br />Please enter at least 3 players!</html>");
+					l1.setOpaque(true);
+					l1.setBackground(Color.RED);
 				}
 
 			}
