@@ -136,7 +136,7 @@ public class MapPanel extends JPanel {
 		}
 	}
 
-	public void toggleLabels() {
+	public void toggleMapDisplay() {
 		this.labelsHidden = !this.labelsHidden;
 		if (labelsHidden) {
 			this.setBackgroundImage("resources/maps/war_tabuleiro_com_nomes.png");
@@ -174,12 +174,10 @@ class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent me) {
-		WarGame.getInstance().getWarFrame().getMapPanel().toggleLabels();
 	}
 
 	@Override
 	public void mouseExited(MouseEvent me) {
-		WarGame.getInstance().getWarFrame().getMapPanel().toggleLabels();
 	}
 
 	@Override

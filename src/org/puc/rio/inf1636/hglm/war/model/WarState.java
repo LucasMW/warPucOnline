@@ -1,9 +1,8 @@
-package org.puc.rio.inf1636.hglm.war.viewcontroller;
+package org.puc.rio.inf1636.hglm.war.model;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
-import org.puc.rio.inf1636.hglm.war.model.Player;
 
-public class WarLogic {
+public class WarState {
 	/* this will be accessed too many times */
 	private final static WarGame game = WarGame.getInstance();
 	private Player currentPlayer;
@@ -13,11 +12,13 @@ public class WarLogic {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
 	}
 
-	public WarLogic() {
+	public WarState(Player firstPlayer) {
+		this.currentPlayer = firstPlayer;
+		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 
 	public TurnState getCurrentState() {
-		return currentState;
+		return this.currentState;
 	}
 
 	public Player getCurrentPlayer() {
@@ -29,24 +30,13 @@ public class WarLogic {
 		if (currentPlayerIndex == game.getPlayers().size() - 1) {
 			this.currentPlayer = game.getPlayers().get(0);
 		} else {
-			game.getPlayers().get(currentPlayerIndex + 1);
+			this.currentPlayer = game.getPlayers().get(currentPlayerIndex + 1);
 		}
+		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 
-	public boolean giveReinforcements() {
+	public boolean startAttacking() {
 		if (this.getCurrentState() != TurnState.PLACING_NEW_ARMIES) {
-			/* this should never be called */
-			System.out.printf("Must be placing new armies to receive reinforcements");
-			return false; 
-		}
-		Player currentPlayer = game.getCurrentPlayer();
-		/* integer division as specified in manual */
-		currentPlayer.giveArmies(currentPlayer.getNumberOfTerritories() / 2); 
-		return true;
-	}
-
-	public boolean attack() {
-		if (game.getCurrentPlayer().getUnplacedArmies() != 0) {
 			System.out.println("Should place all reinforcements first");
 			return false;
 		}
@@ -54,7 +44,7 @@ public class WarLogic {
 		return true;
 	}
 
-	public boolean moveArmy() {
+	public boolean startMovingArmies() {
 		if (!this.currentState.equals(TurnState.ATTACKING)) {
 			System.out.println("Must be attacking before moving");
 			return false;
@@ -63,4 +53,5 @@ public class WarLogic {
 			return true;
 		}
 	}
+
 }
