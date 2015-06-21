@@ -90,7 +90,9 @@ public class MapPanel extends JPanel {
 						if (t != null) {
 							WarGame.getInstance().selectTerritory(t);
 						} else {
-							System.out.println(String.format("Couldn't find territory with name %s", label.getName()));
+							System.out.println(String.format(
+									"Couldn't find territory with name %s",
+									label.getName()));
 						}
 					}
 
@@ -115,17 +117,17 @@ public class MapPanel extends JPanel {
 			} else {
 				centerLabel = this.troopsLabels.get(i);
 			}
-
-			if (t.getOwner().equals(WarGame.getInstance().getCurrentPlayer())) {
+			if (selectedTerritory != null && selectedTerritory.equals(t)) {
+				zOrder = 0;
+				border = BorderFactory.createLineBorder(Color.RED, 3);
+			} else if (t.getOwner().equals(
+					WarGame.getInstance().getCurrentPlayer())) {
 				zOrder = 1;
 				backgroundColor = backgroundColor.darker();
 				border = BorderFactory.createLineBorder(Color.WHITE, 3);
-			}
-			if (selectedTerritory != null) {
-				if (selectedTerritory.equals(t)) {
-					zOrder = 0;
-					border = BorderFactory.createLineBorder(Color.RED, 3);
-				}
+			} else {
+				zOrder = 2;
+				border = BorderFactory.createLineBorder(Color.BLACK, 3);
 			}
 
 			if (WarGame.getInstance().getState().isPlacing()) {
