@@ -18,10 +18,16 @@ import javax.swing.JPanel;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
+import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 //This class controls battle. Attacker and Defender Dice etc.
 
-public class DiceFrame extends JFrame {
+public class AttackFrame extends JFrame {
+	private int attackerDiceCount = 0;
+	private int defenderDiceCount = 0;
+	
+	private int[] losses = new int[2];
+	
 	private JPanel attackerPanel;
 	private JPanel defenderPanel;
 	private JPanel resultPanel;
@@ -37,10 +43,12 @@ public class DiceFrame extends JFrame {
 	private List<Integer> attackResults = new LinkedList<Integer>();
 	private List<Integer> defenseResults = new LinkedList<Integer>();
 
-	public DiceFrame() {
+	public AttackFrame(Territory from, Territory to, int number) {
+		this.attackerDiceCount = number;
+		this.defenderDiceCount = to.getArmyCount() > WarLogic.MAX_DICE ? WarLogic.MAX_DICE: to.getArmyCount();
+		
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setTitle(String.format("%s is attacking %s", "Territory1", WarGame
-				.getInstance().getState().getSelectedTerritory().getName()));
+		this.setTitle(String.format("%s is attacking %s", from.getName(), to.getName()));
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -48,7 +56,7 @@ public class DiceFrame extends JFrame {
 
 		// attacker panel
 		this.attackerPanel = new JPanel();
-		this.attackButton = new JButton("attack");
+		this.attackButton = new JButton(String.format("Attack with %d dice", this.attackerDiceCount));
 		this.attackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.attackerPanel.setLayout(new BoxLayout(attackerPanel,
 				BoxLayout.Y_AXIS));
@@ -89,6 +97,7 @@ public class DiceFrame extends JFrame {
 		ActionListener actLisC = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				WarGame.getInstance().attackResult(losses);
 				dispose();
 			}
 		};
@@ -118,14 +127,15 @@ public class DiceFrame extends JFrame {
 	}
 
 	private void rollDice(boolean attack) {
-		// if dice are rolled already
-		if ((attack && this.attackResults.size() == 3)
-				|| (!attack && this.defenseResults.size() == 3)) {
+		/* if dice are rolled already */
+		if ((attack && this.attackResults.size() == this.attackerDiceCount)
+				|| (!attack && this.defenseResults.size() == this.defenderDiceCount)) {
 			return;
 		}
 
 		Random rand = new Random();
-		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
+		int diceCount = attack ? this.attackerDiceCount : this.defenderDiceCount;
+		for (int i = 0; i < diceCount; i++) {
 			int result = rand.nextInt(6) + 1;
 			if (attack) {
 				this.attackResults.add(result);
@@ -152,7 +162,12 @@ public class DiceFrame extends JFrame {
 	private int[] calculateLosses() {
 		int attackLosses = 0;
 		int defenseLosses = 0;
-		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
+		for (int i = 0; i < this.defenderDiceCount; i++) {
+			/* less attacking armies than defending ones */
+			if (this.attackResults.get(i) == null) {
+				attackLosses++;
+				continue;
+			}
 			if (this.attackResults.get(i) <= this.defenseResults.get(i)) {
 				attackLosses++;
 			} else {
@@ -164,10 +179,10 @@ public class DiceFrame extends JFrame {
 	}
 
 	private void checkEnd() {
-		if (this.attackResults.size() != 3 || this.defenseResults.size() != 3) {
+		if (this.attackResults.size() != this.attackerDiceCount || this.defenseResults.size() != this.defenderDiceCount) {
 			return;
 		}
-		int[] losses = calculateLosses();
+		this.losses = calculateLosses();
 		this.resultLabel.setText(String.format(
 				"Attacker loses %d units and Defender loses %d units",
 				losses[0], losses[1]));

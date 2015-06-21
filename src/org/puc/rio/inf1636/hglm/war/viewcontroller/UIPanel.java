@@ -221,7 +221,13 @@ public class UIPanel extends JPanel {
 		this.actionButton.setEnabled(false);
 		switch (WarGame.getInstance().getTurnState()) {
 		case ATTACKING:
-			statusString = "Select a country to attack from";
+			if (WarGame.getInstance().getSelectedTerritory() == null) {
+				statusString = "Select a country to attack from";
+			} else {
+				statusString = "Select a country to attack";
+				actionString = "Clear selection";
+				actionButton.setEnabled(true);
+			}
 			break;
 		case MOVING_ARMIES:
 			statusString = "Select a country to move from";
@@ -230,7 +236,8 @@ public class UIPanel extends JPanel {
 			statusString = String
 					.format("Select a country place armies in (You have %d armies left to place)",
 							currentPlayer.getUnplacedArmies());
-			if (WarGame.getInstance().getState().getSelectedTerritory() != null) {
+			if (WarGame.getInstance().getState().getSelectedTerritory() != null
+					&& currentPlayer.getUnplacedArmies() > 0) {
 				actionString = String.format("Place armies in %s", WarGame
 						.getInstance().getState().getSelectedTerritory()
 						.getName());
