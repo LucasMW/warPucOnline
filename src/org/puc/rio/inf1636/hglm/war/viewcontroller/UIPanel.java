@@ -231,9 +231,9 @@ public class UIPanel extends JPanel {
 			statusString = String
 					.format("Select a country place armies in (You have %d armies left to place)",
 							currentPlayer.getUnplacedArmies());
-			if (WarGame.getInstance().getWarState().getSelectedTerritory() != null) {
+			if (WarGame.getInstance().getState().getSelectedTerritory() != null) {
 				actionString = String.format("Place armies in %s", WarGame
-						.getInstance().getWarState().getSelectedTerritory()
+						.getInstance().getState().getSelectedTerritory()
 						.getName());
 				this.actionButton.setEnabled(true);
 			}

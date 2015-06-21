@@ -44,7 +44,6 @@ public class MapPanel extends JPanel {
 		this.coordinatesMultiplierX = (mapSize.width / 1024.0);
 		this.coordinatesMultiplierY = (mapSize.height / 768.0);
 		this.setLayout(null);
-		this.addMouseListener(new MapPanelMouseListener());
 	}
 
 	@Override
@@ -57,43 +56,101 @@ public class MapPanel extends JPanel {
 		return mapSize;
 	}
 
+	public void update(boolean first) {
+		updateTroopLabels(first);
+		if (first) {
+			this.addMouseListener(new MapPanelMouseListener());
+		}
+	}
+
 	public void updateTroopLabels(boolean first) {
 		int i = 0;
-		Territory currentTerritory = WarGame.getInstance().getWarState()
+		Territory selectedTerritory = WarGame.getInstance().getState()
 				.getSelectedTerritory();
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
+			/* defaults */
 			JLabel centerLabel;
-			Border border = BorderFactory.createLineBorder(Color.WHITE, 3);
-			int zOrder = 2;
+			Border border = BorderFactory.createLineBorder(Color.BLACK, 3);
 			int width = 130;
+			int zOrder = 2;
 			Color backgroundColor = t.getOwner().getColor();
 			String text = String.format("(%d) %s", t.getTroopCount(),
 					t.getName());
+
 			if (first) {
 				centerLabel = new JLabel("", SwingConstants.CENTER);
+				centerLabel.setName(t.getName());
 				centerLabel.setOpaque(true);
+				centerLabel.addMouseListener(new MouseListener() {
+					@Override
+					public void mouseClicked(MouseEvent me) {
+						JLabel label = (JLabel) me.getComponent();
+						Territory t = WarGame.getInstance().getMap()
+								.getTerritoryByName(label.getName());
+						if (t != null) {
+							WarGame.getInstance().selectTerritory(t);
+						} else {
+							System.out.println(String.format("Couldn't find territory with name %s", label.getName()));
+						}
+					}
+
+					@Override
+					public void mouseEntered(MouseEvent e) {
+					}
+
+					@Override
+					public void mouseExited(MouseEvent e) {
+					}
+
+					@Override
+					public void mousePressed(MouseEvent e) {
+					}
+
+					@Override
+					public void mouseReleased(MouseEvent e) {
+					}
+				});
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
 			} else {
 				centerLabel = this.troopsLabels.get(i);
 			}
-			if (currentTerritory != null) {
-				if (currentTerritory.equals(t)) { // selected territory
+
+			if (t.getOwner().equals(WarGame.getInstance().getCurrentPlayer())) {
+				zOrder = 1;
+				backgroundColor = backgroundColor.darker();
+				border = BorderFactory.createLineBorder(Color.WHITE, 3);
+			}
+			if (selectedTerritory != null) {
+				if (selectedTerritory.equals(t)) {
 					zOrder = 0;
-					backgroundColor = backgroundColor.darker();
-					border = BorderFactory.createLineBorder(Color.BLACK, 3);
-				} else if (currentTerritory.getNeighbors().contains(t)
-						&& !currentTerritory.getOwner().equals(t.getOwner())) { // neighboring
-																				// territories
-					backgroundColor = backgroundColor.brighter();
 					border = BorderFactory.createLineBorder(Color.RED, 3);
 				}
-				this.setComponentZOrder(centerLabel, zOrder);
 			}
+
+			if (WarGame.getInstance().getState().isPlacing()) {
+			} else if (WarGame.getInstance().getState().isAttacking()) {
+				if (selectedTerritory != null) {
+					/* neighbours */
+					if (selectedTerritory.getNeighbors().contains(t)
+							&& !selectedTerritory.getOwner().equals(
+									t.getOwner())) {
+						backgroundColor = backgroundColor.brighter();
+						border = BorderFactory
+								.createLineBorder(Color.YELLOW, 3);
+					}
+				}
+			}
+
 			if (this.labelsHidden) {
 				text = String.format("%d", t.getTroopCount());
 				width = 30;
 			}
+
+			if (!first) {
+				this.setComponentZOrder(centerLabel, zOrder);
+			}
+
 			centerLabel.setBounds((int) (t.getCenter().x),
 					(int) (t.getCenter().y), width, 20);
 			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
@@ -105,20 +162,6 @@ public class MapPanel extends JPanel {
 			centerLabel.repaint();
 			i++;
 		}
-	}
-
-	private Color calculateBorderColor(Territory t) {
-		Color color = Color.WHITE;
-		Territory currentTerritory = WarGame.getInstance().getWarState()
-				.getSelectedTerritory();
-		if (currentTerritory == null) {
-			color = Color.WHITE;
-		} else if (currentTerritory.equals(t)) {
-			color = Color.BLACK;
-		} else if (currentTerritory.getNeighbors().contains(t)) {
-			color = Color.RED;
-		}
-		return color;
 	}
 
 	public void setBackgroundImage(String path) {
@@ -141,10 +184,6 @@ public class MapPanel extends JPanel {
 		this.updateTroopLabels(false);
 	}
 
-	public void update(boolean first) {
-		updateTroopLabels(first);
-	}
-
 }
 
 class MapPanelMouseListener implements MouseListener {
@@ -165,7 +204,6 @@ class MapPanelMouseListener implements MouseListener {
 				return; // Cannot select twice
 			}
 		}
-		WarGame.getInstance().getWarState().unselectTerritory();
 	}
 
 	@Override

@@ -29,6 +29,14 @@ public class WarState {
 	public boolean isAttacking() {
 		return this.getCurrentState().equals(TurnState.ATTACKING);
 	}
+	
+	public boolean isMoving() {
+		return this.getCurrentState().equals(TurnState.MOVING_ARMIES);
+	}
+	
+	public boolean isPlacing() {
+		return this.getCurrentState().equals(TurnState.PLACING_NEW_ARMIES);
+	}
 
 	public void nextTurn() {
 		int currentPlayerIndex = game.getPlayers().indexOf(this.currentPlayer);
@@ -37,6 +45,7 @@ public class WarState {
 		} else {
 			this.currentPlayer = game.getPlayers().get(currentPlayerIndex + 1);
 		}
+		this.selectedTerritory = null;
 		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 

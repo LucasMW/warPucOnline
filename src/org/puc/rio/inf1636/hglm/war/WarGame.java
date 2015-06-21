@@ -74,7 +74,7 @@ public class WarGame {
 		return this.warState.getCurrentState();
 	}
 
-	public WarState getWarState() {
+	public WarState getState() {
 		return this.warState;
 	}
 
@@ -100,13 +100,15 @@ public class WarGame {
 	}
 
 	public void actionPerformed() {
-		if (this.getWarState().isAttacking()) {
+		if (this.getState().isAttacking()) {
 			this.getWarFrame().attack();
 		}
 	}
 
 	public void selectTerritory(Territory t) {
-		this.warState.selectTerritory(t);
-		this.warFrame.update(false);
+		if (t.getOwner().equals(this.getCurrentPlayer())) {
+			this.warState.selectTerritory(t);
+			this.warFrame.update(false);
+		}
 	}
 }

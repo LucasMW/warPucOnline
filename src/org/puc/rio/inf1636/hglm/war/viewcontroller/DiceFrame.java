@@ -40,7 +40,7 @@ public class DiceFrame extends JFrame {
 	public DiceFrame() {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setTitle(String.format("%s is attacking %s", "Territory1", WarGame
-				.getInstance().getWarState().getSelectedTerritory().getName()));
+				.getInstance().getState().getSelectedTerritory().getName()));
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));

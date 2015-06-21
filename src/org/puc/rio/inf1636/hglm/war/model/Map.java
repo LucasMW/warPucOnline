@@ -65,8 +65,8 @@ public class Map extends Object {
 
 	private void bridgeTerritoriesByNames(String nameX, String nameY) {
 		Territory x, y;
-		x = this.searchTerritoryByName(nameX);
-		y = this.searchTerritoryByName(nameY);
+		x = this.getTerritoryByName(nameX);
+		y = this.getTerritoryByName(nameY);
 		if (x == null || y == null) {
 			System.out.println("not found" + nameX + " " + nameY);
 			return;
@@ -76,7 +76,7 @@ public class Map extends Object {
 		y.addNeighbor(x);
 	}
 
-	public Territory searchTerritoryByName(String name) {
+	public Territory getTerritoryByName(String name) {
 		for (Territory t : this.territories) {
 			if (t.getName().equals(name)) {
 				// System.out.println(name + "Found");
