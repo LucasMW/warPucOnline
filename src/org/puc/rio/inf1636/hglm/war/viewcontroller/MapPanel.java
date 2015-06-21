@@ -23,22 +23,17 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 public class MapPanel extends JPanel {
 
-	Image backgroundImage;
+	private Image backgroundImage;
 	private final double MULTIPLIER_X = 1.0;
 	private final double MULTIPLIER_Y = 0.8;
 	public double coordinatesMultiplierX;
 	public double coordinatesMultiplierY;
 	private Dimension mapSize;
 	private List<JLabel> troopsLabels = new LinkedList<JLabel>();
+	private boolean labelsHidden = false;
 
 	public MapPanel() {
-		try {
-			backgroundImage = new ImageIcon(
-					"resources/maps/war_tabuleiro_completo.png").getImage();
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return;
-		}
+		this.setBackgroundImage("resources/maps/war_tabuleiro_completo.png");
 		Dimension gameSize = Util.getGameSize();
 		this.mapSize = new Dimension((int) (gameSize.width * MULTIPLIER_X),
 				(int) (gameSize.height * MULTIPLIER_Y));
@@ -70,11 +65,12 @@ public class MapPanel extends JPanel {
 			JLabel centerLabel;
 			Border border = BorderFactory.createLineBorder(Color.WHITE, 3);
 			int zOrder = 2;
+			int width = 130;
 			Color backgroundColor = t.getOwner().getColor();
+			String text = String.format("(%d) %s", t.getTroopCount(),
+					t.getName());
 			if (first) {
 				centerLabel = new JLabel("", SwingConstants.CENTER);
-				centerLabel.setBounds((int) (t.getCenter().x),
-						(int) (t.getCenter().y), 130, 20);
 				centerLabel.setOpaque(true);
 				this.troopsLabels.add(centerLabel);
 				this.add(centerLabel);
@@ -84,18 +80,25 @@ public class MapPanel extends JPanel {
 			if (currentTerritory != null) {
 				if (currentTerritory.equals(t)) { // selected territory
 					zOrder = 0;
-					backgroundColor = backgroundColor.darker(); 
+					backgroundColor = backgroundColor.darker();
 					border = BorderFactory.createLineBorder(Color.BLACK, 3);
-				} else if (currentTerritory.getNeighbors().contains(t) && !currentTerritory.getOwner().equals(t.getOwner())) { // neighboring territories
+				} else if (currentTerritory.getNeighbors().contains(t)
+						&& !currentTerritory.getOwner().equals(t.getOwner())) { // neighboring
+																				// territories
 					backgroundColor = backgroundColor.brighter();
 					border = BorderFactory.createLineBorder(Color.RED, 3);
 				}
 				this.setComponentZOrder(centerLabel, zOrder);
 			}
+			if (this.labelsHidden) {
+				text = String.format("%d", t.getTroopCount());
+				width = 30;
+			}
+			centerLabel.setBounds((int) (t.getCenter().x),
+					(int) (t.getCenter().y), width, 20);
 			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
 					.getColor()));
-			centerLabel.setText(String.format("(%d) %s", t.getTroopCount(),
-					t.getName()));
+			centerLabel.setText(text);
 			centerLabel.setBorder(border);
 			centerLabel.setBackground(backgroundColor);
 			this.repaint();
@@ -122,6 +125,26 @@ public class MapPanel extends JPanel {
 			color = Color.RED;
 		}
 		return color;
+	}
+
+	public void setBackgroundImage(String path) {
+		try {
+			this.backgroundImage = new ImageIcon(path).getImage();
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+			return;
+		}
+	}
+
+	public void toggleLabels() {
+		this.labelsHidden = !this.labelsHidden;
+		if (labelsHidden) {
+			this.setBackgroundImage("resources/maps/war_tabuleiro_com_nomes.png");
+		} else {
+			this.setBackgroundImage("resources/maps/war_tabuleiro_completo.png");
+
+		}
+		this.updateTroopLabels(false);
 	}
 
 }
@@ -151,10 +174,12 @@ class MapPanelMouseListener implements MouseListener {
 
 	@Override
 	public void mouseEntered(MouseEvent me) {
+		WarGame.getInstance().getWarFrame().getMapPanel().toggleLabels();
 	}
 
 	@Override
 	public void mouseExited(MouseEvent me) {
+		WarGame.getInstance().getWarFrame().getMapPanel().toggleLabels();
 	}
 
 	@Override
