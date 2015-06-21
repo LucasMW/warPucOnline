@@ -40,7 +40,7 @@ public class WarFrame extends JFrame {
 		this.uiPanel.updateSelectedLabel();
 	}
 
-	public void battleEnded() {
+	public void turnEnded() {
 		this.uiPanel.switchPlayer();
 	}
 

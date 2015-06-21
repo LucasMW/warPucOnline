@@ -14,6 +14,7 @@ public class Player {
 	private static final Color PURPLE = new Color(128, 0, 128);
 	private static final Color BROWN = new Color(128, 128, 0);
 	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE, PURPLE, BROWN };
+	private int numberOfUnsetArmies; //represents number of armies to be replaced
 
 	public Player(String name, Color color) {
 		this.name = name;
@@ -47,4 +48,13 @@ public class Player {
 			return Color.BLACK;
 		}
 	}
+	public int getUnsetArmiesNumber()
+	{
+		return this.numberOfUnsetArmies;
+	}
+	public void setUnsetArmiesNumber(int number)
+	{
+		this.numberOfUnsetArmies = number;
+	}
+	
 }

@@ -45,9 +45,8 @@ public class Territory extends Object {
 		return this.troopCount;
 	}
 	
-	public int setTroops(int troops) {
-		this.troopCount = troops;
-		return this.troopCount;
+	public void setTroops(int troops) {
+		this.troopCount = troops;	
 	}
 
 	public String getName() {

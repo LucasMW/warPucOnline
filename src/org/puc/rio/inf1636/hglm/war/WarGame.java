@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
+import org.puc.rio.inf1636.hglm.war.model.Territory;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 public class WarGame {
@@ -65,11 +66,15 @@ public class WarGame {
 
 	public void nextTurn() {
 		this.currentPlayerIndex++;
-		if (this.currentPlayerIndex >= players.size())
+		if (this.currentPlayerIndex >= players.size()) { //means it once repeated
 			this.currentPlayerIndex = 0;
-		warFrame.battleEnded();
+		}
+		Player p =this.getCurrentPlayer();
+		p.setUnsetArmiesNumber(p.getNumberOfTerritories()/2);
+		warFrame.turnEnded();
 
 	}
+	
 
 	public WarFrame getWarFrame() {
 		return this.warFrame;
