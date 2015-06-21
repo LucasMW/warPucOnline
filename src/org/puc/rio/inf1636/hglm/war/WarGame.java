@@ -100,15 +100,134 @@ public class WarGame {
 	}
 
 	public void actionPerformed() {
-		if (this.getState().isAttacking()) {
-			this.getWarFrame().attack();
+		switch (this.getTurnState()) {
+		case ATTACKING:
+			this.warState.unselectTerritory();
+			this.warFrame.update(false);
+			break;
+		case MOVING_ARMIES:
+			break;
+		case PLACING_NEW_ARMIES:
+			if (this.warState.getSelectedTerritory() != null) {
+				this.getWarFrame().spawnChooseNumberFrame(
+						this.getCurrentPlayer().getUnplacedArmies(),
+						"How many do you want to place?");
+			}
+			break;
+		case RECEIVING_LETTER:
+			break;
+		default:
+			break;
+
 		}
 	}
 
 	public void selectTerritory(Territory t) {
-		if (t.getOwner().equals(this.getCurrentPlayer())) {
-			this.warState.selectTerritory(t);
-			this.warFrame.update(false);
+		switch (this.getTurnState()) {
+		case ATTACKING:
+			if (this.getSelectedTerritory() == null) {
+				this.warState.selectTerritory(t);
+			} else if (t.getOwner().equals(this.getCurrentPlayer())) {
+				this.warState.selectTerritory(t);
+			} else if (this.getSelectedTerritory().canAttack(t)) {
+				this.warState.targetTerritory(t);
+				this.getWarFrame().spawnChooseNumberFrame(
+						this.getSelectedTerritory().getMaxAttackArmyNumber(),
+						"How many to attack with");
+			}
+			break;
+		case MOVING_ARMIES:
+			break;
+		case PLACING_NEW_ARMIES:
+			if (t.getOwner().equals(this.getCurrentPlayer())) {
+				this.warState.selectTerritory(t);
+			}
+			break;
+		case RECEIVING_LETTER:
+			break;
+		default:
+			break;
 		}
+		this.warFrame.update(false);
+	}
+
+	public void selectNumber(int number) {
+		switch (this.getTurnState()) {
+		case ATTACKING:
+			/* conquered */
+			if (this.getSelectedTerritory().getOwner()
+					.equals(this.getTargettedTerritory().getOwner())) {
+				this.moveArmies(this.getSelectedTerritory(), this.getTargettedTerritory(), number - 1);
+			} else {
+				this.getWarFrame().spawnAttackFrame(
+						this.getSelectedTerritory(),
+						this.getTargettedTerritory(), number);
+			}
+			break;
+		case MOVING_ARMIES:
+			break;
+		case PLACING_NEW_ARMIES:
+			this.getCurrentPlayer().removeArmies(number);
+			this.warState.getSelectedTerritory().addArmies(number);
+			if (this.getCurrentPlayer().getUnplacedArmies() <= 0) {
+				this.warState.startAttacking();
+			}
+			break;
+		case RECEIVING_LETTER:
+			break;
+		default:
+			break;
+
+		}
+		this.warFrame.update(false);
+	}
+
+	private Territory getTargettedTerritory() {
+		return this.warState.getTargettedTerritory();
+
+	}
+
+	public Territory getSelectedTerritory() {
+		return this.warState.getSelectedTerritory();
+	}
+	
+	public boolean moveArmies(Territory from, Territory to, int amount) {
+		if (!from.getOwner().equals(to.getOwner())) {
+			return false;
+		}
+		if (from.getArmyCount() - 1 < amount) {
+			return false;
+		}
+		from.removeArmies(amount);
+		to.addArmies(amount);
+		return true;
+	}
+
+	public void attackResult(int[] losses) {
+		if (this.getState().isAttacking()) {
+			this.getSelectedTerritory().removeArmies(losses[0]);
+			this.getTargettedTerritory().removeArmies(losses[1]);
+
+			/* attacker conquered */
+			if (this.getTargettedTerritory().getArmyCount() == 0) {
+				this.getTargettedTerritory().setOwner(
+						this.getSelectedTerritory().getOwner());
+				
+				/* always move at least one */
+				this.getSelectedTerritory().removeArmies(1);
+				this.getTargettedTerritory().addArmies(1);
+				
+				int maxToMove = this.getSelectedTerritory().getMaxAttackArmyNumber() + 1;
+				if (maxToMove > 3) {
+					maxToMove = 3;
+				}
+				
+				this.warFrame.spawnChooseNumberFrame(maxToMove,
+						String.format("How many armies to move from %s to %s?",
+								this.getSelectedTerritory().getName(), this
+										.getTargettedTerritory().getName()));
+			}
+		}
+		this.warFrame.update(false);
 	}
 }

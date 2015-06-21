@@ -8,6 +8,7 @@ public class WarState {
 	private Player currentPlayer;
 	private TurnState currentState;
 	private Territory selectedTerritory;
+	private Territory targettedTerritory;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -29,11 +30,11 @@ public class WarState {
 	public boolean isAttacking() {
 		return this.getCurrentState().equals(TurnState.ATTACKING);
 	}
-	
+
 	public boolean isMoving() {
 		return this.getCurrentState().equals(TurnState.MOVING_ARMIES);
 	}
-	
+
 	public boolean isPlacing() {
 		return this.getCurrentState().equals(TurnState.PLACING_NEW_ARMIES);
 	}
@@ -54,6 +55,7 @@ public class WarState {
 			System.out.println("Should place all reinforcements first");
 			return false;
 		}
+		this.selectedTerritory = null;
 		this.currentState = TurnState.ATTACKING;
 		return true;
 	}
@@ -62,10 +64,12 @@ public class WarState {
 		if (!this.currentState.equals(TurnState.ATTACKING)) {
 			System.out.println("Must be attacking before moving");
 			return false;
-		} else {
-			this.currentState = TurnState.MOVING_ARMIES;
-			return true;
 		}
+		
+		this.selectedTerritory = null;
+		this.currentState = TurnState.MOVING_ARMIES;
+		return true;
+
 	}
 
 	public void selectTerritory(Territory t) {
@@ -78,6 +82,18 @@ public class WarState {
 
 	public Territory getSelectedTerritory() {
 		return this.selectedTerritory;
+	}
+	
+	public void targetTerritory(Territory t) {
+		this.targettedTerritory = t;
+	}
+
+	public void untargetTerritory() {
+		this.targettedTerritory = null;
+	}
+
+	public Territory getTargettedTerritory() {
+		return this.targettedTerritory;
 	}
 
 }

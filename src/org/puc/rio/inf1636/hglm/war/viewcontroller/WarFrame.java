@@ -4,12 +4,14 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import org.puc.rio.inf1636.hglm.war.Util;
+import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 public class WarFrame extends JFrame {
 
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
-	private DiceFrame diceFrame;
+	private AttackFrame attackFrame;
+	private ChooseNumberFrame chooseNumberFrame;
 
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -42,8 +44,13 @@ public class WarFrame extends JFrame {
 		this.mapPanel.update(first);
 	}
 
-	public void attack() {
-		this.diceFrame = new DiceFrame();
-		this.diceFrame.setVisible(true);
+	public void spawnAttackFrame(Territory from, Territory to, int number) {
+		this.attackFrame = new AttackFrame(from, to, number);
+		this.attackFrame.setVisible(true);
+	}
+
+	public void spawnChooseNumberFrame(int number, String message) {
+		this.chooseNumberFrame = new ChooseNumberFrame(number, message);
+		this.chooseNumberFrame.setVisible(true);
 	}
 }
