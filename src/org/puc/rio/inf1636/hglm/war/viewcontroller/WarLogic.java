@@ -59,7 +59,7 @@ public class WarLogic {
 			System.out.println("Must be attacking before moving");
 			return false;
 		} else {
-			this.nextTurn();
+			this.currentState = TurnState.MOVING_ARMIES;
 			return true;
 		}
 	}
