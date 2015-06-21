@@ -12,6 +12,7 @@ import javax.swing.JLabel;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
 
+@SuppressWarnings("serial")
 public class ChooseNumberFrame extends JFrame implements ActionListener {
 
 	public ChooseNumberFrame(int maxNumber, String message) {
@@ -46,7 +47,8 @@ public class ChooseNumberFrame extends JFrame implements ActionListener {
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		JComboBox cb = (JComboBox) e.getSource();
+		@SuppressWarnings("unchecked")
+		JComboBox<String> cb = (JComboBox<String>) e.getSource();
 		String value = (String) cb.getSelectedItem();
 		WarGame.getInstance().selectNumber(Integer.parseInt(value));
 		this.dispose();

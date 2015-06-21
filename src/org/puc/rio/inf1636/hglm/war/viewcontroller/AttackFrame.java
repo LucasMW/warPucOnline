@@ -22,6 +22,7 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 //This class controls battle. Attacker and Defender Dice etc.
 
+@SuppressWarnings("serial")
 public class AttackFrame extends JFrame {
 	private int attackerDiceCount = 0;
 	private int defenderDiceCount = 0;

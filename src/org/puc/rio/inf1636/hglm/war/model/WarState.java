@@ -46,7 +46,7 @@ public class WarState {
 		} else {
 			this.currentPlayer = game.getPlayers().get(currentPlayerIndex + 1);
 		}
-		this.selectedTerritory = null;
+		this.clearSelections();
 		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 
@@ -55,7 +55,7 @@ public class WarState {
 			System.out.println("Should place all reinforcements first");
 			return false;
 		}
-		this.selectedTerritory = null;
+		this.clearSelections();
 		this.currentState = TurnState.ATTACKING;
 		return true;
 	}
@@ -65,8 +65,7 @@ public class WarState {
 			System.out.println("Must be attacking before moving");
 			return false;
 		}
-		
-		this.selectedTerritory = null;
+		this.clearSelections();
 		this.currentState = TurnState.MOVING_ARMIES;
 		return true;
 
@@ -96,4 +95,8 @@ public class WarState {
 		return this.targettedTerritory;
 	}
 
+	private void clearSelections() {
+		this.selectedTerritory = null;
+		this.targettedTerritory = null;
+	}
 }

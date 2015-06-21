@@ -31,9 +31,10 @@ public class Util {
 			e.printStackTrace();
 			return;
 		}
+		@SuppressWarnings("unchecked")
 		java.util.Map<String, List<List<Double>>> territories = new Gson()
 				.fromJson(jsonContent, java.util.Map.class);
-		Iterator it = territories.entrySet().iterator();
+		Iterator<java.util.Map.Entry<String, List<List<Double>>>> it = territories.entrySet().iterator();
 		while (it.hasNext()) {
 			java.util.Map.Entry<String, List<List<Double>>> pair = (java.util.Map.Entry<String, List<List<Double>>>) it
 					.next();
