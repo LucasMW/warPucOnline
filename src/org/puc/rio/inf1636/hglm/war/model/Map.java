@@ -61,7 +61,8 @@ public class Map extends Object {
 		this.bridgeTerritoriesByNames("Somália", "Arábia Saudita");
 		this.bridgeTerritoriesByNames("Suécia", "França");
 		this.bridgeTerritoriesByNames("Suécia", "Itália");
-
+		this.bridgeTerritoriesByNames("Groelandia", "Quebec");
+		this.bridgeTerritoriesByNames("Nova Zelândia", "Indonésia");
 	}
 
 	private void bridgeTerritoriesByNames(String nameX, String nameY) {
