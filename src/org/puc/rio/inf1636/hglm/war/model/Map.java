@@ -43,23 +43,24 @@ public class Map extends Object {
 			}
 		}
 		// add bridged neighbors
-		this.bridgeTerritoriesByNames("Alasca", "Sibéria");
-		this.bridgeTerritoriesByNames("Groelandia", "Reino Unido");
-		this.bridgeTerritoriesByNames("França", "Reino Unido");
 		this.bridgeTerritoriesByNames("Argélia", "Espanha");
 		this.bridgeTerritoriesByNames("Argélia", "Itália");
-		this.bridgeTerritoriesByNames("Suécia", "França");
-		this.bridgeTerritoriesByNames("Suécia", "Itália");
-		this.bridgeTerritoriesByNames("Egito", "România");
-		this.bridgeTerritoriesByNames("Egito", "Jordânia");
-		this.bridgeTerritoriesByNames("Somália", "Arábia Saudita");
-		this.bridgeTerritoriesByNames("Japão", "Cazaquistão");
-		this.bridgeTerritoriesByNames("Japão", "Mongólia");
-		this.bridgeTerritoriesByNames("Japão", "Coréia do Norte");
-		this.bridgeTerritoriesByNames("Bangladesh", "Indonésia");
-		this.bridgeTerritoriesByNames("Índia", "Indonésia");
+		this.bridgeTerritoriesByNames("Alasca", "Sibéria");
+		this.bridgeTerritoriesByNames("Brasil", "Nigéria");
 		this.bridgeTerritoriesByNames("Austrália", "Indonésia");
 		this.bridgeTerritoriesByNames("Austrália", "Nova Zelândia");
+		this.bridgeTerritoriesByNames("Bangladesh", "Indonésia");
+		this.bridgeTerritoriesByNames("Egito", "România");
+		this.bridgeTerritoriesByNames("Egito", "Jordânia");
+		this.bridgeTerritoriesByNames("França", "Reino Unido");
+		this.bridgeTerritoriesByNames("Groelandia", "Reino Unido");
+		this.bridgeTerritoriesByNames("Índia", "Indonésia");
+		this.bridgeTerritoriesByNames("Japão", "Cazaquistão");
+		this.bridgeTerritoriesByNames("Japão", "Coréia do Norte");
+		this.bridgeTerritoriesByNames("Japão", "Mongólia");
+		this.bridgeTerritoriesByNames("Somália", "Arábia Saudita");
+		this.bridgeTerritoriesByNames("Suécia", "França");
+		this.bridgeTerritoriesByNames("Suécia", "Itália");
 
 	}
 

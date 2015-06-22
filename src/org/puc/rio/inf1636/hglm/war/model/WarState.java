@@ -8,7 +8,7 @@ public class WarState {
 	private Player currentPlayer;
 	private TurnState currentState;
 	private Territory selectedTerritory;
-	private Territory targettedTerritory;
+	private Territory targetedTerritory;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -84,19 +84,19 @@ public class WarState {
 	}
 	
 	public void targetTerritory(Territory t) {
-		this.targettedTerritory = t;
+		this.targetedTerritory = t;
 	}
 
 	public void untargetTerritory() {
-		this.targettedTerritory = null;
+		this.targetedTerritory = null;
 	}
 
-	public Territory getTargettedTerritory() {
-		return this.targettedTerritory;
+	public Territory getTargetedTerritory() {
+		return this.targetedTerritory;
 	}
 
-	private void clearSelections() {
+	public void clearSelections() {
 		this.selectedTerritory = null;
-		this.targettedTerritory = null;
+		this.targetedTerritory = null;
 	}
 }
