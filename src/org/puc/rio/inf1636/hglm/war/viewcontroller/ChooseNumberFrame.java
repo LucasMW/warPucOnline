@@ -14,6 +14,7 @@ import org.puc.rio.inf1636.hglm.war.WarGame;
 
 @SuppressWarnings("serial")
 public class ChooseNumberFrame extends JFrame implements ActionListener {
+	JComboBox<String> numberOptions;
 
 	public ChooseNumberFrame(int maxNumber, String message) {
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -28,8 +29,7 @@ public class ChooseNumberFrame extends JFrame implements ActionListener {
 		for (int i = 0; i < maxNumber; i++) {
 			options[i] = ((Integer) (i + 1)).toString();
 		}
-		JComboBox<String> numberOptions = new JComboBox<String>(options);
-		numberOptions.addActionListener(this);
+		this.numberOptions = new JComboBox<String>(options);
 
 		JButton cancelButton = new JButton("Cancel");
 		cancelButton.addActionListener(new ActionListener() {
@@ -40,17 +40,20 @@ public class ChooseNumberFrame extends JFrame implements ActionListener {
 			}
 		});
 
+		JButton confirmButton = new JButton("Confirm");
+		confirmButton.addActionListener(this);
+
 		this.add(instructionLabel, BorderLayout.PAGE_START);
-		this.add(numberOptions, BorderLayout.CENTER);
+		this.add(this.numberOptions, BorderLayout.CENTER);
+		this.add(confirmButton, BorderLayout.LINE_END);
 		this.add(cancelButton, BorderLayout.PAGE_END);
 	}
 
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		@SuppressWarnings("unchecked")
-		JComboBox<String> cb = (JComboBox<String>) e.getSource();
-		String value = (String) cb.getSelectedItem();
-		WarGame.getInstance().selectNumber(Integer.parseInt(value));
 		this.dispose();
+
+		String value = (String) this.numberOptions.getSelectedItem();
+		WarGame.getInstance().selectNumber(Integer.parseInt(value));
 	}
 }

@@ -26,9 +26,9 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 public class AttackFrame extends JFrame {
 	private int attackerDiceCount = 0;
 	private int defenderDiceCount = 0;
-	
+
 	private int[] losses = new int[2];
-	
+
 	private JPanel attackerPanel;
 	private JPanel defenderPanel;
 	private JPanel resultPanel;
@@ -46,10 +46,12 @@ public class AttackFrame extends JFrame {
 
 	public AttackFrame(Territory from, Territory to, int number) {
 		this.attackerDiceCount = number;
-		this.defenderDiceCount = to.getArmyCount() > WarLogic.MAX_DICE ? WarLogic.MAX_DICE: to.getArmyCount();
-		
+		this.defenderDiceCount = to.getArmyCount() > WarLogic.MAX_DICE ? WarLogic.MAX_DICE
+				: to.getArmyCount();
+
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setTitle(String.format("%s is attacking %s", from.getName(), to.getName()));
+		this.setTitle(String.format("%s is attacking %s", from.getName(),
+				to.getName()));
 		this.setSize(new Dimension(300, 400));
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
@@ -57,7 +59,8 @@ public class AttackFrame extends JFrame {
 
 		// attacker panel
 		this.attackerPanel = new JPanel();
-		this.attackButton = new JButton(String.format("Attack with %d dice", this.attackerDiceCount));
+		this.attackButton = new JButton(String.format("Attack with %d dice",
+				this.attackerDiceCount));
 		this.attackButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		this.attackerPanel.setLayout(new BoxLayout(attackerPanel,
 				BoxLayout.Y_AXIS));
@@ -75,7 +78,8 @@ public class AttackFrame extends JFrame {
 		this.defenderPanel = new JPanel();
 		this.defenderPanel.setLayout(new BoxLayout(defenderPanel,
 				BoxLayout.Y_AXIS));
-		this.defendButton = new JButton("defend");
+		this.defendButton = new JButton(String.format("Defend with %d dice",
+				this.defenderDiceCount));
 		this.defendButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 		ActionListener actLisB = new ActionListener() {
 			@Override
@@ -98,8 +102,9 @@ public class AttackFrame extends JFrame {
 		ActionListener actLisC = new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent ae) {
-				WarGame.getInstance().attackResult(losses);
 				dispose();
+				WarGame.getInstance().attackResult(losses);
+
 			}
 		};
 		this.confirmButton.addActionListener(actLisC);
@@ -135,7 +140,8 @@ public class AttackFrame extends JFrame {
 		}
 
 		Random rand = new Random();
-		int diceCount = attack ? this.attackerDiceCount : this.defenderDiceCount;
+		int diceCount = attack ? this.attackerDiceCount
+				: this.defenderDiceCount;
 		for (int i = 0; i < diceCount; i++) {
 			int result = rand.nextInt(6) + 1;
 			if (attack) {
@@ -180,7 +186,8 @@ public class AttackFrame extends JFrame {
 	}
 
 	private void checkEnd() {
-		if (this.attackResults.size() != this.attackerDiceCount || this.defenseResults.size() != this.defenderDiceCount) {
+		if (this.attackResults.size() != this.attackerDiceCount
+				|| this.defenseResults.size() != this.defenderDiceCount) {
 			return;
 		}
 		this.losses = calculateLosses();

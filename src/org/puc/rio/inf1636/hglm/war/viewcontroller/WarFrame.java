@@ -44,14 +44,40 @@ public class WarFrame extends JFrame {
 		this.uiPanel.update(first);
 		this.mapPanel.update(first);
 	}
+	
+	public void focusPopup() {
+		if (this.hasAttackFrameActive()) {
+			this.attackFrame.toFront();
+		} else if (this.hasChooseNumberFrameActive()) {
+			this.chooseNumberFrame.toFront();
+		}
+	}
+	
+	public boolean hasAttackFrameActive() {
+		return this.attackFrame != null && this.attackFrame.isVisible();
+	}
+	
+	public boolean hasChooseNumberFrameActive() {
+		return this.chooseNumberFrame != null && this.chooseNumberFrame.isVisible();
+	}
+	
+	public boolean hasPopupActive() {
+		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive();
+	}
 
 	public void spawnAttackFrame(Territory from, Territory to, int number) {
-		this.attackFrame = new AttackFrame(from, to, number);
-		this.attackFrame.setVisible(true);
+		/* only one at once */
+		if (!this.hasPopupActive()) {
+			this.attackFrame = new AttackFrame(from, to, number);
+			this.attackFrame.setVisible(true);
+		}
 	}
 
 	public void spawnChooseNumberFrame(int number, String message) {
-		this.chooseNumberFrame = new ChooseNumberFrame(number, message);
-		this.chooseNumberFrame.setVisible(true);
+		/* only one at once */
+		if (!this.hasPopupActive()) {
+			this.chooseNumberFrame = new ChooseNumberFrame(number, message);
+			this.chooseNumberFrame.setVisible(true);
+		}
 	}
 }

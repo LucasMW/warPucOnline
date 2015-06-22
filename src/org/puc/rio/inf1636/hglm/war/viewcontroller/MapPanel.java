@@ -67,6 +67,8 @@ public class MapPanel extends JPanel {
 		int i = 0;
 		Territory selectedTerritory = WarGame.getInstance().getState()
 				.getSelectedTerritory();
+		Territory targetedTerritory = WarGame.getInstance().getState()
+				.getTargetedTerritory();
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			/* defaults */
 			JLabel centerLabel;
@@ -117,22 +119,30 @@ public class MapPanel extends JPanel {
 			} else {
 				centerLabel = this.armiesLabels.get(i);
 			}
-			
+
+			/* selected */
 			if (selectedTerritory != null && selectedTerritory.equals(t)) {
 				zOrder = 0;
 				borderColor = Color.RED;
+				/* targeted */
+//			} else if (targetedTerritory != null && targetedTerritory.equals(t)) {
+//				zOrder = 0;
+//				borderColor = Color.BLUE;
+				/* owned by current player */
 			} else if (t.getOwner().equals(
 					WarGame.getInstance().getCurrentPlayer())) {
 				zOrder = 1;
 				backgroundColor = backgroundColor.darker();
 				borderColor = Color.WHITE;
+
+				/* others */
 			} else {
 				zOrder = 2;
 				borderColor = Color.BLACK;
 			}
 
-			if (WarGame.getInstance().getState().isPlacing()) {
-			} else if (WarGame.getInstance().getState().isAttacking()) {
+			switch (WarGame.getInstance().getTurnState()) {
+			case ATTACKING:
 				if (selectedTerritory != null) {
 					/* neighbors */
 					if (selectedTerritory.canAttack(t)) {
@@ -141,6 +151,23 @@ public class MapPanel extends JPanel {
 						zOrder = 1;
 					}
 				}
+				break;
+			case MOVING_ARMIES:
+				if (selectedTerritory != null) {
+					/* neighbors */
+					if (selectedTerritory.canMoveTo(t)) {
+						backgroundColor = backgroundColor.brighter();
+						borderColor = Color.YELLOW;
+						zOrder = 1;
+					}
+				}
+				break;
+			case PLACING_NEW_ARMIES:
+				break;
+			case RECEIVING_LETTER:
+				break;
+			default:
+				break;
 			}
 
 			if (this.labelsHidden) {
@@ -157,7 +184,8 @@ public class MapPanel extends JPanel {
 			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
 					.getColor()));
 			centerLabel.setText(text);
-			centerLabel.setBorder(BorderFactory.createLineBorder(borderColor, 3, true));
+			centerLabel.setBorder(BorderFactory.createLineBorder(borderColor,
+					3, true));
 			centerLabel.setBackground(backgroundColor);
 			this.repaint();
 			centerLabel.repaint();

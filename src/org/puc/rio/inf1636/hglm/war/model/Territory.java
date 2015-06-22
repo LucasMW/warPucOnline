@@ -46,7 +46,7 @@ public class Territory extends Object {
 		this.armyCount += armies;
 		return this.armyCount;
 	}
-	
+
 	public int removeArmies(int armies) {
 		this.armyCount -= armies;
 		return this.armyCount;
@@ -85,6 +85,20 @@ public class Territory extends Object {
 		return true;
 	}
 
+	public boolean canMoveTo(Territory t) {
+		if (this.getArmyCount() <= 1) {
+			return false;
+		}
+		if (!t.getOwner().equals(this.getOwner())) {
+			return false;
+		}
+		if (!this.isNeighbor(t)) {
+			return false;
+		}
+		/* has been moved to in the last round */
+		return true;
+	}
+
 	@Override
 	public boolean equals(Object another) {
 		return this.name == ((Territory) another).getName();
@@ -109,8 +123,14 @@ public class Territory extends Object {
 		this.polygon = gp;
 	}
 
-	public int getMaxAttackArmyNumber() {
-		if (this.getArmyCount() == 1) {
+	public int getMoveableArmyCount() {
+		if (this.getArmyCount() <= 1) {
+			return 0;
+		}
+		return this.getArmyCount() - 1;
+	}
+	public int getAtackableArmyCount() {
+		if (this.getArmyCount() <= 1) {
 			return 0;
 		} else if (this.getArmyCount() > WarLogic.MAX_DICE) {
 			return WarLogic.MAX_DICE;
