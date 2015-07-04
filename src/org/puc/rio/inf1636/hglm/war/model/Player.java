@@ -7,6 +7,7 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
+	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
 	private static final Color RED = new Color(128, 0, 0);

@@ -1,40 +1,38 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
+//This class implements only the territory card and the extras
 public class Card {
 	int id; // identifies the cards
 	CardType type;
 	Territory territory;
-	String objective;
+	Player ownwer; //the player who owns this card
+	
+	
 	
 	public enum CardType {
-		TERRITORY_CARD,
-		OBJECTIVE_CARD,
-		JOKER_CARD
+		TRIANGLE_CARD,
+		CIRCLE_CARD,
+		SQUARE_CARD,
+		EXTRA_CARD
 	}
 	public Card(Territory t){
 		
 		this.territory=t;
-		this.objective=null;
-		this.type= CardType.TERRITORY_CARD;
+		if(t!=null){
+			this.type= CardType.TRIANGLE_CARD;
+		}
+		else{
+			this.type = CardType.EXTRA_CARD;
+		}
 	}
-	public Card(String obj)
-	{
-		this.territory=null;
-		this.objective=obj;
-		this.type= CardType.OBJECTIVE_CARD;
-		
-	}
-	public Card() {
-		this.type= CardType.JOKER_CARD;
-		this.territory=null;
-		this.objective=null;
-		
-	}
+	
 	
 	public CardType getType() {
 		return this.type;
 	}
-	
+	public void setOnwer(Player p){
+		this.ownwer=p;
+	}
 	
 	public Territory getTerritory() {
 		return this.territory;
