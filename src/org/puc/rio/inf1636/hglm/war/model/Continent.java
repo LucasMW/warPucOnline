@@ -26,6 +26,6 @@ public enum Continent {
 
 	@Override
 	public String toString() {
-		return this.toString().replace("_", " ");
+		return super.toString().replace("_", " ");
 	}
 }

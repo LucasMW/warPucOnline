@@ -47,6 +47,7 @@ public class WarGame {
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
+		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(players.get(0)));
 		this.getWarFrame().update(true);
@@ -223,6 +224,7 @@ public class WarGame {
 			}
 			break;
 		case RECEIVING_LETTER:
+			
 			break;
 		default:
 			break;
