@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
@@ -17,6 +18,7 @@ public class WarGame {
 	private static WarGame instance;
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
+	private List<Card> deck = new ArrayList<Card>(); //must contain all non owned cards
 	private WarFrame warFrame;
 	private WarState warState = null;
 
@@ -99,10 +101,13 @@ public class WarGame {
 				pi = this.getPlayers().iterator(); // loop back
 			}
 			Player p = pi.next();
-			this.getMap().getTerritories().get(i).setOwner(p);
+			Territory t = this.getMap().getTerritories().get(i);
+			t.setOwner(p);
+			
 			p.addTerritory();
 		}
 	}
+	
 
 	public void actionPerformed() {
 		/* don't do anything when a pop up is active */
@@ -127,6 +132,7 @@ public class WarGame {
 			}
 			break;
 		case RECEIVING_LETTER:
+			
 			break;
 		default:
 			break;
@@ -271,4 +277,18 @@ public class WarGame {
 		}
 		this.warFrame.update(false);
 	}
+
+	public List<Card> getDeck() {
+		return deck;
+	}
+	public void giveCardToPlayer(Player p, Card c){
+		p.addCard(c);
+		this.deck.remove(c);
+	}
+	public void receiveCardFromPlayer(Player p, Card c)
+	{
+		this.deck.add(c);
+		p.removeCard(c);
+	}
+
 }

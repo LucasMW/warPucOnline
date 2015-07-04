@@ -1,12 +1,15 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
 import java.awt.Color;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Player {
 
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
+	private List<Card> cards = new ArrayList<Card>(); //contains this player owned cards
 	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
@@ -66,6 +69,14 @@ public class Player {
 	
 	public void removeArmies(int number) {
 		this.unplacedArmies -= number;
+	}
+	public void addCard(Card c){
+		this.cards.add(c);
+		c.ownwer=this;
+	}
+	public void removeCard(Card c){
+		this.cards.remove(c);
+		c.ownwer=null;
 	}
 
 }
