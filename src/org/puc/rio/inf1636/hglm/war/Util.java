@@ -5,6 +5,7 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.awt.geom.Point2D.Double;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
@@ -16,81 +17,92 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map.Entry;
 
-import org.puc.rio.inf1636.hglm.war.model.Card;
+import org.puc.rio.inf1636.hglm.war.model.Continent;
 import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
+import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 
 import com.google.gson.Gson;
 
 public class Util {
+	/* Dummy classes for json parsing */
+	class Territories {
+		List<Territory> territories;
+		
+		public void setTerritories(List<Territory> ts) {
+			this.territories = ts;
+		}
+		
+		public List<Territory> getTerritories() {
+			return this.territories;
+		}
+	}
+	
+	class Territory {
+		String name;
+		Integer continent;
+		Integer type;
+		List<List<java.lang.Double>> boundsPoints;
+		
+		public String getName() {
+			return this.name;
+		}
+		
+		public void setName(String name) {
+			this.name = name;
+		}
+		
+		public int getContinent() {
+			return this.continent;
+		}
+		
+		public void setContinent(int c) {
+			this.continent = c;
+		}
+		
+		public int getType() {
+			return this.type;
+		}
+		
+		public void setType(int c) {
+			this.type = c;
+		}
+		public List<List<java.lang.Double>> getBoundsPoints() {
+			return this.boundsPoints;
+		}
+		
+		public void setBoundsPoints(List<List<java.lang.Double>> cos) {
+			this.boundsPoints = cos;
+		}
+	}
 
-	public static void loadTerritories(Map map) {
+	
+	public static void loadTerritories(Map map, Deck deck) {
 		String jsonContent;
 		try {
-			jsonContent = readFile("resources/territoryBounds.json",
+			jsonContent = readFile("resources/territories.json",
 					StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
 		}
-		@SuppressWarnings("unchecked")
-		java.util.Map<String, List<List<Double>>> territories = new Gson()
-				.fromJson(jsonContent, java.util.Map.class);
-		Iterator<java.util.Map.Entry<String, List<List<Double>>>> it = territories
-				.entrySet().iterator();
-		while (it.hasNext()) {
-			java.util.Map.Entry<String, List<List<Double>>> pair = (java.util.Map.Entry<String, List<List<Double>>>) it
-					.next();
-			List<List<Double>> values = pair.getValue();
+
+		Territories ts =  new Gson().fromJson(jsonContent, Territories.class);
+		for (Territory t : ts.getTerritories()) {
 			List<Point2D.Double> points = new LinkedList<Point2D.Double>();
-			for (List<Double> point : values) {
-				points.add(new Point2D.Double(
-						(double) point.get(0)
-								* WarGame.getInstance().getWarFrame()
-										.getMapPanel().coordinatesMultiplierX,
-						(double) point.get(1)
-								* WarGame.getInstance().getWarFrame()
-										.getMapPanel().coordinatesMultiplierY));
+			for (List<java.lang.Double> bp: t.getBoundsPoints()) {
+				Point2D.Double point = new Point2D.Double(bp.get(0), bp.get(1));
+				points.add(point);
 			}
-			map.addTerritory(new Territory(pair.getKey(), points));
-			it.remove();
+			org.puc.rio.inf1636.hglm.war.model.Territory newTerritory = new org.puc.rio.inf1636.hglm.war.model.Territory(t.getName(), points, Continent.getById(t.getContinent()));
+			map.addTerritory(newTerritory);
+			TerritoryCard c = new TerritoryCard(newTerritory, t.getType());
+			deck.addCard(c);
 		}
+		
 	}
-
-	public static void loadCards(Deck d) {
-		String jsonContent;
-		try {
-			jsonContent = readFile("resources/TerritoryType.json",
-					StandardCharsets.UTF_8);
-		} catch (IOException e) {
-			e.printStackTrace();
-			return;
-		}
-		@SuppressWarnings("unchecked")
-		java.util.Map<String, Double> cards = new Gson().fromJson(jsonContent,
-				java.util.Map.class);
-		Iterator<java.util.Map.Entry<String, Double>> it = cards.entrySet()
-				.iterator();
-		while (it.hasNext()) {
-			Entry<String, Double> pair = (java.util.Map.Entry<String, Double>) it
-					.next();
-			String name = pair.getKey();
-			int value = 0;
-			try {
-				value = pair.getValue().intValue();
-			} catch (Exception e) {
-				System.out.println(value);
-				System.out.println(name);
-				System.out.println(e.getMessage());
-			}
-
-			Card c = new Card(WarGame.getInstance().getMap()
-					.getTerritoryByName(name), value);
-			d.addCard(c);
-		}
-	}
-
+	
 	public static ArrayList<Line2D.Double> getLineSegments(GeneralPath p) {
 
 		ArrayList<double[]> linePoints = new ArrayList<>();

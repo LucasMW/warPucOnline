@@ -11,7 +11,7 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
-	private List<Card> cards = new ArrayList<Card>(); //contains this player owned cards
+	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>(); //contains this player owned cards
 	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
@@ -73,17 +73,17 @@ public class Player {
 		this.unplacedArmies -= number;
 	}
 	
-	public void addCard(Card c){
+	public void addCard(TerritoryCard c){
 		this.cards.add(c);
 		c.owner = this;
 	}
 	
-	public void removeCard(Card c){
+	public void removeCard(TerritoryCard c){
 		this.cards.remove(c);
 		c.owner = null;
 	}
 
-	public List<Card> getCards() {
+	public List<TerritoryCard> getCards() {
 		return this.cards;
 	}
 

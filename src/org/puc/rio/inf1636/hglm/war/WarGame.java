@@ -5,7 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
-import org.puc.rio.inf1636.hglm.war.model.Card;
+import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
@@ -38,8 +38,7 @@ public class WarGame {
 
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
-		Util.loadTerritories(this.map);
-		Util.loadCards(this.deck);
+		Util.loadTerritories(this.map, this.deck);
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
@@ -295,12 +294,11 @@ public class WarGame {
 	}
 
 	public void giveCardToPlayer(Player p) {
-		Card c = this.deck.takeCard();
+		TerritoryCard c = this.deck.takeCard();
 		p.addCard(c);
-		System.out.println(String.format("Gave card %s to player %s",c.getType().toString(), p.getName()));
 	}
 
-	public void receiveCardFromPlayer(Player p, Card c) {
+	public void receiveCardFromPlayer(Player p, TerritoryCard c) {
 		p.removeCard(c);
 		this.deck.returnCard(c);
 	}

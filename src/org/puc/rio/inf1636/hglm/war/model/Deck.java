@@ -4,20 +4,20 @@ import java.util.Stack;
 
 public class Deck {
 	
-	private Stack<Card> cards = new Stack<Card>();
+	private Stack<TerritoryCard> cards = new Stack<TerritoryCard>();
 	
 	public Deck() {
 	}
 	
-	public void addCard(Card c) {
+	public void addCard(TerritoryCard c) {
 		this.cards.push(c);
 	}
 	
-	public void returnCard(Card c) {
+	public void returnCard(TerritoryCard c) {
 		this.cards.add(0, c);
 	}
 	
-	public Card takeCard() {
+	public TerritoryCard takeCard() {
 		return this.cards.pop();
 	}
 	

@@ -16,9 +16,11 @@ public class Territory extends Object {
 	private Player owner = null;
 	private int armyCount = 1;
 	private Set<Territory> neighbors = new HashSet<Territory>();
+	private Continent continent;
 
-	public Territory(String name, List<Point2D.Double> points) {
+	public Territory(String name, List<Point2D.Double> points, Continent c) {
 		this.name = name;
+		this.continent = c;
 		this.createPolygon(points);
 	}
 
