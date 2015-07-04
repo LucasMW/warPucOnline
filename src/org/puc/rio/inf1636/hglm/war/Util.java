@@ -158,6 +158,10 @@ public class Util {
 	}
 
 	public static Dimension getGameSize() {
-		return java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		Dimension x = java.awt.Toolkit.getDefaultToolkit().getScreenSize();
+		if(System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0){
+			x.setSize(x.width, (int)(x.height*0.9));
+		}
+		return x ;
 	}
 }
