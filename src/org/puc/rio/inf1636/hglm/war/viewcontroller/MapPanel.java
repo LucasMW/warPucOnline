@@ -125,9 +125,10 @@ public class MapPanel extends JPanel {
 				zOrder = 0;
 				borderColor = Color.RED;
 				/* targeted */
-//			} else if (targetedTerritory != null && targetedTerritory.equals(t)) {
-//				zOrder = 0;
-//				borderColor = Color.BLUE;
+				// } else if (targetedTerritory != null &&
+				// targetedTerritory.equals(t)) {
+				// zOrder = 0;
+				// borderColor = Color.BLUE;
 				/* owned by current player */
 			} else if (t.getOwner().equals(
 					WarGame.getInstance().getCurrentPlayer())) {
@@ -179,8 +180,8 @@ public class MapPanel extends JPanel {
 				this.setComponentZOrder(centerLabel, zOrder);
 			}
 
-			centerLabel.setBounds((int) (t.getCenter().x),
-					(int) (t.getCenter().y), width, 20);
+			centerLabel.setBounds((int) (t.getCenter().x * WarGame.getInstance().getWarFrame().getMapPanel().coordinatesMultiplierX),
+					(int) (t.getCenter().y * WarGame.getInstance().getWarFrame().getMapPanel().coordinatesMultiplierY), width, 20);
 			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
 					.getColor()));
 			centerLabel.setText(text);
@@ -217,16 +218,15 @@ public class MapPanel extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent me) {
-			System.out
-					.printf("clicked point <%f,%f>\n",
-							me.getX()
-									/ WarGame.getInstance().getWarFrame()
-											.getMapPanel().coordinatesMultiplierX,
-							me.getY()
-									/ WarGame.getInstance().getWarFrame()
-											.getMapPanel().coordinatesMultiplierY);
+			System.out.printf("clicked point <%d,%d>\n", me.getX(), me.getY());
 			for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
-				if (t.getPolygon().contains(me.getX(), me.getY())) {
+				if (t.getPolygon().contains(
+						me.getX()
+								* WarGame.getInstance().getWarFrame()
+										.getMapPanel().coordinatesMultiplierX,
+						me.getY()
+								* WarGame.getInstance().getWarFrame()
+										.getMapPanel().coordinatesMultiplierY)) {
 					WarGame.getInstance().selectTerritory(t);
 					return; // Cannot select twice
 				}

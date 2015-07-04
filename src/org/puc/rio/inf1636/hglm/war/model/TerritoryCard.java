@@ -1,14 +1,37 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
 //This class implements only the territory card and the extras
-public class Card {
+public class TerritoryCard {
 	int id; // identifies the cards
 	CardType type;
 	Territory territory;
 	Player owner; // the player who owns this card
 
+	public TerritoryCard(Territory t, int type) {
+		this.territory = t;
+		this.owner = null;
+		if (t != null) {
+			this.type = CardType.getByValue(type);
+		} else {
+			this.type = null;
+		}
+
+	}
+
+	public CardType getType() {
+		return this.type;
+	}
+
+	public void setOwner(Player p) {
+		this.owner = p;
+	}
+
+	public Territory getTerritory() {
+		return this.territory;
+	}
+
 	public enum CardType {
-		TRIANGLE_CARD(3), SQUARE_CARD(4), CIRCLE_CARD(0), EXTRA_CARD(-1);
+		TRIANGLE_CARD(3), SQUARE_CARD(4), CIRCLE_CARD(0);
 		private final int value;
 
 		CardType(int value) {
@@ -21,14 +44,14 @@ public class Card {
 
 		public static CardType getByValue(int value) {
 			switch (value) {
+			case 0:
+				return CardType.CIRCLE_CARD;
 			case 3:
 				return CardType.TRIANGLE_CARD;
 			case 4:
 				return CardType.SQUARE_CARD;
-			case 0:
-				return CardType.CIRCLE_CARD;
 			default:
-				return CardType.EXTRA_CARD;
+				return null;
 			}
 		}
 
@@ -44,29 +67,6 @@ public class Card {
 			}
 			return null;
 		}
-	}
-
-	public Card(Territory t, int type) {
-
-		this.territory = t;
-		this.owner = null;
-		if (t != null) {
-			this.type = CardType.getByValue(type);
-		} else {
-			this.type = CardType.EXTRA_CARD;
-		}
-	}
-
-	public CardType getType() {
-		return this.type;
-	}
-
-	public void setOnwer(Player p) {
-		this.owner = p;
-	}
-
-	public Territory getTerritory() {
-		return this.territory;
 	}
 
 }
