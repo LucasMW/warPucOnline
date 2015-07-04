@@ -14,7 +14,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map.Entry;
 
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
@@ -50,6 +52,29 @@ public class Util {
 			map.addTerritory(new Territory(pair.getKey(), points));
 			it.remove();
 		}
+	}
+	public static void loadDeck() {
+		String jsonContent;
+		try {
+			jsonContent = readFile("resources/TerritoryType.json",
+					StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		@SuppressWarnings("unchecked")
+		java.util.Map<String, Integer> territories = new Gson()
+				.fromJson(jsonContent, java.util.Map.class);
+		Iterator<java.util.Map.Entry<String, Integer>> it = territories.entrySet().iterator();
+		while (it.hasNext()) {
+			Entry<String, Integer> pair = (java.util.Map.Entry<String, Integer>) it
+					.next();
+			int value = pair.getValue().intValue();
+			String name = pair.getKey();
+			Card c = new Card(WarGame.getInstance().getMap().getTerritoryByName(name),value);
+			WarGame.getInstance().insertCardOnly(c);
+		}
+			
 	}
 	
     public static ArrayList<Line2D.Double> getLineSegments(GeneralPath p){

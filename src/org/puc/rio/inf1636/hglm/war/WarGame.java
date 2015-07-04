@@ -37,6 +37,7 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map);
+		Util.loadDeck();
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
@@ -106,6 +107,9 @@ public class WarGame {
 			
 			p.addTerritory();
 		}
+	}
+	public void generateDeck() {
+		
 	}
 	
 
@@ -289,6 +293,10 @@ public class WarGame {
 	{
 		this.deck.add(c);
 		p.removeCard(c);
+	}
+	public void insertCardOnly(Card c)
+	{
+		this.deck.add(c);
 	}
 
 }

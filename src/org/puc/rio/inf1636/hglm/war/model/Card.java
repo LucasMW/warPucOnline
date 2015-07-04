@@ -15,11 +15,26 @@ public class Card {
 		CIRCLE_CARD,
 		EXTRA_CARD
 	}
-	public Card(Territory t){
+	public Card(Territory t,int type){
 		
 		this.territory=t;
+		this.ownwer=null;
 		if(t!=null){
-			this.type= CardType.TRIANGLE_CARD;
+			switch(type) {
+			case 3:
+				this.type=CardType.TRIANGLE_CARD;
+				break;
+			case 4:
+				this.type = CardType.SQUARE_CARD;
+				break;
+			case 5:
+				this.type = CardType.CIRCLE_CARD;
+				break;
+			default:
+				this.type= CardType.EXTRA_CARD;
+				break;
+				
+			}
 		}
 		else{
 			this.type = CardType.EXTRA_CARD;
