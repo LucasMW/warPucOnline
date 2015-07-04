@@ -4,6 +4,8 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
+
 public class Player {
 
 	private String name;
@@ -70,13 +72,19 @@ public class Player {
 	public void removeArmies(int number) {
 		this.unplacedArmies -= number;
 	}
+	
 	public void addCard(Card c){
 		this.cards.add(c);
-		c.ownwer=this;
+		c.owner = this;
 	}
+	
 	public void removeCard(Card c){
 		this.cards.remove(c);
-		c.ownwer=null;
+		c.owner = null;
+	}
+
+	public List<Card> getCards() {
+		return this.cards;
 	}
 
 }
