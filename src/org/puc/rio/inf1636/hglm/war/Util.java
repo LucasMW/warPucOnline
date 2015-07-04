@@ -63,24 +63,15 @@ public class Util {
 			return;
 		}
 		@SuppressWarnings("unchecked")
-		java.util.Map<String, Integer> cards = new Gson()
+		java.util.Map<String, Double> cards = new Gson()
 				.fromJson(jsonContent, java.util.Map.class);
-		Iterator<java.util.Map.Entry<String, Integer>> it = cards.entrySet().iterator();
+		Iterator<java.util.Map.Entry<String, Double>> it = cards.entrySet().iterator();
 		while (it.hasNext()) {
-			Entry<String, Integer> pair = (java.util.Map.Entry<String, Integer>) it
+			Entry<String, Double> pair = (java.util.Map.Entry<String, Double>) it
 					.next();
 			String name = pair.getKey();
-			int value = 0;
-			try {
-			    value = (int)(pair.getValue());
-			}
-			catch(Exception e){
-			    	System.out.println(value);
-			    	System.out.println(name);
-			    	System.out.println(e.getMessage());
-			    }
-			
-			
+			int value = pair.getValue().intValue();
+			System.out.println(name +" " + pair.getValue().toString());
 			Card c = new Card(WarGame.getInstance().getMap().getTerritoryByName(name),value);
 			WarGame.getInstance().insertCardOnly(c);
 		}
