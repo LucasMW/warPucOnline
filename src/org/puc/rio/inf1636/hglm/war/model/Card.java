@@ -11,8 +11,8 @@ public class Card {
 	
 	public enum CardType {
 		TRIANGLE_CARD,
-		CIRCLE_CARD,
 		SQUARE_CARD,
+		CIRCLE_CARD,
 		EXTRA_CARD
 	}
 	public Card(Territory t){
