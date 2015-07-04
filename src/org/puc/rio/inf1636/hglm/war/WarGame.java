@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.puc.rio.inf1636.hglm.war.model.Card;
+import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
@@ -18,13 +19,14 @@ public class WarGame {
 	private static WarGame instance;
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
-	private List<Card> deck = new ArrayList<Card>(); //must contain all non owned cards
+	private Deck deck;
 	private WarFrame warFrame;
 	private WarState warState = null;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
 		this.map = new Map();
+		this.deck = new Deck();
 	}
 
 	public static WarGame getInstance() {
@@ -37,7 +39,7 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map);
-		Util.loadDeck();
+		Util.loadCards(this.deck);
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
@@ -72,10 +74,13 @@ public class WarGame {
 			warFrame.focusPopup();
 			return;
 		}
-		warState.nextTurn();
-		warState.getCurrentPlayer().giveArmies(
+		if (this.warState.getConquestsThisTurn() > 0) {
+			this.giveCardToPlayer(this.getCurrentPlayer());
+		}
+		this.warState.nextTurn();
+		this.warState.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(warState.getCurrentPlayer()));
-		warFrame.update(false);
+		this.warFrame.update(false);
 	}
 
 	public TurnState getTurnState() {
@@ -104,15 +109,16 @@ public class WarGame {
 			Player p = pi.next();
 			Territory t = this.getMap().getTerritories().get(i);
 			t.setOwner(p);
-			
+
 			p.addTerritory();
 		}
 	}
-	public void generateDeck() {
-		
-	}
-	
 
+	public void generateDeck() {
+
+	}
+
+	/* Event handlers */
 	public void actionPerformed() {
 		/* don't do anything when a pop up is active */
 		if (warFrame.hasPopupActive()) {
@@ -136,7 +142,7 @@ public class WarGame {
 			}
 			break;
 		case RECEIVING_LETTER:
-			
+
 			break;
 		default:
 			break;
@@ -171,10 +177,11 @@ public class WarGame {
 			if (this.getSelectedTerritory() == null
 					&& t.getOwner().equals(this.getCurrentPlayer())) {
 				this.warState.selectTerritory(t);
-			/* re-select territory */
-			} else if ( t.getOwner().equals(this.getCurrentPlayer()) && !this.getSelectedTerritory().canMoveTo(t)) {
+				/* re-select territory */
+			} else if (t.getOwner().equals(this.getCurrentPlayer())
+					&& !this.getSelectedTerritory().canMoveTo(t)) {
 				this.warState.selectTerritory(t);
-		    /* target territory */
+				/* target territory */
 			} else {
 				this.warState.targetTerritory(t);
 				this.getWarFrame().spawnChooseNumberFrame(
@@ -232,27 +239,6 @@ public class WarGame {
 		this.warFrame.update(false);
 	}
 
-	public Territory getTargetedTerritory() {
-		return this.warState.getTargetedTerritory();
-
-	}
-
-	public Territory getSelectedTerritory() {
-		return this.warState.getSelectedTerritory();
-	}
-
-	public boolean moveArmies(Territory from, Territory to, int amount) {
-		if (!from.getOwner().equals(to.getOwner())) {
-			return false;
-		}
-		if (from.getArmyCount() - 1 < amount) {
-			return false;
-		}
-		from.removeArmies(amount);
-		to.addArmies(amount);
-		return true;
-	}
-
 	public void attackResult(int[] losses) {
 		if (this.getState().isAttacking()) {
 			this.getSelectedTerritory().removeArmies(losses[0]);
@@ -262,7 +248,7 @@ public class WarGame {
 			if (this.getTargetedTerritory().getArmyCount() == 0) {
 				this.getTargetedTerritory().setOwner(
 						this.getSelectedTerritory().getOwner());
-
+				this.getState().addConquestThisTurn();
 				/* always move at least one */
 				this.moveArmies(this.getSelectedTerritory(),
 						this.getTargetedTerritory(), 1);
@@ -282,21 +268,40 @@ public class WarGame {
 		this.warFrame.update(false);
 	}
 
-	public List<Card> getDeck() {
-		return deck;
-	}
-	public void giveCardToPlayer(Player p, Card c){
-		p.addCard(c);
-		this.deck.remove(c);
-	}
-	public void receiveCardFromPlayer(Player p, Card c)
-	{
-		this.deck.add(c);
-		p.removeCard(c);
-	}
-	public void insertCardOnly(Card c)
-	{
-		this.deck.add(c);
+	/* End Event handlers */
+
+	public Territory getTargetedTerritory() {
+		return this.warState.getTargetedTerritory();
 	}
 
+	public Territory getSelectedTerritory() {
+		return this.warState.getSelectedTerritory();
+	}
+
+	public boolean moveArmies(Territory from, Territory to, int amount) {
+		if (!from.getOwner().equals(to.getOwner())) {
+			return false;
+		}
+		if (from.getArmyCount() - 1 < amount) {
+			return false;
+		}
+		from.removeArmies(amount);
+		to.addArmies(amount);
+		return true;
+	}
+
+	public Deck getDeck() {
+		return deck;
+	}
+
+	public void giveCardToPlayer(Player p) {
+		Card c = this.deck.takeCard();
+		p.addCard(c);
+		System.out.println(String.format("Gave card %s to player %s",c.getType().toString(), p.getName()));
+	}
+
+	public void receiveCardFromPlayer(Player p, Card c) {
+		p.removeCard(c);
+		this.deck.returnCard(c);
+	}
 }

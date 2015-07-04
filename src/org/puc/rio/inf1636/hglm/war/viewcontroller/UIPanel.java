@@ -19,6 +19,7 @@ import javax.swing.JTextField;
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
 @SuppressWarnings("serial")
@@ -157,9 +158,14 @@ public class UIPanel extends JPanel {
 			} else {
 				playerLabel = this.playerLabels.get(i);
 			}
-			playerLabel.setText(String.format("%s (%d territories in total)%s",
-					p.getName(), p.getNumberOfTerritories(),
-					isCurrentPlayer ? "*" : ""));
+			StringBuilder sb = new StringBuilder();
+			for (Card c : p.getCards()) {
+				System.out.println(c.getType().toString());
+				sb.append(c.getType().toString());
+				sb.append(" ");
+			}
+			playerLabel.setText(String.format("%s (%d territories in total)%s. Cards: %s", p.getName(), p.getNumberOfTerritories(),
+					isCurrentPlayer ? "*" : "", sb.toString()));
 			i++;
 		}
 	}

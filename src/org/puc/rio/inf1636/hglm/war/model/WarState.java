@@ -9,6 +9,7 @@ public class WarState {
 	private TurnState currentState;
 	private Territory selectedTerritory;
 	private Territory targetedTerritory;
+	private int conquestsThisTurn = 0;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -47,6 +48,7 @@ public class WarState {
 			this.currentPlayer = game.getPlayers().get(currentPlayerIndex + 1);
 		}
 		this.clearSelections();
+		this.conquestsThisTurn = 0;
 		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 
@@ -71,7 +73,7 @@ public class WarState {
 
 	}
 	public boolean startDistributing() {
-		Player p; 
+		Player p;
 		
 		return true;
 	}
@@ -103,5 +105,13 @@ public class WarState {
 	public void clearSelections() {
 		this.selectedTerritory = null;
 		this.targetedTerritory = null;
+	}
+	
+	public int getConquestsThisTurn() {
+		return this.conquestsThisTurn;
+	}
+	
+	public void addConquestThisTurn() {
+		this.conquestsThisTurn++;
 	}
 }

@@ -1,4 +1,5 @@
-package org.puc.rio.inf1636.hglm.war.model;
+package org.puc.rio.inf1636.hglm.war.objective;
+
 
 public class CardObjective implements WarObjective {
 
