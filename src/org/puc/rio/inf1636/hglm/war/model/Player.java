@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
 
 public class Player {
@@ -85,6 +86,15 @@ public class Player {
 
 	public List<TerritoryCard> getCards() {
 		return this.cards;
+	}
+	public boolean checkVictory(){
+		return this.objective.checkVictory(WarGame.getInstance().getMap(), this);
+	}
+	public WarObjective getObjective() {
+		return this.objective;
+	}
+	public void setObjective(WarObjective obj) {
+		this.objective=obj;
 	}
 
 }

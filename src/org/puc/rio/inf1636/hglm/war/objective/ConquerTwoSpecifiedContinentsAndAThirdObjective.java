@@ -11,12 +11,13 @@ public class ConquerTwoSpecifiedContinentsAndAThirdObjective extends WarObjectiv
 Continent targetContinent1;
 Continent targetContinent2;
 	public ConquerTwoSpecifiedContinentsAndAThirdObjective(String description, Continent c1, Continent c2) {
-		super("Conquistar na totalidade a "+ c1.toString() + " e " + c2.toString());
+		super("Conquistar na totalidade a "+ c1.toString() + ", " + c2.toString() + " e um terceiro");
 		this.targetContinent1=c1;
 		this.targetContinent2=c2;
 	}
 
 	@Override
+	public
 	boolean checkVictory(Map m, Player p) {
 		for(Continent c : Continent.values()) { //for each continent
 			int tCont =0;

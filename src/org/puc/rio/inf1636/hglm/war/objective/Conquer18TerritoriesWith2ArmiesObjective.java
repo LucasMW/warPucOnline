@@ -12,6 +12,7 @@ public class Conquer18TerritoriesWith2ArmiesObjective extends WarObjective {
 	}
 
 	@Override
+	public
 	boolean checkVictory(Map m, Player p) {
 		
 		if(p.getNumberOfTerritories() >= 18)

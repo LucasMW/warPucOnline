@@ -17,6 +17,7 @@ Continent targetContinent2;
 	}
 
 	@Override
+	public
 	boolean checkVictory(Map m, Player p) {
 		for(Territory t : m.getTerritoriesByContinent(this.targetContinent1)) {
 			if(!t.getOwner().equals(p)) {
