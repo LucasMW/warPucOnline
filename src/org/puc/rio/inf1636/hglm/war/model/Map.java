@@ -9,7 +9,12 @@ import org.puc.rio.inf1636.hglm.war.Util;
 public class Map extends Object {
 
 	private List<Territory> territories = new ArrayList<Territory>();
-
+	private List<List <Territory>> continents = new ArrayList<List<Territory>>(6);
+	private List<Territory> northAmericaRed = new ArrayList<Territory>();
+	private List<Territory> southAmericaGreen = new ArrayList<Territory>();
+	private List<Territory> europeDarkBlue = new ArrayList<Territory>();
+	private List<Territory> africaPurple = new ArrayList<Territory>();
+	private List<Territory> asia = new ArrayList<Territory>();
 	public Map() {
 
 	}
