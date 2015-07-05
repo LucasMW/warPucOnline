@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
-import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.Player;
+import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 
 @SuppressWarnings("serial")
 public class UIPanel extends JPanel {
@@ -35,7 +35,7 @@ public class UIPanel extends JPanel {
 	private JLabel statusLabel;
 
 	private JButton actionButton;
-	private JButton myObjectiveButton;
+	private JButton showObjectiveButton;
 	private JButton myCardsButton;
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
@@ -222,17 +222,17 @@ public class UIPanel extends JPanel {
 
 			this.gamePanel.add(this.optionsPanel);
 			
-			this.myObjectiveButton = new JButton("myObjective");
-			this.myObjectiveButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
-			this.myObjectiveButton.setEnabled(true);
+			this.showObjectiveButton = new JButton("Show Objective");
+			this.showObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.showObjectiveButton.setEnabled(true);
 			ActionListener myObjectiveListener = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					System.out.println(WarGame.getInstance().getCurrentPlayer().getObjective().getDescription());
+					WarGame.getInstance().showObjective();
 				}
 			};
-			this.myObjectiveButton.addActionListener(myObjectiveListener);
-			this.optionsPanel.add(this.myObjectiveButton);
+			this.showObjectiveButton.addActionListener(myObjectiveListener);
+			this.optionsPanel.add(this.showObjectiveButton);
 		}
 
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
