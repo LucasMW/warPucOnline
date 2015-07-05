@@ -167,4 +167,12 @@ public class Map extends Object {
 		}
 	}
 
+	public List<Territory> getTerritoriesByOwner(Player owner) {
+		List<Territory> territoriesOwned = new LinkedList<Territory>();
+		for (Territory t: this.getTerritories()) {
+			territoriesOwned.add(t);
+		}
+		return territoriesOwned;
+	}
+
 }

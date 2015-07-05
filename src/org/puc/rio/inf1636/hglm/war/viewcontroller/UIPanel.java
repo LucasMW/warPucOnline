@@ -222,7 +222,7 @@ public class UIPanel extends JPanel {
 			ActionListener showCardsListener = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
-					WarGame.getInstance().showCards();
+					WarGame.getInstance().showCards(false);
 				}
 			};
 			this.showCardsButton.addActionListener(showCardsListener);

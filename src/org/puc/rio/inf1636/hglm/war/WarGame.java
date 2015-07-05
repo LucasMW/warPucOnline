@@ -47,14 +47,14 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map, this.deck);
-		this.deck.addJoker(10);
+		this.deck.addJoker(2);
 		this.deck.shuffle();
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
 		this.giveObjectiveToPlayers();
-		players.get(0).giveArmies(
-				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
+		this.getCurrentPlayer().giveArmies(
+				WarLogic.calculateArmiesToGain(this.getMap(), this.getCurrentPlayer()));
 		this.getWarFrame().update(true);
 	}
 
@@ -73,8 +73,7 @@ public class WarGame {
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						warState.getCurrentPlayer()));
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
-			this.warFrame
-					.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
+			this.showCards(true);
 		}
 		this.warFrame.update(false);
 	}
@@ -257,19 +256,28 @@ public class WarGame {
 	public void selectNumber(int number) {
 		switch (this.getTurnState()) {
 		case ATTACKING:
-			/* conquered */
+			/* already conquered and moving armies */
 			if (this.getSelectedTerritory().getOwner()
 					.equals(this.getTargetedTerritory().getOwner())) {
 				this.getMap().moveArmies(this.getSelectedTerritory(),
 						this.getTargetedTerritory(), number - 1, true);
+				Player winner = this.checkWinner();
+				if (winner != null) {
+					this.endGameSequence(winner);
+					return;
+				}
+				if (this.getState().getCanStealCardsFrom() != null) {
+					if (this.getCurrentPlayer().getCards().size() < 5) {
+						this.getWarFrame().spawnCardSelectionFrame(
+								this.getState().getCanStealCardsFrom(),
+								5 - this.getCurrentPlayer().getCards().size(),
+								false);
+					}
+				}
 			} else {
 				this.getWarFrame().spawnAttackFrame(
 						this.getSelectedTerritory(),
 						this.getTargetedTerritory(), number);
-			}
-			Player winner = this.checkWinner();
-			if (winner != null) {
-				this.endGameSequence(winner);
 			}
 			break;
 		case MOVING_ARMIES:
@@ -300,10 +308,21 @@ public class WarGame {
 
 			/* attacker conquered */
 			if (this.getTargetedTerritory().getArmyCount() == 0) {
+				/* Is last territory */
+				if (this.getTargetedTerritory().getOwner()
+						.getNumberOfTerritories() == 1) {
+					this.getState().setCanStealCardsFrom(
+							this.getTargetedTerritory().getOwner());
+				}
 				this.getState().addConquestThisTurn();
 				int maxToMove = this.getMap().conquerTerritory(
 						this.getSelectedTerritory(),
 						this.getTargetedTerritory());
+				Player winner = this.checkWinner();
+				if (winner != null) {
+					this.endGameSequence(winner);
+					return;
+				}
 				this.warFrame.spawnChooseNumberFrame(maxToMove, String.format(
 						"How many armies to move from %s to %s?", this
 								.getSelectedTerritory().getName(), this
@@ -358,9 +377,9 @@ public class WarGame {
 				this.getCurrentPlayer().getObjective().getDescription());
 	}
 
-	public void showCards() {
-		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(),
-				false);
+	public void showCards(boolean forcedToExchange) {
+		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(), 3,
+				forcedToExchange);
 	}
 
 	public void exchangeCards(List<Card> selectedCards) {

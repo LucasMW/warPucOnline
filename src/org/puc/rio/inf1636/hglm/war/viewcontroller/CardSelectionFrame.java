@@ -32,14 +32,18 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 	private HashMap<JLabel, Card> cards = new HashMap<JLabel, Card>();
 	private List<Card> selectedCards = new LinkedList<Card>();
 
+	private int maxNumberOfCards;
+
 	private JPanel cardDisplayPanel;
 
 	private JButton exchangeCardsButton;
 
 	private Player player;
 
-	public CardSelectionFrame(Player p, boolean forcedToExchange) {
+	public CardSelectionFrame(Player p, int maxNumberOfCards,
+			boolean forcedToExchange) {
 		this.player = p;
+		this.maxNumberOfCards = maxNumberOfCards;
 		if (forcedToExchange) {
 			this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
 		} else {
@@ -65,9 +69,9 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 			String imagePath;
 			if (c instanceof TerritoryCard) {
 				TerritoryCard tc = (TerritoryCard) c;
-				imagePath = String
-						.format("resources/cards/war_carta_%s.png", tc
-								.getTerritory().getName().toLowerCase()
+				imagePath = String.format(
+						"resources/cards/war_carta_%s.png",
+						tc.getTerritory().getName().toLowerCase()
 								.replaceAll("\\s+", ""));
 				imagePath = Normalizer
 						.normalize(imagePath, Normalizer.Form.NFD);
@@ -115,14 +119,15 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 			this.selectedCards.remove(index);
 			clickedCard.setBorder(BorderFactory
 					.createLineBorder(Color.BLACK, 2));
-		} else if (this.selectedCards.size() < 3) {
+		} else if (this.selectedCards.size() < this.maxNumberOfCards) {
 			this.selectedCards.add(this.cards.get(clickedCard));
 			clickedCard
 					.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
 		}
-
-		if (this.player.hasValidCardExchange(this.selectedCards)
-				&& WarGame.getInstance().getState().isPlacing()) {
+		if ((this.player.hasValidCardExchange(this.selectedCards) && WarGame
+				.getInstance().getState().isPlacing())
+				|| (WarGame.getInstance().getState().isAttacking() && this.selectedCards
+						.size() < this.maxNumberOfCards)) {
 			this.exchangeCardsButton.setEnabled(true);
 		} else {
 			this.exchangeCardsButton.setEnabled(false);

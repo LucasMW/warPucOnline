@@ -105,10 +105,10 @@ public class WarFrame extends JFrame {
 		}
 	}
 
-	public void spawnCardSelectionFrame(Player currentPlayer, boolean forcedToExchange) {
+	public void spawnCardSelectionFrame(Player currentPlayer, int maxNumberOfCards, boolean forcedToExchange) {
 		/* only one at once */
 		if (!this.hasPopupActive()) {
-			this.cardSelectionFrame = new CardSelectionFrame(currentPlayer, forcedToExchange);
+			this.cardSelectionFrame = new CardSelectionFrame(currentPlayer, maxNumberOfCards, forcedToExchange);
 			this.cardSelectionFrame.setVisible(true);
 		}
 	}

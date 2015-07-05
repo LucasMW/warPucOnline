@@ -11,6 +11,7 @@ public class WarState {
 	private Territory targetedTerritory;
 	private int conquestsThisTurn = 0;
 	private int cardExchangeArmyCount = 4;
+	private Player canStealCardsFrom = null;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -50,6 +51,7 @@ public class WarState {
 		}
 		this.clearSelections();
 		this.conquestsThisTurn = 0;
+		this.canStealCardsFrom = null;
 		this.currentState = TurnState.PLACING_NEW_ARMIES;
 	}
 
@@ -117,5 +119,13 @@ public class WarState {
 	
 	public void incrementCardExchangeArmyCount() {
 		this.cardExchangeArmyCount += 2;
+	}
+
+	public void setCanStealCardsFrom(Player p) {
+		this.canStealCardsFrom = p;
+	}
+	
+	public Player getCanStealCardsFrom() {
+		return this.canStealCardsFrom;
 	}
 }
