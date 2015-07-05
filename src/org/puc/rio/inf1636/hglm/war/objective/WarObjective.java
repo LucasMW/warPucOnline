@@ -14,5 +14,5 @@ public abstract class WarObjective {
 		return this.description;
 	}
 
-	abstract boolean checkVictory(Map m, Player p);
+	public abstract boolean checkVictory(Map m, Player p);
 }

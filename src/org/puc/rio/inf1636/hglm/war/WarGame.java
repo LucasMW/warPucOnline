@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
+import org.puc.rio.inf1636.hglm.war.model.Continent;
 import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
@@ -12,6 +14,7 @@ import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 import org.puc.rio.inf1636.hglm.war.model.WarState;
 import org.puc.rio.inf1636.hglm.war.model.WarState.TurnState;
+import org.puc.rio.inf1636.hglm.war.objective.*;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 public class WarGame {
@@ -20,8 +23,10 @@ public class WarGame {
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
 	private Deck deck;
+	
 	private WarFrame warFrame;
 	private WarState warState = null;
+	private Player winner;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
@@ -42,6 +47,7 @@ public class WarGame {
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
+		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(players.get(0)));
 		this.getWarFrame().update(true);
@@ -115,6 +121,28 @@ public class WarGame {
 
 	public void generateDeck() {
 
+	}
+	private void giveObjectiveToPlayers() {
+		List<WarObjective> objectives = new ArrayList<WarObjective>();
+		objectives.add(new Conquer18TerritoriesWith2ArmiesObjective(null));
+		objectives.add(new Conquer24TerritoriesObjective(null));
+		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.ASIA, Continent.SOUTH_AMERICA));
+		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.ASIA, Continent.AFRICA));
+		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.NORTH_AMERICA, Continent.AFRICA));
+		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.NORTH_AMERICA, Continent.OCEANIA));
+		objectives.add(new ConquerTwoSpecifiedContinentsAndAThirdObjective(null,Continent.EUROPE, Continent.OCEANIA));
+		objectives.add(new ConquerTwoSpecifiedContinentsAndAThirdObjective(null,Continent.EUROPE, Continent.SOUTH_AMERICA));
+		
+		for(Player p : this.players) {
+		objectives.add(new DestroyPlayerObjective(null, p));
+		}
+		Random rnd = new Random();
+		for(Player p : this.players) {
+			
+			int index=rnd.nextInt(objectives.size());
+			p.setObjective(objectives.get(index));
+			objectives.remove(index);
+		}
 	}
 
 	/* Event handlers */
@@ -196,6 +224,7 @@ public class WarGame {
 			}
 			break;
 		case RECEIVING_LETTER:
+			
 			break;
 		default:
 			break;
@@ -301,5 +330,20 @@ public class WarGame {
 	public void receiveCardFromPlayer(Player p, TerritoryCard c) {
 		p.removeCard(c);
 		this.deck.returnCard(c);
+	}
+	public boolean CheckVictory() {
+		for(Player p: this.players){
+			if(p.checkVictory()) {
+				this.winner=p;
+				return true;
+			}
+		}
+			return false;
+		}
+	
+	
+	private void endGameSequence() {
+		System.out.println("GAME FINISHED");
+		System.out.println("Winner is " + this.winner.getName() + " " + winner.getObjective().getDescription() );
 	}
 }

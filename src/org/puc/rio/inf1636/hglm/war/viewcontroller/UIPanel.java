@@ -35,6 +35,8 @@ public class UIPanel extends JPanel {
 	private JLabel statusLabel;
 
 	private JButton actionButton;
+	private JButton myObjectiveButton;
+	private JButton myCardsButton;
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
 
@@ -219,6 +221,18 @@ public class UIPanel extends JPanel {
 			this.optionsPanel.add(this.toggleMapDisplayButton);
 
 			this.gamePanel.add(this.optionsPanel);
+			
+			this.myObjectiveButton = new JButton("myObjective");
+			this.myObjectiveButton.setAlignmentX(Component.RIGHT_ALIGNMENT);
+			this.myObjectiveButton.setEnabled(true);
+			ActionListener myObjectiveListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					System.out.println(WarGame.getInstance().getCurrentPlayer().getObjective().getDescription());
+				}
+			};
+			this.myObjectiveButton.addActionListener(myObjectiveListener);
+			this.optionsPanel.add(this.myObjectiveButton);
 		}
 
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();

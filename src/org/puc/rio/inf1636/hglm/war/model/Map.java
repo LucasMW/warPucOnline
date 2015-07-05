@@ -95,5 +95,13 @@ public class Map extends Object {
 		return null;
 
 	}
+	public List<Territory> getTerritoriesByContinent(Continent c) {
+		List<Territory> tl = new ArrayList<Territory>();
+		for(Territory t: this.territories){
+			if(t.getContinent() == c)
+				tl.add(t);
+		}
+		return tl;
+	}
 
 }
