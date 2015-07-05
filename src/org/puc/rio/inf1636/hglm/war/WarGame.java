@@ -43,6 +43,7 @@ public class WarGame {
 		/* Randomize player order */
 		Collections.shuffle(players);
 		this.warState = new WarState(players, new Map(), new Deck());
+		this.getState().attach(this.getWarFrame());
 		Util.loadTerritories(this.getState().getMap(), this.getState()
 				.getDeck());
 		this.getState().getDeck().addJoker(2);
@@ -53,27 +54,7 @@ public class WarGame {
 		this.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						this.getCurrentPlayer()));
-		this.getWarFrame().update(true);
-	}
-
-	public void nextTurn() {
-		/* Do nothing when a pop up is active */
-		if (warFrame.hasPopupActive()) {
-			warFrame.focusPopup();
-			return;
-		}
-		if (this.warState.getConquestsThisTurn() > 0) {
-			this.giveCardToPlayer(this.getCurrentPlayer());
-		}
-		this.getMap().resetMovableArmiesCount();
-		this.warState.nextTurn();
-		this.warState.getCurrentPlayer().giveArmies(
-				WarLogic.calculateArmiesToGain(this.getMap(),
-						warState.getCurrentPlayer()));
-		if (this.getCurrentPlayer().getCards().size() >= 5) {
-			this.showCards(true);
-		}
-		this.warFrame.update(false);
+		this.getWarFrame().init();
 	}
 
 	/* Wargame is a facade, no-one should be able to access the state */
@@ -194,16 +175,37 @@ public class WarGame {
 	}
 
 	/* Event handlers */
+	public void nextTurn() {
+		/* Do nothing when a pop up is active */
+		if (this.getWarFrame().hasPopupActive()) {
+			this.getWarFrame().focusPopup();
+			return;
+		}
+		if (this.getState().getConquestsThisTurn() > 0) {
+			this.giveCardToPlayer(this.getCurrentPlayer());
+		}
+		this.getMap().resetMovableArmiesCount();
+		this.getState().nextTurn();
+		this.getState()
+				.getCurrentPlayer()
+				.giveArmies(
+						WarLogic.calculateArmiesToGain(this.getMap(),
+								getState().getCurrentPlayer()));
+		if (this.getCurrentPlayer().getCards().size() >= 5) {
+			this.showCards(true);
+		}
+		this.getState().notifyAllObservers();
+	}
+
 	public void actionPerformed() {
-		/* don't do anything when a pop up is active */
-		if (warFrame.hasPopupActive()) {
-			warFrame.focusPopup();
+		/* Do nothing when a pop up is active */
+		if (this.getWarFrame().hasPopupActive()) {
+			this.getWarFrame().focusPopup();
 			return;
 		}
 		switch (this.getTurnState()) {
 		case ATTACKING:
-			this.warState.startMovingArmies();
-			this.warFrame.update(false);
+			this.getState().startMovingArmies();
 			break;
 		case MOVING_ARMIES:
 			this.getState().clearSelections();
@@ -222,53 +224,63 @@ public class WarGame {
 		default:
 			break;
 		}
-		this.warFrame.update(false);
+		this.getState().notifyAllObservers();
 	}
 
 	public void selectTerritory(Territory t) {
-		/* don't do anything when a pop up is active */
-		if (warFrame.hasPopupActive()) {
-			warFrame.focusPopup();
+		/* Do nothing when a pop up is active */
+		if (this.getWarFrame().hasPopupActive()) {
+			getWarFrame().focusPopup();
 			return;
 		}
 		switch (this.getTurnState()) {
 		case ATTACKING:
+			/* Select territory to attack from */
 			if (this.getSelectedTerritory() == null
 					&& t.getOwner().equals(this.getCurrentPlayer())) {
 				this.warState.selectTerritory(t);
-			} else if (t.getOwner().equals(this.getCurrentPlayer())) {
-				this.warState.selectTerritory(t);
-			} else if (this.getSelectedTerritory().canAttack(t)) {
-				this.warState.targetTerritory(t);
-				this.getWarFrame().spawnChooseNumberFrame(
-						this.getSelectedTerritory().getAtackableArmyCount(),
-						String.format("How many to attack from %s to %s with?",
-								this.getSelectedTerritory().getName(), this
-										.getTargetedTerritory().getName()));
+			} else {
+				/* Select another territory */
+				if (t.getOwner().equals(this.getCurrentPlayer())) {
+					this.warState.selectTerritory(t);
+				/* Select territory to attack */
+				} else if (this.getSelectedTerritory().canAttack(t)) {
+					this.getState().targetTerritory(t);
+					this.getWarFrame()
+							.spawnChooseNumberFrame(
+									this.getSelectedTerritory()
+											.getAtackableArmyCount(),
+									String.format(
+											"How many to attack from %s to %s with?",
+											this.getSelectedTerritory()
+													.getName(), this
+													.getTargetedTerritory()
+													.getName()));
+				}
 			}
 			break;
 		case MOVING_ARMIES:
-			/* select territory */
-			if (this.getSelectedTerritory() == null
-					&& t.getOwner().equals(this.getCurrentPlayer())) {
-				this.warState.selectTerritory(t);
-				/* re-select territory */
-			} else if (t.getOwner().equals(this.getCurrentPlayer())
-					&& !this.getSelectedTerritory().canMoveTo(t)) {
-				this.warState.selectTerritory(t);
-				/* target territory */
-			} else {
-				this.warState.targetTerritory(t);
-				this.getWarFrame().spawnChooseNumberFrame(
-						this.getSelectedTerritory().getMoveableArmyCount(),
-						String.format("How many to move from %s to %s?", this
-								.getSelectedTerritory().getName(), this
-								.getTargetedTerritory().getName()));
+			if (t.getOwner().equals(this.getCurrentPlayer())) {
+				/* select territory */
+				if (this.getSelectedTerritory() == null) {
+					this.warState.selectTerritory(t);
+					/* select another owned territory */
+				} else if (!this.getSelectedTerritory().canMoveTo(t)) {
+					this.warState.selectTerritory(t);
+					/* target owned territory */
+				} else {
+					this.warState.targetTerritory(t);
+					this.getWarFrame().spawnChooseNumberFrame(
+							this.getSelectedTerritory().getMoveableArmyCount(),
+							String.format("How many to move from %s to %s?",
+									this.getSelectedTerritory().getName(), this
+											.getTargetedTerritory().getName()));
+				}
 			}
 			break;
 		case PLACING_NEW_ARMIES:
 			if (t.getOwner().equals(this.getCurrentPlayer())) {
-				this.warState.selectTerritory(t);
+				this.getState().selectTerritory(t);
 			}
 			break;
 		case RECEIVING_LETTER:
@@ -277,7 +289,7 @@ public class WarGame {
 		default:
 			break;
 		}
-		this.warFrame.update(false);
+		this.getState().notifyAllObservers();
 	}
 
 	public void selectNumber(int number) {
@@ -323,9 +335,8 @@ public class WarGame {
 			break;
 		default:
 			break;
-
 		}
-		this.warFrame.update(false);
+		this.getState().notifyAllObservers();
 	}
 
 	public void attackResult(int[] losses) {
@@ -341,10 +352,10 @@ public class WarGame {
 					this.getState().setCanStealCardsFrom(
 							this.getTargetedTerritory().getOwner());
 				}
-				this.getState().addConquestThisTurn();
 				int maxToMove = this.getMap().conquerTerritory(
 						this.getSelectedTerritory(),
 						this.getTargetedTerritory());
+				this.getState().addConquestThisTurn();
 				Player winner = this.checkWinner();
 				if (winner != null) {
 					this.endGameSequence(winner);
@@ -356,13 +367,13 @@ public class WarGame {
 								.getTargetedTerritory().getName()));
 			}
 		}
-		this.warFrame.update(false);
+		this.getState().notifyAllObservers();
 	}
 
 	public void showObjective() {
-		/* don't do anything when a pop up is active */
-		if (warFrame.hasPopupActive()) {
-			warFrame.focusPopup();
+		/* Do nothing when a pop up is active */
+		if (this.getWarFrame().hasPopupActive()) {
+			getWarFrame().focusPopup();
 			return;
 		}
 		this.getWarFrame().spawnTextFrame(
@@ -423,8 +434,6 @@ public class WarGame {
 			this.getCurrentPlayer().giveArmies(
 					this.getState().getCardExchangeArmyCount());
 			this.incrementCardExchangeArmyCount();
-			this.warFrame.update(false);
 		}
 	}
-
 }

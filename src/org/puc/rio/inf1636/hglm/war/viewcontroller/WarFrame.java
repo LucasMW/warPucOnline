@@ -8,7 +8,7 @@ import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 @SuppressWarnings("serial")
-public class WarFrame extends JFrame {
+public class WarFrame extends JFrame implements Observer {
 
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
@@ -43,43 +43,54 @@ public class WarFrame extends JFrame {
 		return this.uiPanel;
 	}
 
+	public void init() {
+		this.update(true);
+	}
+
+	public void update() {
+		this.update(false);
+	}
+
 	public void update(boolean first) {
 		this.uiPanel.update(first);
 		this.mapPanel.update(first);
 	}
-	
+
 	public void focusPopup() {
 		if (this.hasAttackFrameActive()) {
 			this.attackFrame.toFront();
 		} else if (this.hasChooseNumberFrameActive()) {
 			this.chooseNumberFrame.toFront();
 		} else if (this.hasTextFrameActive()) {
-			this.textFrame.toFront(); 
+			this.textFrame.toFront();
 		} else if (this.hasCardSelectionFrameActive()) {
 			this.cardSelectionFrame.toFront();
 		}
 	}
-	
+
 	public boolean hasAttackFrameActive() {
 		return this.attackFrame != null && this.attackFrame.isVisible();
 	}
-	
+
 	public boolean hasChooseNumberFrameActive() {
-		return this.chooseNumberFrame != null && this.chooseNumberFrame.isVisible();
+		return this.chooseNumberFrame != null
+				&& this.chooseNumberFrame.isVisible();
 	}
-	
+
 	public boolean hasTextFrameActive() {
 		return this.textFrame != null && this.textFrame.isVisible();
 	}
 
 	public boolean hasCardSelectionFrameActive() {
-		return this.cardSelectionFrame != null && this.cardSelectionFrame.isVisible();
-	}
-	
-	public boolean hasPopupActive() {
-		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive() || this.hasTextFrameActive() || this.hasCardSelectionFrameActive();
+		return this.cardSelectionFrame != null
+				&& this.cardSelectionFrame.isVisible();
 	}
 
+	public boolean hasPopupActive() {
+		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive()
+				|| this.hasTextFrameActive()
+				|| this.hasCardSelectionFrameActive();
+	}
 
 	public void spawnAttackFrame(Territory from, Territory to, int number) {
 		/* only one at once */
@@ -105,11 +116,14 @@ public class WarFrame extends JFrame {
 		}
 	}
 
-	public void spawnCardSelectionFrame(Player currentPlayer, int maxNumberOfCards, boolean forcedToExchange) {
+	public void spawnCardSelectionFrame(Player currentPlayer,
+			int maxNumberOfCards, boolean forcedToExchange) {
 		/* only one at once */
 		if (!this.hasPopupActive()) {
-			this.cardSelectionFrame = new CardSelectionFrame(currentPlayer, maxNumberOfCards, forcedToExchange);
+			this.cardSelectionFrame = new CardSelectionFrame(currentPlayer,
+					maxNumberOfCards, forcedToExchange);
 			this.cardSelectionFrame.setVisible(true);
 		}
 	}
+
 }

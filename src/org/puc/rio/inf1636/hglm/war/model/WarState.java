@@ -3,24 +3,24 @@ package org.puc.rio.inf1636.hglm.war.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WarState {
+public class WarState extends Subject {
 
 	private Player currentPlayer;
 	private List<Player> players = new ArrayList<Player>();
 	private Player canStealCardsFrom = null;
-	
+
 	private TurnState currentTurnState;
-	
+
 	private Territory selectedTerritory;
 	private Territory targetedTerritory;
-	
+
 	private int conquestsThisTurn = 0;
 	private int cardExchangeArmyCount = 4;
 
 	private Map map = null;
-	
+
 	private Deck deck;
-	
+
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
 	}
@@ -35,10 +35,6 @@ public class WarState {
 
 	public Map getMap() {
 		return this.map;
-	}
-
-	public void addPlayer(Player p) {
-		players.add(p);
 	}
 
 	public List<Player> getPlayers() {
@@ -57,6 +53,26 @@ public class WarState {
 		return this.currentPlayer;
 	}
 
+	public Territory getSelectedTerritory() {
+		return this.selectedTerritory;
+	}
+
+	public Territory getTargetedTerritory() {
+		return this.targetedTerritory;
+	}
+
+	public int getConquestsThisTurn() {
+		return this.conquestsThisTurn;
+	}
+
+	public int getCardExchangeArmyCount() {
+		return this.cardExchangeArmyCount;
+	}
+
+	public Player getCanStealCardsFrom() {
+		return this.canStealCardsFrom;
+	}
+
 	public void nextTurn() {
 		int currentPlayerIndex = players.indexOf(this.currentPlayer);
 		if (currentPlayerIndex == players.size() - 1) {
@@ -70,25 +86,14 @@ public class WarState {
 		this.currentTurnState = TurnState.PLACING_NEW_ARMIES;
 	}
 
-	public boolean startAttacking() {
-		if (this.getCurrentTurnState() != TurnState.PLACING_NEW_ARMIES) {
-			System.out.println("Should place all reinforcements first");
-			return false;
-		}
+	public void startAttacking() {
 		this.clearSelections();
 		this.currentTurnState = TurnState.ATTACKING;
-		return true;
 	}
 
-	public boolean startMovingArmies() {
-		if (!this.currentTurnState.equals(TurnState.ATTACKING)) {
-			System.out.println("Must be attacking before moving");
-			return false;
-		}
+	public void startMovingArmies() {
 		this.clearSelections();
 		this.currentTurnState = TurnState.MOVING_ARMIES;
-		return true;
-
 	}
 
 	public void selectTerritory(Territory t) {
@@ -99,10 +104,6 @@ public class WarState {
 		this.selectedTerritory = null;
 	}
 
-	public Territory getSelectedTerritory() {
-		return this.selectedTerritory;
-	}
-	
 	public void targetTerritory(Territory t) {
 		this.targetedTerritory = t;
 	}
@@ -111,27 +112,15 @@ public class WarState {
 		this.targetedTerritory = null;
 	}
 
-	public Territory getTargetedTerritory() {
-		return this.targetedTerritory;
-	}
-
 	public void clearSelections() {
 		this.selectedTerritory = null;
 		this.targetedTerritory = null;
 	}
-	
-	public int getConquestsThisTurn() {
-		return this.conquestsThisTurn;
-	}
-	
+
 	public void addConquestThisTurn() {
 		this.conquestsThisTurn++;
 	}
-	
-	public int getCardExchangeArmyCount() {
-		return this.cardExchangeArmyCount;
-	}
-	
+
 	public void setCardExchangeArmyCount(int count) {
 		this.cardExchangeArmyCount = count;
 	}
@@ -139,8 +128,5 @@ public class WarState {
 	public void setCanStealCardsFrom(Player p) {
 		this.canStealCardsFrom = p;
 	}
-	
-	public Player getCanStealCardsFrom() {
-		return this.canStealCardsFrom;
-	}
+
 }

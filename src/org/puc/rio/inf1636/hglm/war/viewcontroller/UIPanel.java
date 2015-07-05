@@ -61,7 +61,7 @@ public class UIPanel extends JPanel implements MouseListener {
 		this.size.width = (int) (this.size.width * MULTIPLIER_X);
 		this.setMaximumSize(this.size);
 		this.addStartUIPanel();
-		
+
 		this.layout.show(this, "Starting UI");
 	}
 
@@ -101,9 +101,8 @@ public class UIPanel extends JPanel implements MouseListener {
 					JTextField playerNameTextField = playerNameTextFields
 							.get(i);
 					if (playerNameTextField.getText().length() > 0) {
-						players.add(
-								new Player(playerNameTextField.getText(),
-										Player.playerColors[i]));
+						players.add(new Player(playerNameTextField.getText(),
+								Player.playerColors[i]));
 					}
 				}
 				if (players.size() >= WarLogic.MIN_PLAYERS) {
@@ -287,8 +286,10 @@ public class UIPanel extends JPanel implements MouseListener {
 		this.endTurnButton.setEnabled(true);
 		if (currentPlayer.getCards().isEmpty()) {
 			this.showCardsButton.setEnabled(false);
-		} else {
+			this.showCardsButton.setText("Show Cards");
+		} else {	
 			this.showCardsButton.setEnabled(true);
+			this.showCardsButton.setText(String.format("Show Cards (%d)", currentPlayer.getCards().size()));
 		}
 		switch (WarGame.getInstance().getTurnState()) {
 		case ATTACKING:
@@ -316,8 +317,7 @@ public class UIPanel extends JPanel implements MouseListener {
 			if (WarGame.getInstance().getSelectedTerritory() != null
 					&& currentPlayer.getUnplacedArmies() > 0) {
 				actionString = String.format("Place armies in %s", WarGame
-						.getInstance().getSelectedTerritory()
-						.getName());
+						.getInstance().getSelectedTerritory().getName());
 				this.actionButton.setEnabled(true);
 			}
 			/* must always place all armies */
@@ -344,24 +344,24 @@ public class UIPanel extends JPanel implements MouseListener {
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

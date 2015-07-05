@@ -232,7 +232,8 @@ public class MapPanel extends JPanel {
 								/ WarGame.getInstance().getWarFrame()
 										.getMapPanel().coordinatesMultiplierY)) {
 					WarGame.getInstance().selectTerritory(t);
-					return; // Cannot select twice
+					/*  Cannot select twice */
+					return;
 				} else {
 					WarGame.getInstance().focusPopupIfExists();					
 				}
