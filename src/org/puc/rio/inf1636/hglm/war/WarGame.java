@@ -53,11 +53,6 @@ public class WarGame {
 		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
-		for (int i = 0; i < 5; i++)
-			this.giveCardToPlayer(players.get(0));
-		if (this.getCurrentPlayer().getCards().size() >= 5) {
-			this.warFrame.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
-		}
 		this.getWarFrame().update(true);
 	}
 
@@ -70,6 +65,7 @@ public class WarGame {
 		if (this.warState.getConquestsThisTurn() > 0) {
 			this.giveCardToPlayer(this.getCurrentPlayer());
 		}
+		this.getMap().resetMovableArmiesCount();
 		this.warState.nextTurn();
 		this.warState.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(),
@@ -262,7 +258,7 @@ public class WarGame {
 			if (this.getSelectedTerritory().getOwner()
 					.equals(this.getTargetedTerritory().getOwner())) {
 				this.getMap().moveArmies(this.getSelectedTerritory(),
-						this.getTargetedTerritory(), number - 1);
+						this.getTargetedTerritory(), number - 1, true);
 			} else {
 				this.getWarFrame().spawnAttackFrame(
 						this.getSelectedTerritory(),
@@ -275,7 +271,7 @@ public class WarGame {
 			break;
 		case MOVING_ARMIES:
 			this.getMap().moveArmies(this.getSelectedTerritory(),
-					this.getTargetedTerritory(), number);
+					this.getTargetedTerritory(), number, false);
 			this.getState().clearSelections();
 			break;
 		case PLACING_NEW_ARMIES:

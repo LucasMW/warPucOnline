@@ -17,6 +17,7 @@ public class Territory extends Object {
 	private int armyCount = 1;
 	private Set<Territory> neighbors = new HashSet<Territory>();
 	private Continent continent;
+	private int unmovableArmiesCount = 0;
 
 	public Territory(String name, List<Point2D.Double> points, Continent c) {
 		this.name = name;
@@ -95,7 +96,7 @@ public class Territory extends Object {
 	}
 
 	public boolean canMoveTo(Territory t) {
-		if (this.getArmyCount() <= 1) {
+		if (this.getMoveableArmyCount() < 1) {
 			return false;
 		}
 		if (!t.getOwner().equals(this.getOwner())) {
@@ -133,10 +134,7 @@ public class Territory extends Object {
 	}
 
 	public int getMoveableArmyCount() {
-		if (this.getArmyCount() <= 1) {
-			return 0;
-		}
-		return this.getArmyCount() - 1;
+		return Math.max(0, this.getArmyCount() - 1 - this.unmovableArmiesCount);
 	}
 
 	public int getAtackableArmyCount() {
@@ -147,5 +145,14 @@ public class Territory extends Object {
 		} else {
 			return this.getArmyCount() - 1;
 		}
+	}
+
+	public void addUnmovableArmies(int amount) {
+		this.unmovableArmiesCount += amount;
+		this.addArmies(amount);
+	}
+	
+	public void resetUnmovableArmiesCount() {
+		this.unmovableArmiesCount = 0;
 	}
 }

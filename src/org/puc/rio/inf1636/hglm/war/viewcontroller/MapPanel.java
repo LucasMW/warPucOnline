@@ -222,10 +222,10 @@ public class MapPanel extends JPanel {
 			for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 				if (t.getPolygon().contains(
 						me.getX()
-								* WarGame.getInstance().getWarFrame()
+								/ WarGame.getInstance().getWarFrame()
 										.getMapPanel().coordinatesMultiplierX,
 						me.getY()
-								* WarGame.getInstance().getWarFrame()
+								/ WarGame.getInstance().getWarFrame()
 										.getMapPanel().coordinatesMultiplierY)) {
 					WarGame.getInstance().selectTerritory(t);
 					return; // Cannot select twice

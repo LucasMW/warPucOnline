@@ -135,7 +135,7 @@ public class Map extends Object {
 	public int conquerTerritory(Territory from, Territory to) {
 		to.setOwner(from.getOwner());
 		/* always move at least one */
-		this.moveArmies(from, to, 1);
+		this.moveArmies(from, to, 1, true);
 
 		if (from.getAtackableArmyCount() + 1 > 3) {
 			return 3;
@@ -144,7 +144,7 @@ public class Map extends Object {
 		}
 	}
 
-	public boolean moveArmies(Territory from, Territory to, int amount) {
+	public boolean moveArmies(Territory from, Territory to, int amount, boolean movable) {
 		if (!from.getOwner().equals(to.getOwner())) {
 			return false;
 		}
@@ -152,8 +152,18 @@ public class Map extends Object {
 			return false;
 		}
 		from.removeArmies(amount);
-		to.addArmies(amount);
+		if (movable) {
+			to.addArmies(amount);
+		} else {
+			to.addUnmovableArmies(amount);
+		}
 		return true;
+	}
+		
+	public void resetMovableArmiesCount() {
+		for (Territory t : this.getTerritories()) {
+			t.resetUnmovableArmiesCount();
+		}
 	}
 
 }

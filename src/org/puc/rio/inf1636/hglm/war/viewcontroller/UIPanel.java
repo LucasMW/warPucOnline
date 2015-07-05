@@ -270,12 +270,12 @@ public class UIPanel extends JPanel {
 			this.actionButton.setEnabled(true);
 			break;
 		case MOVING_ARMIES:
+			actionString = "Clear selection";
+			this.actionButton.setEnabled(true);
 			if (WarGame.getInstance().getSelectedTerritory() == null) {
 				statusString = "Select a country to move from";
 			} else if (WarGame.getInstance().getTargetedTerritory() == null) {
 				statusString = "Select a country to move to";
-				actionString = "Clear selection";
-				this.actionButton.setEnabled(true);
 			}
 			break;
 		case PLACING_NEW_ARMIES:

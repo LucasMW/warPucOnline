@@ -13,11 +13,7 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
-	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>(); // contains
-																		// this
-																		// player
-																		// owned
-																		// cards
+	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>();
 	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
@@ -27,8 +23,7 @@ public class Player {
 	private static final Color BROWN = new Color(128, 128, 0);
 	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE,
 			PURPLE, BROWN };
-	private int unplacedArmies = 0; // represents number of armies to be
-									// placed
+	private int unplacedArmies = 0;
 
 	public Player(String name, Color color) {
 		this.name = name;
