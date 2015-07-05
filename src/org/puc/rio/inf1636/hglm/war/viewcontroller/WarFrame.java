@@ -12,6 +12,7 @@ public class WarFrame extends JFrame {
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
 	private AttackFrame attackFrame;
+	private TextFrame textFrame;
 	private ChooseNumberFrame chooseNumberFrame;
 
 	public WarFrame() {
@@ -61,8 +62,12 @@ public class WarFrame extends JFrame {
 		return this.chooseNumberFrame != null && this.chooseNumberFrame.isVisible();
 	}
 	
+	public boolean hasTextFrameActive() {
+		return this.textFrame != null && this.textFrame.isVisible();
+	}
+	
 	public boolean hasPopupActive() {
-		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive();
+		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive() || this.hasTextFrameActive();
 	}
 
 	public void spawnAttackFrame(Territory from, Territory to, int number) {
@@ -78,6 +83,14 @@ public class WarFrame extends JFrame {
 		if (!this.hasPopupActive()) {
 			this.chooseNumberFrame = new ChooseNumberFrame(number, message);
 			this.chooseNumberFrame.setVisible(true);
+		}
+	}
+
+	public void spawnTextFrame(String message) {
+		/* only one at once */
+		if (!this.hasPopupActive()) {
+			this.textFrame = new TextFrame(message);
+			this.textFrame.setVisible(true);
 		}
 	}
 }

@@ -171,9 +171,8 @@ public class AttackFrame extends JFrame {
 		int defenseLosses = 0;
 		for (int i = 0; i < this.defenderDiceCount; i++) {
 			/* less attacking armies than defending ones */
-			if (this.attackResults.get(i) == null) {
-				attackLosses++;
-				continue;
+			if (i >= this.attackResults.size()) {
+				break;
 			}
 			if (this.attackResults.get(i) <= this.defenseResults.get(i)) {
 				attackLosses++;

@@ -7,14 +7,17 @@ import java.util.List;
 import java.util.Random;
 
 import org.puc.rio.inf1636.hglm.war.model.Continent;
-import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
+import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.WarState;
 import org.puc.rio.inf1636.hglm.war.model.WarState.TurnState;
-import org.puc.rio.inf1636.hglm.war.objective.*;
+import org.puc.rio.inf1636.hglm.war.objective.ConquerContinentsObjective;
+import org.puc.rio.inf1636.hglm.war.objective.ConquerTerritoriesObjective;
+import org.puc.rio.inf1636.hglm.war.objective.DestroyPlayerObjective;
+import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 public class WarGame {
@@ -23,7 +26,7 @@ public class WarGame {
 	private Map map = null;
 	private List<Player> players = new ArrayList<Player>();
 	private Deck deck;
-	
+
 	private WarFrame warFrame;
 	private WarState warState = null;
 	private Player winner;
@@ -117,29 +120,39 @@ public class WarGame {
 
 		}
 	}
-
-	public void generateDeck() {
-
-	}
+	
 	private void giveObjectiveToPlayers() {
 		List<WarObjective> objectives = new ArrayList<WarObjective>();
-		objectives.add(new Conquer18TerritoriesWith2ArmiesObjective(null));
-		objectives.add(new Conquer24TerritoriesObjective(null));
-		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.ASIA, Continent.SOUTH_AMERICA));
-		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.ASIA, Continent.AFRICA));
-		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.NORTH_AMERICA, Continent.AFRICA));
-		objectives.add(new ConquerTwoSpecifiedContinentsObjective(null, Continent.NORTH_AMERICA, Continent.OCEANIA));
-		objectives.add(new ConquerTwoSpecifiedContinentsAndAThirdObjective(null,Continent.EUROPE, Continent.OCEANIA));
-		objectives.add(new ConquerTwoSpecifiedContinentsAndAThirdObjective(null,Continent.EUROPE, Continent.SOUTH_AMERICA));
+		objectives.add(new ConquerTerritoriesObjective(18, 2));
+		objectives.add(new ConquerTerritoriesObjective(24, 1));
+		objectives.add(new ConquerContinentsObjective(Continent.EUROPE,
+				Continent.OCEANIA, false));
+		objectives.add(new ConquerContinentsObjective(Continent.ASIA,
+				Continent.SOUTH_AMERICA, false));
+		objectives.add(new ConquerContinentsObjective(Continent.EUROPE,
+				Continent.SOUTH_AMERICA, true));
+		objectives.add(new ConquerContinentsObjective(Continent.ASIA,
+				Continent.AFRICA, false));
+		objectives.add(new ConquerContinentsObjective(Continent.NORTH_AMERICA,
+				Continent.AFRICA, false));
+		objectives.add(new ConquerContinentsObjective(Continent.NORTH_AMERICA,
+				Continent.OCEANIA, false));
 		
-		for(Player p : this.players) {
-		objectives.add(new DestroyPlayerObjective(null, p));
+		for (Player p : this.players) {
+			objectives.add(new DestroyPlayerObjective(p));
 		}
-		Random rnd = new Random();
-		for(Player p : this.players) {
-			
-			int index=rnd.nextInt(objectives.size());
-			p.setObjective(objectives.get(index));
+
+		Random r = new Random();
+		for (Player p : this.players) {
+			int index = 0;
+			WarObjective objective;
+			do {
+				index = r.nextInt(objectives.size());
+				objective = objectives.get(index);
+			/* Disallow player having to destroy himself */
+			} while (objective instanceof DestroyPlayerObjective && ((DestroyPlayerObjective) objective).getTargetPlayer().equals(p));
+			p.setObjective(objective);
+			/* Disallow duplicate objectives */
 			objectives.remove(index);
 		}
 	}
@@ -147,7 +160,7 @@ public class WarGame {
 	/* Event handlers */
 	public void actionPerformed() {
 		/* don't do anything when a pop up is active */
-		if(this.CheckVictory()==true) {
+		if (this.CheckVictory() == true) {
 			this.endGameSequence();
 		}
 		if (warFrame.hasPopupActive()) {
@@ -226,7 +239,7 @@ public class WarGame {
 			}
 			break;
 		case RECEIVING_LETTER:
-			
+
 			break;
 		default:
 			break;
@@ -333,20 +346,26 @@ public class WarGame {
 		p.removeCard(c);
 		this.deck.returnCard(c);
 	}
+
 	public boolean CheckVictory() {
-		for(Player p: this.players){
-			if(p.checkVictory()) {
-				this.winner=p;
+		for (Player p : this.players) {
+			if (p.checkVictory()) {
+				this.winner = p;
 				return true;
 			}
 		}
 		System.out.println("no winner yet");
-			return false;
-		}
-	
-	
+		return false;
+	}
+
 	private void endGameSequence() {
 		System.out.println("GAME FINISHED");
-		System.out.println("Winner is " + this.winner.getName() + " " + winner.getObjective().getDescription() );
+		System.out.println("Winner is " + this.winner.getName() + " "
+				+ winner.getObjective().getDescription());
+	}
+
+	public void showObjective() {
+		this.getWarFrame().spawnTextFrame(
+				this.getCurrentPlayer().getObjective().getDescription());
 	}
 }
