@@ -55,9 +55,6 @@ public class WarGame {
 		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
-		for (int i = 0; i < 5; i++) {
-			this.giveCardToPlayer(players.get(0));
-		}
 		this.getWarFrame().update(true);
 	}
 
@@ -75,9 +72,6 @@ public class WarGame {
 		this.warState.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						warState.getCurrentPlayer()));
-		for (int i = 0; i < 5; i++) {
-			this.giveCardToPlayer(this.getCurrentPlayer());
-		}
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.warFrame
 					.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
@@ -345,7 +339,7 @@ public class WarGame {
 
 	public Player checkWinner() {
 		for (Player p : this.players) {
-			if (p.checkVictory()) {
+			if (p.isVictorious()) {
 				return p;
 			}
 		}
@@ -356,6 +350,7 @@ public class WarGame {
 		System.out.println("GAME FINISHED");
 		System.out.println("Winner is " + p.getName() + " "
 				+ p.getObjective().getDescription());
+		this.getWarFrame().getUIPanel().showGameEndedPanel(p);
 	}
 
 	public void showObjective() {
@@ -370,8 +365,13 @@ public class WarGame {
 
 	public void exchangeCards(List<Card> selectedCards) {
 		if (this.getState().isPlacing()) {
-			for (Card tc : selectedCards) {
-				this.getCurrentPlayer().removeCard(tc);
+			for (Card c : selectedCards) {
+				this.getCurrentPlayer().removeCard(c);
+				if (c instanceof TerritoryCard) {
+					TerritoryCard tc = (TerritoryCard) c;
+					tc.getTerritory().addArmies(
+							WarLogic.ARMIES_TO_GAIN_FROM_TERRITORY_CARD);
+				}
 			}
 			this.getCurrentPlayer().giveArmies(
 					this.getState().getCardExchangeArmyCount());

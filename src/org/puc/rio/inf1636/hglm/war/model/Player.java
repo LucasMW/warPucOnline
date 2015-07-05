@@ -132,7 +132,7 @@ public class Player {
 		}
 	}
 
-	public boolean checkVictory() {
+	public boolean isVictorious() {
 		return this.objective
 				.checkVictory(WarGame.getInstance().getMap(), this);
 	}

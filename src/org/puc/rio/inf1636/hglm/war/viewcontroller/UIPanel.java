@@ -1,5 +1,6 @@
 package org.puc.rio.inf1636.hglm.war.viewcontroller;
 
+import java.awt.BorderLayout;
 import java.awt.CardLayout;
 import java.awt.Color;
 import java.awt.Component;
@@ -14,6 +15,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import org.puc.rio.inf1636.hglm.war.Util;
@@ -31,13 +33,14 @@ public class UIPanel extends JPanel {
 	private JPanel gamePanel;
 	private JPanel optionsPanel;
 	private JPanel namesPanel;
+	private JPanel gameEndedPanel;
+
 	private List<JLabel> playerLabels = new LinkedList<JLabel>();
 	private JLabel statusLabel;
 
 	private JButton actionButton;
 	private JButton showObjectiveButton;
 	private JButton showCardsButton;
-
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
 
@@ -45,7 +48,6 @@ public class UIPanel extends JPanel {
 
 	private final double MULTIPLIER_X = 1.0;
 	private final double MULTIPLIER_Y = 0.2;
-
 
 	public UIPanel() {
 		this.layout = new CardLayout();
@@ -134,6 +136,19 @@ public class UIPanel extends JPanel {
 		this.updateOptionsPanel(first);
 	}
 
+	public void showGameEndedPanel(Player winner) {
+		this.gameEndedPanel = new JPanel();
+		this.gameEndedPanel.setLayout(new BorderLayout());
+		JTextArea endGameMessage = new JTextArea(
+				String.format(
+						"The game has ended, %s is victorious for completing his/her objective (%s)",
+						winner.getName(), winner.getObjective()
+								.getDescription()));
+		this.gameEndedPanel.add(endGameMessage, BorderLayout.CENTER);
+		this.add(gameEndedPanel, "Game Ended");
+		layout.show(this, "Game Ended");
+	}
+
 	private void updateNamesPanel(boolean first) {
 		if (first) {
 			this.namesPanel = new JPanel();
@@ -165,11 +180,14 @@ public class UIPanel extends JPanel {
 				sb.append(c.getType().toString());
 				sb.append(" ");
 			}
-			playerLabel.setText(String.format("%s (%d territories in total)", p.getName(), p.getNumberOfTerritories()));
+			playerLabel.setText(String.format("%s (%d territories in total)",
+					p.getName(), p.getNumberOfTerritories()));
 			if (WarGame.getInstance().getCurrentPlayer().equals(p)) {
-				playerLabel.setFont(playerLabel.getFont().deriveFont(playerLabel.getFont().getStyle() | Font.BOLD));
+				playerLabel.setFont(playerLabel.getFont().deriveFont(
+						playerLabel.getFont().getStyle() | Font.BOLD));
 			} else {
-				playerLabel.setFont(playerLabel.getFont().deriveFont(playerLabel.getFont().getStyle()  & ~Font.BOLD));
+				playerLabel.setFont(playerLabel.getFont().deriveFont(
+						playerLabel.getFont().getStyle() & ~Font.BOLD));
 			}
 			i++;
 		}
@@ -180,8 +198,8 @@ public class UIPanel extends JPanel {
 			this.optionsPanel = new JPanel();
 			this.optionsPanel.setLayout(new BoxLayout(optionsPanel,
 					BoxLayout.Y_AXIS));
-			this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 8 * 7,
-					this.size.height));
+			this.optionsPanel.setMaximumSize(new Dimension(
+					this.size.width / 8 * 7, this.size.height));
 			this.statusLabel = new JLabel();
 			this.statusLabel.setOpaque(true);
 			this.statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
@@ -196,7 +214,7 @@ public class UIPanel extends JPanel {
 				}
 			};
 			actionButton.addActionListener(actionButtonListener);
-			
+
 			this.showCardsButton = new JButton("Show Cards");
 			this.showCardsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 			this.showCardsButton.setMaximumSize(new Dimension(200, 25));
@@ -208,7 +226,7 @@ public class UIPanel extends JPanel {
 				}
 			};
 			this.showCardsButton.addActionListener(showCardsListener);
-			
+
 			this.showObjectiveButton = new JButton("Show Objective");
 			this.showObjectiveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 			this.showObjectiveButton.setMaximumSize(new Dimension(200, 25));
@@ -220,7 +238,7 @@ public class UIPanel extends JPanel {
 				}
 			};
 			this.showObjectiveButton.addActionListener(showObjectiveListener);
-			
+
 			this.endTurnButton = new JButton("End Turn");
 			this.endTurnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
 			this.endTurnButton.setMaximumSize(new Dimension(200, 25));
@@ -234,7 +252,8 @@ public class UIPanel extends JPanel {
 			this.endTurnButton.addActionListener(endTurnButtonListener);
 
 			this.toggleMapDisplayButton = new JButton("Toggle Map Display");
-			this.toggleMapDisplayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.toggleMapDisplayButton
+					.setAlignmentX(Component.CENTER_ALIGNMENT);
 			this.toggleMapDisplayButton.setMaximumSize(new Dimension(200, 25));
 			ActionListener toggleMapDisplayButtonListener = new ActionListener() {
 				@Override

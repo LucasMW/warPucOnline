@@ -40,7 +40,7 @@ public class Map extends Object {
 								.get(t.getContinent()) + 1);
 			}
 		}
-     // System.out.println("Continent ownership status");
+		// System.out.println("Continent ownership status");
 		for (Continent c : Continent.values()) {
 			// System.out.println(String.format("%s %d/%d", c.toString(),
 			// territoriesOwnedInContinentCount.get(c),
@@ -81,7 +81,7 @@ public class Map extends Object {
 		this.bridgeTerritoriesByNames("Austrália", "Indonésia");
 		this.bridgeTerritoriesByNames("Austrália", "Nova Zelândia");
 		this.bridgeTerritoriesByNames("Bangladesh", "Indonésia");
-		this.bridgeTerritoriesByNames("Egito", "România");
+		this.bridgeTerritoriesByNames("Egito", "Romênia");
 		this.bridgeTerritoriesByNames("Egito", "Jordânia");
 		this.bridgeTerritoriesByNames("França", "Reino Unido");
 		this.bridgeTerritoriesByNames("Groelandia", "Reino Unido");
@@ -144,7 +144,8 @@ public class Map extends Object {
 		}
 	}
 
-	public boolean moveArmies(Territory from, Territory to, int amount, boolean movable) {
+	public boolean moveArmies(Territory from, Territory to, int amount,
+			boolean movable) {
 		if (!from.getOwner().equals(to.getOwner())) {
 			return false;
 		}
@@ -159,7 +160,7 @@ public class Map extends Object {
 		}
 		return true;
 	}
-		
+
 	public void resetMovableArmiesCount() {
 		for (Territory t : this.getTerritories()) {
 			t.resetUnmovableArmiesCount();
