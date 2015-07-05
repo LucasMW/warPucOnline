@@ -4,6 +4,7 @@ import javax.swing.BoxLayout;
 import javax.swing.JFrame;
 
 import org.puc.rio.inf1636.hglm.war.Util;
+import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 @SuppressWarnings("serial")
@@ -14,6 +15,7 @@ public class WarFrame extends JFrame {
 	private AttackFrame attackFrame;
 	private TextFrame textFrame;
 	private ChooseNumberFrame chooseNumberFrame;
+	private CardSelectionFrame cardSelectionFrame;
 
 	public WarFrame() {
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
@@ -51,6 +53,10 @@ public class WarFrame extends JFrame {
 			this.attackFrame.toFront();
 		} else if (this.hasChooseNumberFrameActive()) {
 			this.chooseNumberFrame.toFront();
+		} else if (this.hasTextFrameActive()) {
+			this.textFrame.toFront(); 
+		} else if (this.hasCardSelectionFrameActive()) {
+			this.cardSelectionFrame.toFront();
 		}
 	}
 	
@@ -65,10 +71,15 @@ public class WarFrame extends JFrame {
 	public boolean hasTextFrameActive() {
 		return this.textFrame != null && this.textFrame.isVisible();
 	}
+
+	public boolean hasCardSelectionFrameActive() {
+		return this.cardSelectionFrame != null && this.cardSelectionFrame.isVisible();
+	}
 	
 	public boolean hasPopupActive() {
-		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive() || this.hasTextFrameActive();
+		return this.hasAttackFrameActive() || this.hasChooseNumberFrameActive() || this.hasTextFrameActive() || this.hasCardSelectionFrameActive();
 	}
+
 
 	public void spawnAttackFrame(Territory from, Territory to, int number) {
 		/* only one at once */
@@ -91,6 +102,14 @@ public class WarFrame extends JFrame {
 		if (!this.hasPopupActive()) {
 			this.textFrame = new TextFrame(message);
 			this.textFrame.setVisible(true);
+		}
+	}
+
+	public void spawnCardSelectionFrame(Player currentPlayer, boolean forcedToExchange) {
+		/* only one at once */
+		if (!this.hasPopupActive()) {
+			this.cardSelectionFrame = new CardSelectionFrame(currentPlayer, forcedToExchange);
+			this.cardSelectionFrame.setVisible(true);
 		}
 	}
 }

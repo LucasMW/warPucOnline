@@ -10,6 +10,7 @@ public class WarState {
 	private Territory selectedTerritory;
 	private Territory targetedTerritory;
 	private int conquestsThisTurn = 0;
+	private int cardExchangeArmyCount = 4;
 
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
@@ -108,5 +109,13 @@ public class WarState {
 	
 	public void addConquestThisTurn() {
 		this.conquestsThisTurn++;
+	}
+	
+	public int getCardExchangeArmyCount() {
+		return this.cardExchangeArmyCount;
+	}
+	
+	public void incrementCardExchangeArmyCount() {
+		this.cardExchangeArmyCount += 2;
 	}
 }

@@ -46,15 +46,40 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map, this.deck);
+		//this.deck.shuffle();
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
 		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
+		for (int i = 0; i < 5; i++)
+			this.giveCardToPlayer(players.get(0));
+		if (this.getCurrentPlayer().getCards().size() >= 5) {
+			this.warFrame.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
+		}
 		this.getWarFrame().update(true);
 	}
 
+	public void nextTurn() {
+		/* Do nothing when a pop up is active */
+		if (warFrame.hasPopupActive()) {
+			warFrame.focusPopup();
+			return;
+		}
+		if (this.warState.getConquestsThisTurn() > 0) {
+			this.giveCardToPlayer(this.getCurrentPlayer());
+		}
+		this.warState.nextTurn();
+		this.warState.getCurrentPlayer().giveArmies(
+				WarLogic.calculateArmiesToGain(this.getMap(),
+						warState.getCurrentPlayer()));
+		if (this.getCurrentPlayer().getCards().size() >= 5) {
+			this.warFrame.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
+		}
+		this.warFrame.update(false);
+	}
+	
 	public Map getMap() {
 		return this.map;
 	}
@@ -73,22 +98,6 @@ public class WarGame {
 
 	public int getCurrentPlayerIndex() {
 		return this.getPlayers().indexOf(warState.getCurrentPlayer());
-	}
-
-	public void nextTurn() {
-		/* don't do anything when a pop up is active */
-		if (warFrame.hasPopupActive()) {
-			warFrame.focusPopup();
-			return;
-		}
-		if (this.warState.getConquestsThisTurn() > 0) {
-			this.giveCardToPlayer(this.getCurrentPlayer());
-		}
-		this.warState.nextTurn();
-		this.warState.getCurrentPlayer().giveArmies(
-				WarLogic.calculateArmiesToGain(this.getMap(), warState.getCurrentPlayer()));
-		
-		this.warFrame.update(false);
 	}
 
 	public TurnState getTurnState() {
@@ -120,7 +129,7 @@ public class WarGame {
 
 		}
 	}
-	
+
 	private void giveObjectiveToPlayers() {
 		List<WarObjective> objectives = new ArrayList<WarObjective>();
 		objectives.add(new ConquerTerritoriesObjective(18, 2));
@@ -137,7 +146,7 @@ public class WarGame {
 				Continent.AFRICA, false));
 		objectives.add(new ConquerContinentsObjective(Continent.NORTH_AMERICA,
 				Continent.OCEANIA, false));
-		
+
 		for (Player p : this.players) {
 			objectives.add(new DestroyPlayerObjective(p));
 		}
@@ -149,8 +158,10 @@ public class WarGame {
 			do {
 				index = r.nextInt(objectives.size());
 				objective = objectives.get(index);
-			/* Disallow player having to destroy himself */
-			} while (objective instanceof DestroyPlayerObjective && ((DestroyPlayerObjective) objective).getTargetPlayer().equals(p));
+				/* Disallow player having to destroy himself */
+			} while (objective instanceof DestroyPlayerObjective
+					&& ((DestroyPlayerObjective) objective).getTargetPlayer()
+							.equals(p));
 			p.setObjective(objective);
 			/* Disallow duplicate objectives */
 			objectives.remove(index);
@@ -291,7 +302,9 @@ public class WarGame {
 			/* attacker conquered */
 			if (this.getTargetedTerritory().getArmyCount() == 0) {
 				this.getState().addConquestThisTurn();
-				int maxToMove = this.getMap().conquerTerritory(this.getSelectedTerritory(), this.getTargetedTerritory());
+				int maxToMove = this.getMap().conquerTerritory(
+						this.getSelectedTerritory(),
+						this.getTargetedTerritory());
 				this.warFrame.spawnChooseNumberFrame(maxToMove, String.format(
 						"How many armies to move from %s to %s?", this
 								.getSelectedTerritory().getName(), this
@@ -310,8 +323,6 @@ public class WarGame {
 	public Territory getSelectedTerritory() {
 		return this.warState.getSelectedTerritory();
 	}
-
-
 
 	public Deck getDeck() {
 		return deck;
@@ -345,5 +356,20 @@ public class WarGame {
 	public void showObjective() {
 		this.getWarFrame().spawnTextFrame(
 				this.getCurrentPlayer().getObjective().getDescription());
+	}
+
+	public void showCards() {
+		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(), false);
+	}
+
+	public void exchangeCards(List<TerritoryCard> selectedCards) {
+		if (this.getState().isPlacing()) { 
+			for (TerritoryCard tc: selectedCards) {
+				this.getCurrentPlayer().removeCard(tc);
+			}
+			this.getCurrentPlayer().giveArmies(this.getState().getCardExchangeArmyCount());
+			this.getState().incrementCardExchangeArmyCount();
+			this.warFrame.update(false);
+		}
 	}
 }

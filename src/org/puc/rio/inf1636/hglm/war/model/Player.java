@@ -2,6 +2,7 @@ package org.puc.rio.inf1636.hglm.war.model;
 
 import java.awt.Color;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
@@ -12,7 +13,11 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
-	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>(); //contains this player owned cards
+	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>(); // contains
+																		// this
+																		// player
+																		// owned
+																		// cards
 	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
@@ -23,7 +28,7 @@ public class Player {
 	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE,
 			PURPLE, BROWN };
 	private int unplacedArmies = 0; // represents number of armies to be
-										// placed
+									// placed
 
 	public Player(String name, Color color) {
 		this.name = name;
@@ -65,21 +70,21 @@ public class Player {
 	public void setUnplacedArmies(int number) {
 		this.unplacedArmies = number;
 	}
-	
+
 	public void giveArmies(int number) {
 		this.unplacedArmies += number;
 	}
-	
+
 	public void removeArmies(int number) {
 		this.unplacedArmies -= number;
 	}
-	
-	public void addCard(TerritoryCard c){
+
+	public void addCard(TerritoryCard c) {
 		this.cards.add(c);
 		c.owner = this;
 	}
-	
-	public void removeCard(TerritoryCard c){
+
+	public void removeCard(TerritoryCard c) {
 		this.cards.remove(c);
 		c.owner = null;
 	}
@@ -87,15 +92,51 @@ public class Player {
 	public List<TerritoryCard> getCards() {
 		return this.cards;
 	}
-
-	public boolean checkVictory(){
-		return this.objective.checkVictory(WarGame.getInstance().getMap(), this);
+	
+	public boolean mustExchangeCards() {
+		return this.cards.size() >= 5;
 	}
+	
+	public boolean canExchangeCards() {
+		return checkIfHasValidCardExchange(this.getCards()); 
+	}
+	
+	public boolean checkIfHasValidCardExchange(List<TerritoryCard> cards)  {
+		if (this.getCards().size() < 3) {
+			return false;
+		} else {
+			HashMap<CardType, Integer> cardTypeCount = new HashMap<CardType, Integer>();
+			boolean hasOneOfEach = true;
+			boolean hasThreeOfTheSame = false;
+			for (CardType ct: CardType.values()) {
+			 cardTypeCount.put(ct, 0);
+			}
+			for (TerritoryCard c : cards) {
+				cardTypeCount.put(c.getType(), cardTypeCount.get(c.getType()) + 1);
+			}
+			for (CardType ct: CardType.values()) {
+				 if (cardTypeCount.get(ct) == 0) {
+					 hasOneOfEach = false;
+				 }
+				 if (cardTypeCount.get(ct) == 3) {
+					 hasThreeOfTheSame = true;
+				 }
+			}
+			return hasOneOfEach || hasThreeOfTheSame;
+		}
+	}
+
+	public boolean checkVictory() {
+		return this.objective
+				.checkVictory(WarGame.getInstance().getMap(), this);
+	}
+
 	public WarObjective getObjective() {
 		return this.objective;
 	}
+
 	public void setObjective(WarObjective obj) {
-		this.objective=obj;
+		this.objective = obj;
 	}
 
 }

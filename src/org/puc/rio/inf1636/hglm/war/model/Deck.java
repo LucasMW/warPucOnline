@@ -1,5 +1,6 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
+import java.util.Collections;
 import java.util.Stack;
 
 public class Deck {
@@ -19,6 +20,10 @@ public class Deck {
 	
 	public TerritoryCard takeCard() {
 		return this.cards.pop();
+	}
+
+	public void shuffle() {
+		Collections.shuffle(this.cards);
 	}
 	
 }

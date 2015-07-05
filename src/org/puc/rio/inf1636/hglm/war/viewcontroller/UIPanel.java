@@ -36,6 +36,8 @@ public class UIPanel extends JPanel {
 
 	private JButton actionButton;
 	private JButton showObjectiveButton;
+	private JButton showCardsButton;
+
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
 
@@ -43,6 +45,7 @@ public class UIPanel extends JPanel {
 
 	private final double MULTIPLIER_X = 1.0;
 	private final double MULTIPLIER_Y = 0.2;
+
 
 	public UIPanel() {
 		this.layout = new CardLayout();
@@ -191,7 +194,29 @@ public class UIPanel extends JPanel {
 				}
 			};
 			actionButton.addActionListener(actionButtonListener);
-
+			
+			this.showCardsButton = new JButton("Show Cards");
+			this.showCardsButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.showCardsButton.setEnabled(false);
+			ActionListener showCardsListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					WarGame.getInstance().showCards();
+				}
+			};
+			this.showCardsButton.addActionListener(showCardsListener);
+			
+			this.showObjectiveButton = new JButton("Show Objective");
+			this.showObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.showObjectiveButton.setEnabled(true);
+			ActionListener showObjectiveListener = new ActionListener() {
+				@Override
+				public void actionPerformed(ActionEvent ae) {
+					WarGame.getInstance().showObjective();
+				}
+			};
+			this.showObjectiveButton.addActionListener(showObjectiveListener);
+			
 			this.endTurnButton = new JButton("End Turn");
 			this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
 			ActionListener endTurnButtonListener = new ActionListener() {
@@ -216,22 +241,12 @@ public class UIPanel extends JPanel {
 
 			this.optionsPanel.add(this.statusLabel);
 			this.optionsPanel.add(this.actionButton);
+			this.optionsPanel.add(this.showCardsButton);
+			this.optionsPanel.add(this.showObjectiveButton);
 			this.optionsPanel.add(this.endTurnButton);
 			this.optionsPanel.add(this.toggleMapDisplayButton);
 
 			this.gamePanel.add(this.optionsPanel);
-			
-			this.showObjectiveButton = new JButton("Show Objective");
-			this.showObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
-			this.showObjectiveButton.setEnabled(true);
-			ActionListener myObjectiveListener = new ActionListener() {
-				@Override
-				public void actionPerformed(ActionEvent ae) {
-					WarGame.getInstance().showObjective();
-				}
-			};
-			this.showObjectiveButton.addActionListener(myObjectiveListener);
-			this.optionsPanel.add(this.showObjectiveButton);
 		}
 
 		Player currentPlayer = WarGame.getInstance().getCurrentPlayer();
@@ -239,6 +254,11 @@ public class UIPanel extends JPanel {
 		String statusString = "No status";
 		this.actionButton.setEnabled(false);
 		this.endTurnButton.setEnabled(true);
+		if (currentPlayer.getCards().isEmpty()) {
+			this.showCardsButton.setEnabled(false);
+		} else {
+			this.showCardsButton.setEnabled(true);
+		}
 		switch (WarGame.getInstance().getTurnState()) {
 		case ATTACKING:
 			if (WarGame.getInstance().getSelectedTerritory() == null) {

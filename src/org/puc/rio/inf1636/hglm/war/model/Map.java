@@ -73,7 +73,7 @@ public class Map extends Object {
 				}
 			}
 		}
-		// add bridged neighbors
+		/* Add bridged neighbors */
 		this.bridgeTerritoriesByNames("Argélia", "Espanha");
 		this.bridgeTerritoriesByNames("Argélia", "Itália");
 		this.bridgeTerritoriesByNames("Alasca", "Sibéria");
