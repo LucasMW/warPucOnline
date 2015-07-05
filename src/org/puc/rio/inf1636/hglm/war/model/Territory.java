@@ -25,6 +25,8 @@ public class Territory extends Object {
 	}
 
 	public void setOwner(Player p) {
+		
+		p.addTerritory();
 		this.owner = p;
 	}
 

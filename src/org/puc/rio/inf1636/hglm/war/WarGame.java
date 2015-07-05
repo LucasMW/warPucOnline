@@ -115,7 +115,6 @@ public class WarGame {
 			Territory t = this.getMap().getTerritories().get(i);
 			t.setOwner(p);
 
-			p.addTerritory();
 		}
 	}
 
@@ -148,6 +147,9 @@ public class WarGame {
 	/* Event handlers */
 	public void actionPerformed() {
 		/* don't do anything when a pop up is active */
+		if(this.CheckVictory()==true) {
+			this.endGameSequence();
+		}
 		if (warFrame.hasPopupActive()) {
 			warFrame.focusPopup();
 			return;
@@ -338,6 +340,7 @@ public class WarGame {
 				return true;
 			}
 		}
+		System.out.println("no winner yet");
 			return false;
 		}
 	
