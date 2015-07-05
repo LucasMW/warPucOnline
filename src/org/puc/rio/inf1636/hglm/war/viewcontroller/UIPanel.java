@@ -36,7 +36,6 @@ public class UIPanel extends JPanel {
 
 	private JButton actionButton;
 	private JButton showObjectiveButton;
-	private JButton myCardsButton;
 	private JButton endTurnButton;
 	private JButton toggleMapDisplayButton;
 

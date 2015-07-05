@@ -28,4 +28,23 @@ public enum Continent {
 	public String toString() {
 		return super.toString().replace("_", " ");
 	}
+
+	public int getTerritoriesToGain() {
+		switch (this) {
+		case NORTH_AMERICA:
+			return 5;
+		case SOUTH_AMERICA:
+			return 2;
+		case AFRICA:
+			return 3;
+		case EUROPE:
+			return 5;
+		case ASIA:
+			return 7;
+		case OCEANIA:
+			return 2;
+		default:
+			return 0;
+		}
+	}
 }

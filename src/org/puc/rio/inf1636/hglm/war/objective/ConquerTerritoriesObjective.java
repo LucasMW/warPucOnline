@@ -19,20 +19,15 @@ public class ConquerTerritoriesObjective extends WarObjective {
 
 	@Override
 	public boolean checkVictory(Map m, Player p) {
-
-		if (p.getNumberOfTerritories() >= this.numberOfTerritories) {
-			int cont = 0;
-			for (Territory t : m.getTerritories()) {
-				if (t.getOwner().equals(p)
-						&& t.getArmyCount() >= this.numberOfArmies) {
-					cont++;
-				}
-			}
-			if (cont >= this.numberOfTerritories) {
-				return true;
+		int numberOfTerritoriesOwnedWithCondition = 0;
+		for (Territory t : m.getTerritories()) {
+			if (t.getOwner().equals(p)
+					&& t.getArmyCount() >= this.numberOfArmies) {
+				numberOfTerritoriesOwnedWithCondition++;
 			}
 		}
-		return false;
+
+		return numberOfTerritoriesOwnedWithCondition >= this.numberOfTerritories;
 	}
 
 }

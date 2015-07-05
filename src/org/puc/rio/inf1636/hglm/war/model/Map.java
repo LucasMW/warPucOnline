@@ -2,6 +2,8 @@ package org.puc.rio.inf1636.hglm.war.model;
 
 import java.awt.geom.Line2D;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.puc.rio.inf1636.hglm.war.Util;
@@ -9,14 +11,8 @@ import org.puc.rio.inf1636.hglm.war.Util;
 public class Map extends Object {
 
 	private List<Territory> territories = new ArrayList<Territory>();
-	private List<List <Territory>> continents = new ArrayList<List<Territory>>(6);
-	private List<Territory> northAmericaRed = new ArrayList<Territory>();
-	private List<Territory> southAmericaGreen = new ArrayList<Territory>();
-	private List<Territory> europeDarkBlue = new ArrayList<Territory>();
-	private List<Territory> africaPurple = new ArrayList<Territory>();
-	private List<Territory> asia = new ArrayList<Territory>();
-	public Map() {
 
+	public Map() {
 	}
 
 	public void addTerritory(Territory t) {
@@ -25,6 +21,36 @@ public class Map extends Object {
 
 	public List<Territory> getTerritories() {
 		return this.territories;
+	}
+
+	public List<Continent> getContinentsOwnedByPlayer(Player p) {
+		List<Continent> continentsOwned = new LinkedList<Continent>();
+		HashMap<Continent, Integer> territoriesOwnedInContinentCount = new HashMap<Continent, Integer>();
+		HashMap<Continent, Integer> totalTerritoriesInContinentCount = new HashMap<Continent, Integer>();
+		for (Continent c : Continent.values()) {
+			territoriesOwnedInContinentCount.put(c, 0);
+			totalTerritoriesInContinentCount.put(c, 0);
+		}
+		for (Territory t : this.getTerritories()) {
+			totalTerritoriesInContinentCount.put(t.getContinent(),
+					totalTerritoriesInContinentCount.get(t.getContinent()) + 1);
+			if (t.getOwner().equals(p)) {
+				territoriesOwnedInContinentCount
+						.put(t.getContinent(), territoriesOwnedInContinentCount
+								.get(t.getContinent()) + 1);
+			}
+		}
+		System.out.println("Continent ownership status");
+		for (Continent c : Continent.values()) {
+			System.out.println(String.format("%s %d/%d", c.toString(),
+					territoriesOwnedInContinentCount.get(c),
+					totalTerritoriesInContinentCount.get(c)));
+			if (territoriesOwnedInContinentCount.get(c) == totalTerritoriesInContinentCount
+					.get(c)) {
+				continentsOwned.add(c);
+			}
+		}
+		return continentsOwned;
 	}
 
 	public void calculateNeighbors() {
@@ -95,13 +121,39 @@ public class Map extends Object {
 		return null;
 
 	}
+
 	public List<Territory> getTerritoriesByContinent(Continent c) {
 		List<Territory> tl = new ArrayList<Territory>();
-		for(Territory t: this.territories){
-			if(t.getContinent() == c)
+		for (Territory t : this.territories) {
+			if (t.getContinent() == c)
 				tl.add(t);
 		}
 		return tl;
+	}
+
+	/* returns maximum amount of armies to move straight after conquest */
+	public int conquerTerritory(Territory from, Territory to) {
+		to.setOwner(from.getOwner());
+		/* always move at least one */
+		this.moveArmies(from, to, 1);
+
+		if (from.getAtackableArmyCount() + 1 > 3) {
+			return 3;
+		} else {
+			return from.getAtackableArmyCount() + 1;
+		}
+	}
+
+	public boolean moveArmies(Territory from, Territory to, int amount) {
+		if (!from.getOwner().equals(to.getOwner())) {
+			return false;
+		}
+		if (from.getArmyCount() - 1 < amount) {
+			return false;
+		}
+		from.removeArmies(amount);
+		to.addArmies(amount);
+		return true;
 	}
 
 }

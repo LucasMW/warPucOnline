@@ -72,11 +72,6 @@ public class WarState {
 		return true;
 
 	}
-	public boolean startDistributing() {
-		Player p;
-		
-		return true;
-	}
 
 	public void selectTerritory(Territory t) {
 		this.selectedTerritory = t;

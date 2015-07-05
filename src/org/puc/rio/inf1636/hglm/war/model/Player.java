@@ -87,6 +87,7 @@ public class Player {
 	public List<TerritoryCard> getCards() {
 		return this.cards;
 	}
+
 	public boolean checkVictory(){
 		return this.objective.checkVictory(WarGame.getInstance().getMap(), this);
 	}

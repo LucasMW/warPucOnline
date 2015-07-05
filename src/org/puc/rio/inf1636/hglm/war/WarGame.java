@@ -29,7 +29,6 @@ public class WarGame {
 
 	private WarFrame warFrame;
 	private WarState warState = null;
-	private Player winner;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
@@ -52,7 +51,7 @@ public class WarGame {
 		this.getMap().calculateNeighbors();
 		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
-				WarLogic.calculateArmiesToGain(players.get(0)));
+				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
 		this.getWarFrame().update(true);
 	}
 
@@ -87,7 +86,8 @@ public class WarGame {
 		}
 		this.warState.nextTurn();
 		this.warState.getCurrentPlayer().giveArmies(
-				WarLogic.calculateArmiesToGain(warState.getCurrentPlayer()));
+				WarLogic.calculateArmiesToGain(this.getMap(), warState.getCurrentPlayer()));
+		
 		this.warFrame.update(false);
 	}
 
@@ -160,9 +160,6 @@ public class WarGame {
 	/* Event handlers */
 	public void actionPerformed() {
 		/* don't do anything when a pop up is active */
-		if (this.CheckVictory() == true) {
-			this.endGameSequence();
-		}
 		if (warFrame.hasPopupActive()) {
 			warFrame.focusPopup();
 			return;
@@ -253,16 +250,20 @@ public class WarGame {
 			/* conquered */
 			if (this.getSelectedTerritory().getOwner()
 					.equals(this.getTargetedTerritory().getOwner())) {
-				this.moveArmies(this.getSelectedTerritory(),
+				this.getMap().moveArmies(this.getSelectedTerritory(),
 						this.getTargetedTerritory(), number - 1);
 			} else {
 				this.getWarFrame().spawnAttackFrame(
 						this.getSelectedTerritory(),
 						this.getTargetedTerritory(), number);
 			}
+			Player winner = this.checkWinner();
+			if (winner != null) {
+				this.endGameSequence(winner);
+			}
 			break;
 		case MOVING_ARMIES:
-			this.moveArmies(this.getSelectedTerritory(),
+			this.getMap().moveArmies(this.getSelectedTerritory(),
 					this.getTargetedTerritory(), number);
 			this.getState().clearSelections();
 			break;
@@ -289,19 +290,8 @@ public class WarGame {
 
 			/* attacker conquered */
 			if (this.getTargetedTerritory().getArmyCount() == 0) {
-				this.getTargetedTerritory().setOwner(
-						this.getSelectedTerritory().getOwner());
 				this.getState().addConquestThisTurn();
-				/* always move at least one */
-				this.moveArmies(this.getSelectedTerritory(),
-						this.getTargetedTerritory(), 1);
-
-				int maxToMove = this.getSelectedTerritory()
-						.getAtackableArmyCount() + 1;
-				if (maxToMove > 3) {
-					maxToMove = 3;
-				}
-
+				int maxToMove = this.getMap().conquerTerritory(this.getSelectedTerritory(), this.getTargetedTerritory());
 				this.warFrame.spawnChooseNumberFrame(maxToMove, String.format(
 						"How many armies to move from %s to %s?", this
 								.getSelectedTerritory().getName(), this
@@ -311,7 +301,7 @@ public class WarGame {
 		this.warFrame.update(false);
 	}
 
-	/* End Event handlers */
+	/* End event handlers */
 
 	public Territory getTargetedTerritory() {
 		return this.warState.getTargetedTerritory();
@@ -321,17 +311,7 @@ public class WarGame {
 		return this.warState.getSelectedTerritory();
 	}
 
-	public boolean moveArmies(Territory from, Territory to, int amount) {
-		if (!from.getOwner().equals(to.getOwner())) {
-			return false;
-		}
-		if (from.getArmyCount() - 1 < amount) {
-			return false;
-		}
-		from.removeArmies(amount);
-		to.addArmies(amount);
-		return true;
-	}
+
 
 	public Deck getDeck() {
 		return deck;
@@ -347,21 +327,19 @@ public class WarGame {
 		this.deck.returnCard(c);
 	}
 
-	public boolean CheckVictory() {
+	public Player checkWinner() {
 		for (Player p : this.players) {
 			if (p.checkVictory()) {
-				this.winner = p;
-				return true;
+				return p;
 			}
 		}
-		System.out.println("no winner yet");
-		return false;
+		return null;
 	}
 
-	private void endGameSequence() {
+	private void endGameSequence(Player p) {
 		System.out.println("GAME FINISHED");
-		System.out.println("Winner is " + this.winner.getName() + " "
-				+ winner.getObjective().getDescription());
+		System.out.println("Winner is " + p.getName() + " "
+				+ p.getObjective().getDescription());
 	}
 
 	public void showObjective() {
