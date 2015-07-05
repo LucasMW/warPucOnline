@@ -19,27 +19,28 @@ Continent targetContinent2;
 	@Override
 	public
 	boolean checkVictory(Map m, Player p) {
+		int chosenContinents=0;
+		boolean flagUnspecified=false;
 		for(Continent c : Continent.values()) { //for each continent
 			int tCont =0;
 			int pCont =0;
 			for(Territory t : m.getTerritoriesByContinent(c)) {
-				if(c.equals(targetContinent1) || c.equals(targetContinent2)){
-					if(!t.getOwner().equals(p)) {
-						return false; //Player fails in specified
-					}
-				}
-				else { // unspecified continent
 					tCont++;
 					if(t.getOwner().equals(p)){
 						pCont++;
 					}
-					if(tCont==pCont) { //Player conquered unspecified Territory
-						return true;
-					}
+				}
+			if(tCont==pCont) { //Player conquered unspecified Territory
+				if(c.equals(this.targetContinent1) || c.equals(this.targetContinent2)) {
+					chosenContinents++;
+				}
+				else {
+					flagUnspecified=true;
 				}
 			}
+			
 		}
-		return false;
+		return flagUnspecified && chosenContinents >=2;
 	}
 
 }
