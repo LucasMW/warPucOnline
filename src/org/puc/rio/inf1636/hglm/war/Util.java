@@ -97,7 +97,6 @@ public class Util {
 			TerritoryCard c = new TerritoryCard(newTerritory, t.getType());
 			deck.addCard(c);
 		}
-
 	}
 
 	public static ArrayList<Line2D.Double> getLineSegments(GeneralPath p) {

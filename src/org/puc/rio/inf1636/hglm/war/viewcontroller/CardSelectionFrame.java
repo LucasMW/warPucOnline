@@ -23,16 +23,17 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import org.puc.rio.inf1636.hglm.war.WarGame;
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 
 @SuppressWarnings("serial")
-public class CardSelectionFrame extends JFrame implements MouseListener{
-	private HashMap<JLabel, TerritoryCard> cards = new HashMap<JLabel, TerritoryCard>();
-	private List<TerritoryCard> selectedCards = new LinkedList<TerritoryCard>();
+public class CardSelectionFrame extends JFrame implements MouseListener {
+	private HashMap<JLabel, Card> cards = new HashMap<JLabel, Card>();
+	private List<Card> selectedCards = new LinkedList<Card>();
 
 	private JPanel cardDisplayPanel;
-	
+
 	private JButton exchangeCardsButton;
 
 	private Player player;
@@ -41,37 +42,53 @@ public class CardSelectionFrame extends JFrame implements MouseListener{
 		this.player = p;
 		if (forcedToExchange) {
 			this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
-		} else {			
+		} else {
 			this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		}
-		this.setTitle(String.format("%s's cards%s", p.getName(), forcedToExchange ? " (Must exchange)" : ""));
-		this.setSize(new Dimension(1100+2*2*5, 600));
+		this.setTitle(String.format("%s's cards%s", p.getName(),
+				forcedToExchange ? " (Must exchange)" : ""));
+		this.setSize(new Dimension(1100 + 2 * 2 * 5, 600));
 		this.getContentPane().setLayout(new BorderLayout());
 		this.setResizable(false);
-		
+
 		/* Card display panel */
 		this.cardDisplayPanel = new JPanel();
-		this.cardDisplayPanel.setLayout(new BoxLayout(cardDisplayPanel, BoxLayout.X_AXIS));
-		
-		for (TerritoryCard tc: p.getCards()) {
+		this.cardDisplayPanel.setLayout(new BoxLayout(cardDisplayPanel,
+				BoxLayout.X_AXIS));
+
+		for (Card c : p.getCards()) {
 			JLabel cardLabel = new JLabel();
 			cardLabel.setSize(220, 363);
 			cardLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 			cardLabel.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 			cardLabel.addMouseListener(this);
-			String imagePath = String.format("resources/cards/war_carta_%s.png", tc.getTerritory().getName().toLowerCase().replaceAll("\\s+",""));
-			imagePath = Normalizer.normalize(imagePath, Normalizer.Form.NFD);
-			imagePath = imagePath.replaceAll("[^\\x00-\\x7F]", "");
+			String imagePath;
+			if (c instanceof TerritoryCard) {
+				TerritoryCard tc = (TerritoryCard) c;
+				imagePath = String
+						.format("resources/cards/war_carta_%s.png", tc
+								.getTerritory().getName().toLowerCase()
+								.replaceAll("\\s+", ""));
+				imagePath = Normalizer
+						.normalize(imagePath, Normalizer.Form.NFD);
+				imagePath = imagePath.replaceAll("[^\\x00-\\x7F]", "");
+			} else {
+				imagePath = "resources/cards/war_carta_coringa.png";
+			}
 			System.out.println(imagePath);
 			ImageIcon cardImage = new ImageIcon(imagePath);
-			Image resizedImage = cardImage.getImage().getScaledInstance(cardLabel.getWidth(), cardLabel.getHeight(), Image.SCALE_SMOOTH);
+			Image resizedImage = cardImage.getImage().getScaledInstance(
+					cardLabel.getWidth(), cardLabel.getHeight(),
+					Image.SCALE_SMOOTH);
 			cardLabel.setIcon(new ImageIcon(resizedImage));
 
-			this.cards.put(cardLabel, tc);
+			this.cards.put(cardLabel, c);
 			this.cardDisplayPanel.add(cardLabel);
 		}
-		
-		this.exchangeCardsButton = new JButton(String.format("Exchange cards for %d armies", WarGame.getInstance().getState().getCardExchangeArmyCount()));
+
+		this.exchangeCardsButton = new JButton(String.format(
+				"Exchange cards for %d armies", WarGame.getInstance()
+						.getState().getCardExchangeArmyCount()));
 		ActionListener exchangeCardsListener = new ActionListener() {
 
 			@Override
@@ -79,13 +96,14 @@ public class CardSelectionFrame extends JFrame implements MouseListener{
 				WarGame.getInstance().exchangeCards(selectedCards);
 				dispose();
 			}
-			
+
 		};
 		this.exchangeCardsButton.addActionListener(exchangeCardsListener);
 		this.exchangeCardsButton.setEnabled(false);
-			
+
 		this.getContentPane().add(this.cardDisplayPanel, BorderLayout.CENTER);
-		this.getContentPane().add(this.exchangeCardsButton, BorderLayout.PAGE_END);
+		this.getContentPane().add(this.exchangeCardsButton,
+				BorderLayout.PAGE_END);
 	}
 
 	@Override
@@ -95,13 +113,16 @@ public class CardSelectionFrame extends JFrame implements MouseListener{
 		/* already selected */
 		if (index >= 0) {
 			this.selectedCards.remove(index);
-			clickedCard.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
+			clickedCard.setBorder(BorderFactory
+					.createLineBorder(Color.BLACK, 2));
 		} else if (this.selectedCards.size() < 3) {
-			this.selectedCards.add(this.cards.get(clickedCard));			
-			clickedCard.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
+			this.selectedCards.add(this.cards.get(clickedCard));
+			clickedCard
+					.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
 		}
-		
-		if (this.player.checkIfHasValidCardExchange(this.selectedCards) && WarGame.getInstance().getState().isPlacing()) {
+
+		if (this.player.hasValidCardExchange(this.selectedCards)
+				&& WarGame.getInstance().getState().isPlacing()) {
 			this.exchangeCardsButton.setEnabled(true);
 		} else {
 			this.exchangeCardsButton.setEnabled(false);
@@ -111,24 +132,24 @@ public class CardSelectionFrame extends JFrame implements MouseListener{
 	@Override
 	public void mouseEntered(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseExited(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mousePressed(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }

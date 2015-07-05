@@ -13,7 +13,7 @@ public class Player {
 	private String name;
 	private Color color;
 	private int numberOfTerritories = 0;
-	private List<TerritoryCard> cards = new ArrayList<TerritoryCard>();
+	private List<Card> cards = new ArrayList<Card>();
 	private WarObjective objective;
 	private static final Color BLUE = new Color(0, 0, 128);
 	private static final Color GREEN = new Color(0, 128, 0);
@@ -74,48 +74,59 @@ public class Player {
 		this.unplacedArmies -= number;
 	}
 
-	public void addCard(TerritoryCard c) {
+	public void addCard(Card c) {
 		this.cards.add(c);
-		c.owner = this;
 	}
 
-	public void removeCard(TerritoryCard c) {
+	public void removeCard(Card c) {
 		this.cards.remove(c);
-		c.owner = null;
 	}
 
-	public List<TerritoryCard> getCards() {
+	public List<Card> getCards() {
 		return this.cards;
 	}
-	
+
 	public boolean mustExchangeCards() {
 		return this.cards.size() >= 5;
 	}
-	
+
 	public boolean canExchangeCards() {
-		return checkIfHasValidCardExchange(this.getCards()); 
+		return hasValidCardExchange(this.getCards());
 	}
-	
-	public boolean checkIfHasValidCardExchange(List<TerritoryCard> cards)  {
+
+	public boolean hasValidCardExchange(List<Card> cards) {
 		if (this.getCards().size() < 3) {
 			return false;
 		} else {
 			HashMap<CardType, Integer> cardTypeCount = new HashMap<CardType, Integer>();
 			boolean hasOneOfEach = true;
 			boolean hasThreeOfTheSame = false;
-			for (CardType ct: CardType.values()) {
-			 cardTypeCount.put(ct, 0);
+			for (CardType ct : CardType.values()) {
+				cardTypeCount.put(ct, 0);
 			}
-			for (TerritoryCard c : cards) {
-				cardTypeCount.put(c.getType(), cardTypeCount.get(c.getType()) + 1);
+			for (Card c : cards) {
+				cardTypeCount.put(c.getType(),
+						cardTypeCount.get(c.getType()) + 1);
 			}
-			for (CardType ct: CardType.values()) {
-				 if (cardTypeCount.get(ct) == 0) {
-					 hasOneOfEach = false;
-				 }
-				 if (cardTypeCount.get(ct) == 3) {
-					 hasThreeOfTheSame = true;
-				 }
+			int numberOfJokers = cardTypeCount.get(CardType.JOKER);
+			int spentJokers = 0;
+			for (CardType ct : CardType.values()) {
+				if (ct.equals(CardType.JOKER)) {
+					continue;
+				}
+				/* If card type not found */
+				if (cardTypeCount.get(ct) == 0) {
+					/* If we don't have any jokers to spend */
+					if (numberOfJokers - spentJokers <= 0) {
+						hasOneOfEach = false;
+					/* Spend joker */
+					} else {
+						spentJokers++;
+					}
+				}
+				if (cardTypeCount.get(ct) == 3 - numberOfJokers) {
+					hasThreeOfTheSame = true;
+				}
 			}
 			return hasOneOfEach || hasThreeOfTheSame;
 		}

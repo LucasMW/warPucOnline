@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Continent;
 import org.puc.rio.inf1636.hglm.war.model.Deck;
 import org.puc.rio.inf1636.hglm.war.model.Map;
@@ -46,13 +47,17 @@ public class WarGame {
 	public void startGame() {
 		Collections.shuffle(players); // randomize player order
 		Util.loadTerritories(this.map, this.deck);
-		//this.deck.shuffle();
+		this.deck.addJoker(10);
+		this.deck.shuffle();
 		this.warState = new WarState(players.get(0));
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
 		this.giveObjectiveToPlayers();
 		players.get(0).giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(), players.get(0)));
+		for (int i = 0; i < 5; i++) {
+			this.giveCardToPlayer(players.get(0));
+		}
 		this.getWarFrame().update(true);
 	}
 
@@ -70,12 +75,16 @@ public class WarGame {
 		this.warState.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						warState.getCurrentPlayer()));
+		for (int i = 0; i < 5; i++) {
+			this.giveCardToPlayer(this.getCurrentPlayer());
+		}
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
-			this.warFrame.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
+			this.warFrame
+					.spawnCardSelectionFrame(this.getCurrentPlayer(), true);
 		}
 		this.warFrame.update(false);
 	}
-	
+
 	public Map getMap() {
 		return this.map;
 	}
@@ -325,7 +334,7 @@ public class WarGame {
 	}
 
 	public void giveCardToPlayer(Player p) {
-		TerritoryCard c = this.deck.takeCard();
+		Card c = this.deck.takeCard();
 		p.addCard(c);
 	}
 
@@ -355,15 +364,17 @@ public class WarGame {
 	}
 
 	public void showCards() {
-		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(), false);
+		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(),
+				false);
 	}
 
-	public void exchangeCards(List<TerritoryCard> selectedCards) {
-		if (this.getState().isPlacing()) { 
-			for (TerritoryCard tc: selectedCards) {
+	public void exchangeCards(List<Card> selectedCards) {
+		if (this.getState().isPlacing()) {
+			for (Card tc : selectedCards) {
 				this.getCurrentPlayer().removeCard(tc);
 			}
-			this.getCurrentPlayer().giveArmies(this.getState().getCardExchangeArmyCount());
+			this.getCurrentPlayer().giveArmies(
+					this.getState().getCardExchangeArmyCount());
 			this.getState().incrementCardExchangeArmyCount();
 			this.warFrame.update(false);
 		}

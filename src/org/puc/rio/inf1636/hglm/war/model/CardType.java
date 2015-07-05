@@ -1,25 +1,28 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
 public enum CardType {
-	TRIANGLE_CARD(3), SQUARE_CARD(4), CIRCLE_CARD(0);
-	private final int value;
+	TRIANGLE(3), SQUARE(4), CIRCLE(0), JOKER(1);
+	
+	private final int id;
 
 	CardType(int value) {
-		this.value = value;
+		this.id = value;
 	}
 
-	public int getValue() {
-		return this.value;
+	public int getId() {
+		return this.id;
 	}
 
-	public static CardType getByValue(int value) {
-		switch (value) {
+	public static CardType getById(int id) {
+		switch (id) {
 		case 3:
-			return CardType.TRIANGLE_CARD;
+			return CardType.TRIANGLE;
 		case 4:
-			return CardType.SQUARE_CARD;
+			return CardType.SQUARE;
 		case 0:
-			return CardType.CIRCLE_CARD;
+			return CardType.CIRCLE;
+		case 1:
+			return CardType.JOKER;
 		default:
 			return null;
 		}
@@ -27,7 +30,7 @@ public enum CardType {
 
 	@Override
 	public String toString() {
-		switch (this.value) {
+		switch (this.id) {
 		case 3:
 			return "\u25B2";
 		case 4:

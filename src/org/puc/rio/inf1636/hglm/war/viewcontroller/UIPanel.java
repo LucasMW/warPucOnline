@@ -19,8 +19,8 @@ import javax.swing.JTextField;
 import org.puc.rio.inf1636.hglm.war.Util;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
+import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Player;
-import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 
 @SuppressWarnings("serial")
 public class UIPanel extends JPanel {
@@ -139,7 +139,7 @@ public class UIPanel extends JPanel {
 			this.namesPanel = new JPanel();
 			this.namesPanel.setLayout(new BoxLayout(namesPanel,
 					BoxLayout.Y_AXIS));
-			this.namesPanel.setMaximumSize(new Dimension(this.size.width / 2,
+			this.namesPanel.setMaximumSize(new Dimension(this.size.width / 8,
 					this.size.height));
 			JLabel playersLabel = new JLabel("Players:");
 			this.namesPanel.add(playersLabel);
@@ -147,8 +147,6 @@ public class UIPanel extends JPanel {
 		}
 		int i = 0;
 		for (Player p : WarGame.getInstance().getPlayers()) {
-			boolean isCurrentPlayer = WarGame.getInstance()
-					.getCurrentPlayerIndex() == i;
 			JLabel playerLabel;
 			if (first) {
 				playerLabel = new JLabel();
@@ -163,12 +161,16 @@ public class UIPanel extends JPanel {
 				playerLabel = this.playerLabels.get(i);
 			}
 			StringBuilder sb = new StringBuilder();
-			for (TerritoryCard c : p.getCards()) {
+			for (Card c : p.getCards()) {
 				sb.append(c.getType().toString());
 				sb.append(" ");
 			}
-			playerLabel.setText(String.format("%s (%d territories in total)%s. Cards: %s", p.getName(), p.getNumberOfTerritories(),
-					isCurrentPlayer ? "*" : "", sb.toString()));
+			playerLabel.setText(String.format("%s (%d territories in total)", p.getName(), p.getNumberOfTerritories()));
+			if (WarGame.getInstance().getCurrentPlayer().equals(p)) {
+				playerLabel.setFont(playerLabel.getFont().deriveFont(playerLabel.getFont().getStyle() | Font.BOLD));
+			} else {
+				playerLabel.setFont(playerLabel.getFont().deriveFont(playerLabel.getFont().getStyle()  & ~Font.BOLD));
+			}
 			i++;
 		}
 	}
@@ -178,14 +180,14 @@ public class UIPanel extends JPanel {
 			this.optionsPanel = new JPanel();
 			this.optionsPanel.setLayout(new BoxLayout(optionsPanel,
 					BoxLayout.Y_AXIS));
-			this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 2,
+			this.optionsPanel.setMaximumSize(new Dimension(this.size.width / 8 * 7,
 					this.size.height));
 			this.statusLabel = new JLabel();
 			this.statusLabel.setOpaque(true);
-			this.statusLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
-
+			this.statusLabel.setAlignmentX(Component.CENTER_ALIGNMENT);
 			this.actionButton = new JButton();
-			this.actionButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.actionButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.actionButton.setMaximumSize(new Dimension(200, 25));
 			this.actionButton.setEnabled(false);
 			ActionListener actionButtonListener = new ActionListener() {
 				@Override
@@ -196,7 +198,8 @@ public class UIPanel extends JPanel {
 			actionButton.addActionListener(actionButtonListener);
 			
 			this.showCardsButton = new JButton("Show Cards");
-			this.showCardsButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.showCardsButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.showCardsButton.setMaximumSize(new Dimension(200, 25));
 			this.showCardsButton.setEnabled(false);
 			ActionListener showCardsListener = new ActionListener() {
 				@Override
@@ -207,7 +210,8 @@ public class UIPanel extends JPanel {
 			this.showCardsButton.addActionListener(showCardsListener);
 			
 			this.showObjectiveButton = new JButton("Show Objective");
-			this.showObjectiveButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.showObjectiveButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.showObjectiveButton.setMaximumSize(new Dimension(200, 25));
 			this.showObjectiveButton.setEnabled(true);
 			ActionListener showObjectiveListener = new ActionListener() {
 				@Override
@@ -218,7 +222,9 @@ public class UIPanel extends JPanel {
 			this.showObjectiveButton.addActionListener(showObjectiveListener);
 			
 			this.endTurnButton = new JButton("End Turn");
-			this.endTurnButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.endTurnButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.endTurnButton.setMaximumSize(new Dimension(200, 25));
+			this.endTurnButton.setEnabled(false);
 			ActionListener endTurnButtonListener = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
@@ -228,7 +234,8 @@ public class UIPanel extends JPanel {
 			this.endTurnButton.addActionListener(endTurnButtonListener);
 
 			this.toggleMapDisplayButton = new JButton("Toggle Map Display");
-			this.toggleMapDisplayButton.setAlignmentX(Component.LEFT_ALIGNMENT);
+			this.toggleMapDisplayButton.setAlignmentX(Component.CENTER_ALIGNMENT);
+			this.toggleMapDisplayButton.setMaximumSize(new Dimension(200, 25));
 			ActionListener toggleMapDisplayButtonListener = new ActionListener() {
 				@Override
 				public void actionPerformed(ActionEvent ae) {
@@ -280,7 +287,7 @@ public class UIPanel extends JPanel {
 			break;
 		case PLACING_NEW_ARMIES:
 			statusString = String
-					.format("Select a country place armies in (You have %d armies left to place)",
+					.format("Select a country place armies in (you have %d armies left to place)",
 							currentPlayer.getUnplacedArmies());
 			if (WarGame.getInstance().getState().getSelectedTerritory() != null
 					&& currentPlayer.getUnplacedArmies() > 0) {

@@ -40,11 +40,11 @@ public class Map extends Object {
 								.get(t.getContinent()) + 1);
 			}
 		}
-		System.out.println("Continent ownership status");
+     // System.out.println("Continent ownership status");
 		for (Continent c : Continent.values()) {
-			System.out.println(String.format("%s %d/%d", c.toString(),
-					territoriesOwnedInContinentCount.get(c),
-					totalTerritoriesInContinentCount.get(c)));
+			// System.out.println(String.format("%s %d/%d", c.toString(),
+			// territoriesOwnedInContinentCount.get(c),
+			// totalTerritoriesInContinentCount.get(c)));
 			if (territoriesOwnedInContinentCount.get(c) == totalTerritoriesInContinentCount
 					.get(c)) {
 				continentsOwned.add(c);

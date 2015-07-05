@@ -5,7 +5,7 @@ import java.util.Stack;
 
 public class Deck {
 	
-	private Stack<TerritoryCard> cards = new Stack<TerritoryCard>();
+	private Stack<Card> cards = new Stack<Card>();
 	
 	public Deck() {
 	}
@@ -18,12 +18,22 @@ public class Deck {
 		this.cards.add(0, c);
 	}
 	
-	public TerritoryCard takeCard() {
+	public Card takeCard() {
 		return this.cards.pop();
 	}
 
 	public void shuffle() {
 		Collections.shuffle(this.cards);
+	}
+
+	public void addJoker() {
+		this.cards.push(new Card(CardType.JOKER));
+	}
+	
+	public void addJoker(int count) {
+		for (int i = 0; i < count; i++) {
+			addJoker();
+		}
 	}
 	
 }
