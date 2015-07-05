@@ -20,6 +20,7 @@ public class TextFrame extends JFrame {
 		this.setSize(new Dimension(300, 100));
 		this.setLayout(new BorderLayout());
 		this.setResizable(false);
+		this.setLocationRelativeTo(null);
 
 		JTextArea textArea = new JTextArea(message);
 		textArea.setEditable(false);

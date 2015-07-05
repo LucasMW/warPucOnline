@@ -24,17 +24,12 @@ import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 public class WarGame {
 
 	private static WarGame instance;
-	private Map map = null;
-	private List<Player> players = new ArrayList<Player>();
-	private Deck deck;
 
 	private WarFrame warFrame;
 	private WarState warState = null;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
-		this.map = new Map();
-		this.deck = new Deck();
 	}
 
 	public static WarGame getInstance() {
@@ -44,17 +39,20 @@ public class WarGame {
 		return WarGame.instance;
 	}
 
-	public void startGame() {
-		Collections.shuffle(players); // randomize player order
-		Util.loadTerritories(this.map, this.deck);
-		this.deck.addJoker(2);
-		this.deck.shuffle();
-		this.warState = new WarState(players.get(0));
+	public void startGame(List<Player> players) {
+		/* Randomize player order */
+		Collections.shuffle(players);
+		this.warState = new WarState(players, new Map(), new Deck());
+		Util.loadTerritories(this.getState().getMap(), this.getState()
+				.getDeck());
+		this.getState().getDeck().addJoker(2);
+		this.getState().getDeck().shuffle();
 		this.giveAwayTerritories();
 		this.getMap().calculateNeighbors();
 		this.giveObjectiveToPlayers();
 		this.getCurrentPlayer().giveArmies(
-				WarLogic.calculateArmiesToGain(this.getMap(), this.getCurrentPlayer()));
+				WarLogic.calculateArmiesToGain(this.getMap(),
+						this.getCurrentPlayer()));
 		this.getWarFrame().update(true);
 	}
 
@@ -78,36 +76,65 @@ public class WarGame {
 		this.warFrame.update(false);
 	}
 
-	public Map getMap() {
-		return this.map;
-	}
-
-	public void addPlayer(Player p) {
-		players.add(p);
+	/* Wargame is a facade, no-one should be able to access the state */
+	private WarState getState() {
+		return this.warState;
 	}
 
 	public List<Player> getPlayers() {
-		return this.players;
+		return this.getState().getPlayers();
+	}
+
+	public Map getMap() {
+		return this.getState().getMap();
+	}
+
+	public Deck getDeck() {
+		return this.getState().getDeck();
 	}
 
 	public Player getCurrentPlayer() {
-		return this.warState.getCurrentPlayer();
+		return this.getState().getCurrentPlayer();
 	}
 
 	public int getCurrentPlayerIndex() {
-		return this.getPlayers().indexOf(warState.getCurrentPlayer());
+		return this.getPlayers().indexOf(this.getState().getCurrentPlayer());
 	}
 
 	public TurnState getTurnState() {
-		return this.warState.getCurrentState();
+		return this.getState().getCurrentTurnState();
 	}
 
-	public WarState getState() {
-		return this.warState;
+	public boolean isAttacking() {
+		return this.getTurnState().equals(TurnState.ATTACKING);
+	}
+
+	public boolean isMoving() {
+		return this.getTurnState().equals(TurnState.MOVING_ARMIES);
+	}
+
+	public boolean isPlacing() {
+		return this.getTurnState().equals(TurnState.PLACING_NEW_ARMIES);
 	}
 
 	public WarFrame getWarFrame() {
 		return this.warFrame;
+	}
+
+	public int getCardExchangeArmyCount() {
+		return this.getState().getCardExchangeArmyCount();
+	}
+
+	public void focusPopupIfExists() {
+		if (warFrame.hasPopupActive()) {
+			warFrame.focusPopup();
+		}
+	}
+
+	private void incrementCardExchangeArmyCount() {
+		this.getState().setCardExchangeArmyCount(
+				this.getCardExchangeArmyCount()
+						+ WarLogic.CARD_EXCHANGE_ARMY_INCREMENT);
 	}
 
 	private void giveAwayTerritories() {
@@ -145,12 +172,12 @@ public class WarGame {
 		objectives.add(new ConquerContinentsObjective(Continent.NORTH_AMERICA,
 				Continent.OCEANIA, false));
 
-		for (Player p : this.players) {
+		for (Player p : this.getPlayers()) {
 			objectives.add(new DestroyPlayerObjective(p));
 		}
 
 		Random r = new Random();
-		for (Player p : this.players) {
+		for (Player p : this.getPlayers()) {
 			int index = 0;
 			WarObjective objective;
 			do {
@@ -302,7 +329,7 @@ public class WarGame {
 	}
 
 	public void attackResult(int[] losses) {
-		if (this.getState().isAttacking()) {
+		if (this.isAttacking()) {
 			this.getSelectedTerritory().removeArmies(losses[0]);
 			this.getTargetedTerritory().removeArmies(losses[1]);
 
@@ -332,6 +359,16 @@ public class WarGame {
 		this.warFrame.update(false);
 	}
 
+	public void showObjective() {
+		/* don't do anything when a pop up is active */
+		if (warFrame.hasPopupActive()) {
+			warFrame.focusPopup();
+			return;
+		}
+		this.getWarFrame().spawnTextFrame(
+				this.getCurrentPlayer().getObjective().getDescription());
+	}
+
 	/* End event handlers */
 
 	public Territory getTargetedTerritory() {
@@ -342,22 +379,18 @@ public class WarGame {
 		return this.warState.getSelectedTerritory();
 	}
 
-	public Deck getDeck() {
-		return deck;
-	}
-
 	public void giveCardToPlayer(Player p) {
-		Card c = this.deck.takeCard();
+		Card c = this.getDeck().takeCard();
 		p.addCard(c);
 	}
 
 	public void receiveCardFromPlayer(Player p, TerritoryCard c) {
 		p.removeCard(c);
-		this.deck.returnCard(c);
+		this.getDeck().returnCard(c);
 	}
 
 	public Player checkWinner() {
-		for (Player p : this.players) {
+		for (Player p : this.getPlayers()) {
 			if (p.isVictorious()) {
 				return p;
 			}
@@ -372,18 +405,13 @@ public class WarGame {
 		this.getWarFrame().getUIPanel().showGameEndedPanel(p);
 	}
 
-	public void showObjective() {
-		this.getWarFrame().spawnTextFrame(
-				this.getCurrentPlayer().getObjective().getDescription());
-	}
-
 	public void showCards(boolean forcedToExchange) {
 		this.getWarFrame().spawnCardSelectionFrame(this.getCurrentPlayer(), 3,
 				forcedToExchange);
 	}
 
 	public void exchangeCards(List<Card> selectedCards) {
-		if (this.getState().isPlacing()) {
+		if (this.isPlacing()) {
 			for (Card c : selectedCards) {
 				this.getCurrentPlayer().removeCard(c);
 				if (c instanceof TerritoryCard) {
@@ -394,8 +422,9 @@ public class WarGame {
 			}
 			this.getCurrentPlayer().giveArmies(
 					this.getState().getCardExchangeArmyCount());
-			this.getState().incrementCardExchangeArmyCount();
+			this.incrementCardExchangeArmyCount();
 			this.warFrame.update(false);
 		}
 	}
+
 }

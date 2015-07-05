@@ -8,6 +8,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,7 +28,7 @@ import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
 @SuppressWarnings("serial")
-public class UIPanel extends JPanel {
+public class UIPanel extends JPanel implements MouseListener {
 
 	private CardLayout layout;
 
@@ -57,9 +60,9 @@ public class UIPanel extends JPanel {
 		this.size.height = (int) (this.size.height * MULTIPLIER_Y);
 		this.size.width = (int) (this.size.width * MULTIPLIER_X);
 		this.setMaximumSize(this.size);
-		addStartUIPanel();
-
-		layout.show(this, "Starting UI");
+		this.addStartUIPanel();
+		
+		this.layout.show(this, "Starting UI");
 	}
 
 	private void addStartUIPanel() {
@@ -93,19 +96,20 @@ public class UIPanel extends JPanel {
 
 			@Override
 			public void actionPerformed(ActionEvent ae) {
+				List<Player> players = new ArrayList<Player>();
 				for (int i = 0; i < WarLogic.MAX_PLAYERS; i++) {
 					JTextField playerNameTextField = playerNameTextFields
 							.get(i);
 					if (playerNameTextField.getText().length() > 0) {
-						WarGame.getInstance().addPlayer(
+						players.add(
 								new Player(playerNameTextField.getText(),
 										Player.playerColors[i]));
 					}
 				}
-				if (WarGame.getInstance().getPlayers().size() >= WarLogic.MIN_PLAYERS) {
-					WarGame.getInstance().startGame();
+				if (players.size() >= WarLogic.MIN_PLAYERS) {
+					WarGame.getInstance().startGame(players);
 				} else {
-					WarGame.getInstance().getPlayers().clear();
+					players.clear();
 					l1.setText("<html>Welcome to War. Enter the name of each player:<br />Please enter at least 3 players!</html>");
 					l1.setOpaque(true);
 					l1.setBackground(Color.RED);
@@ -131,6 +135,7 @@ public class UIPanel extends JPanel {
 			this.gamePanel
 					.setLayout(new BoxLayout(gamePanel, BoxLayout.X_AXIS));
 			this.add(gamePanel, "Game UI");
+			this.gamePanel.addMouseListener(this);
 		}
 		this.updateNamesPanel(first);
 		this.updateOptionsPanel(first);
@@ -308,10 +313,10 @@ public class UIPanel extends JPanel {
 			statusString = String
 					.format("Select a country place armies in (you have %d armies left to place)",
 							currentPlayer.getUnplacedArmies());
-			if (WarGame.getInstance().getState().getSelectedTerritory() != null
+			if (WarGame.getInstance().getSelectedTerritory() != null
 					&& currentPlayer.getUnplacedArmies() > 0) {
 				actionString = String.format("Place armies in %s", WarGame
-						.getInstance().getState().getSelectedTerritory()
+						.getInstance().getSelectedTerritory()
 						.getName());
 				this.actionButton.setEnabled(true);
 			}
@@ -329,5 +334,34 @@ public class UIPanel extends JPanel {
 		this.statusLabel.setForeground(Player.getForegroundColor(currentPlayer
 				.getColor()));
 		this.actionButton.setText(actionString);
+	}
+
+	@Override
+	public void mouseClicked(MouseEvent me) {
+		WarGame.getInstance().focusPopupIfExists();
+	}
+
+	@Override
+	public void mouseEntered(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseExited(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mousePressed(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void mouseReleased(MouseEvent arg0) {
+		// TODO Auto-generated method stub
+		
 	}
 }

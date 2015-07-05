@@ -22,6 +22,7 @@ public class ChooseNumberFrame extends JFrame implements ActionListener {
 		this.setSize(new Dimension(300, 100));
 		this.getContentPane().setLayout(new BorderLayout());
 		this.setResizable(false);
+		this.setLocationRelativeTo(null);
 
 		JLabel instructionLabel = new JLabel(message);
 

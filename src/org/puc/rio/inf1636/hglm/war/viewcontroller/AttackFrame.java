@@ -56,6 +56,7 @@ public class AttackFrame extends JFrame {
 		this.getContentPane().setLayout(
 				new BoxLayout(this.getContentPane(), BoxLayout.Y_AXIS));
 		this.setResizable(false);
+		this.setLocationRelativeTo(null);
 
 		// attacker panel
 		this.attackerPanel = new JPanel();

@@ -54,6 +54,7 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 		this.setSize(new Dimension(1100 + 2 * 2 * 5, 600));
 		this.getContentPane().setLayout(new BorderLayout());
 		this.setResizable(false);
+		this.setLocationRelativeTo(null);
 
 		/* Card display panel */
 		this.cardDisplayPanel = new JPanel();
@@ -91,8 +92,7 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 		}
 
 		this.exchangeCardsButton = new JButton(String.format(
-				"Exchange cards for %d armies", WarGame.getInstance()
-						.getState().getCardExchangeArmyCount()));
+				"Exchange cards for %d armies", WarGame.getInstance().getCardExchangeArmyCount()));
 		ActionListener exchangeCardsListener = new ActionListener() {
 
 			@Override
@@ -125,8 +125,8 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 					.setBorder(BorderFactory.createLineBorder(Color.BLUE, 2));
 		}
 		if ((this.player.hasValidCardExchange(this.selectedCards) && WarGame
-				.getInstance().getState().isPlacing())
-				|| (WarGame.getInstance().getState().isAttacking() && this.selectedCards
+				.getInstance().isPlacing())
+				|| (WarGame.getInstance().isAttacking() && this.selectedCards
 						.size() < this.maxNumberOfCards)) {
 			this.exchangeCardsButton.setEnabled(true);
 		} else {

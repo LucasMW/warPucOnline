@@ -65,10 +65,10 @@ public class MapPanel extends JPanel {
 
 	public void updateArmyLabels(boolean first) {
 		int i = 0;
-		Territory selectedTerritory = WarGame.getInstance().getState()
+		Territory selectedTerritory = WarGame.getInstance()
 				.getSelectedTerritory();
-		Territory targetedTerritory = WarGame.getInstance().getState()
-				.getTargetedTerritory();
+		// Territory targetedTerritory = WarGame.getInstance()
+		// .getTargetedTerritory();
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 			/* defaults */
 			JLabel centerLabel;
@@ -92,6 +92,7 @@ public class MapPanel extends JPanel {
 						if (t != null) {
 							WarGame.getInstance().selectTerritory(t);
 						} else {
+							WarGame.getInstance().focusPopupIfExists();
 							System.out.println(String.format(
 									"Couldn't find territory with name %s",
 									label.getName()));
@@ -129,6 +130,7 @@ public class MapPanel extends JPanel {
 				// targetedTerritory.equals(t)) {
 				// zOrder = 0;
 				// borderColor = Color.BLUE;
+
 				/* owned by current player */
 			} else if (t.getOwner().equals(
 					WarGame.getInstance().getCurrentPlayer())) {
@@ -175,13 +177,16 @@ public class MapPanel extends JPanel {
 				text = String.format("%d", t.getArmyCount());
 				width = 30;
 			}
-
 			if (!first) {
 				this.setComponentZOrder(centerLabel, zOrder);
 			}
-
-			centerLabel.setBounds((int) (t.getCenter().x * WarGame.getInstance().getWarFrame().getMapPanel().coordinatesMultiplierX),
-					(int) (t.getCenter().y * WarGame.getInstance().getWarFrame().getMapPanel().coordinatesMultiplierY), width, 20);
+			centerLabel
+					.setBounds(
+							(int) (t.getCenter().x * WarGame.getInstance()
+									.getWarFrame().getMapPanel().coordinatesMultiplierX),
+							(int) (t.getCenter().y * WarGame.getInstance()
+									.getWarFrame().getMapPanel().coordinatesMultiplierY),
+							width, 20);
 			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
 					.getColor()));
 			centerLabel.setText(text);
@@ -218,7 +223,6 @@ public class MapPanel extends JPanel {
 
 		@Override
 		public void mouseClicked(MouseEvent me) {
-			System.out.printf("clicked point <%d,%d>\n", me.getX(), me.getY());
 			for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
 				if (t.getPolygon().contains(
 						me.getX()
@@ -229,6 +233,8 @@ public class MapPanel extends JPanel {
 										.getMapPanel().coordinatesMultiplierY)) {
 					WarGame.getInstance().selectTerritory(t);
 					return; // Cannot select twice
+				} else {
+					WarGame.getInstance().focusPopupIfExists();					
 				}
 			}
 		}

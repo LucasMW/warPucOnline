@@ -11,6 +11,7 @@ public class WarLogic {
 	public final static int MAX_DICE = 3;
 	public final static int ARMIES_TO_GAIN_FROM_TERRITORY_CARD = 2;
 	public final static int MINIMUM_ARMIES_TO_GAIN_PER_TURN = 3;
+	public final static int CARD_EXCHANGE_ARMY_INCREMENT= 2;
 
 	public static int calculateArmiesToGain(Map m, Player p) {
 		int countFromTotalTerritories = p.getNumberOfTerritories() / 2;

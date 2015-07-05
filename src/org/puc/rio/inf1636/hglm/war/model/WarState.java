@@ -1,77 +1,92 @@
 package org.puc.rio.inf1636.hglm.war.model;
 
-import org.puc.rio.inf1636.hglm.war.WarGame;
+import java.util.ArrayList;
+import java.util.List;
 
 public class WarState {
-	/* this will be accessed too many times */
-	private final static WarGame game = WarGame.getInstance();
+
 	private Player currentPlayer;
-	private TurnState currentState;
+	private List<Player> players = new ArrayList<Player>();
+	private Player canStealCardsFrom = null;
+	
+	private TurnState currentTurnState;
+	
 	private Territory selectedTerritory;
 	private Territory targetedTerritory;
+	
 	private int conquestsThisTurn = 0;
 	private int cardExchangeArmyCount = 4;
-	private Player canStealCardsFrom = null;
 
+	private Map map = null;
+	
+	private Deck deck;
+	
 	public enum TurnState {
 		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
 	}
 
-	public WarState(Player firstPlayer) {
-		this.currentPlayer = firstPlayer;
-		this.currentState = TurnState.PLACING_NEW_ARMIES;
+	public WarState(List<Player> players, Map map, Deck deck) {
+		this.players = players;
+		this.map = map;
+		this.deck = deck;
+		this.currentPlayer = players.get(0);
+		this.currentTurnState = TurnState.PLACING_NEW_ARMIES;
 	}
 
-	public TurnState getCurrentState() {
-		return this.currentState;
+	public Map getMap() {
+		return this.map;
+	}
+
+	public void addPlayer(Player p) {
+		players.add(p);
+	}
+
+	public List<Player> getPlayers() {
+		return this.players;
+	}
+
+	public Deck getDeck() {
+		return deck;
+	}
+
+	public TurnState getCurrentTurnState() {
+		return this.currentTurnState;
 	}
 
 	public Player getCurrentPlayer() {
 		return this.currentPlayer;
 	}
 
-	public boolean isAttacking() {
-		return this.getCurrentState().equals(TurnState.ATTACKING);
-	}
-
-	public boolean isMoving() {
-		return this.getCurrentState().equals(TurnState.MOVING_ARMIES);
-	}
-
-	public boolean isPlacing() {
-		return this.getCurrentState().equals(TurnState.PLACING_NEW_ARMIES);
-	}
-
 	public void nextTurn() {
-		int currentPlayerIndex = game.getPlayers().indexOf(this.currentPlayer);
-		if (currentPlayerIndex == game.getPlayers().size() - 1) {
-			this.currentPlayer = game.getPlayers().get(0);
+		int currentPlayerIndex = players.indexOf(this.currentPlayer);
+		if (currentPlayerIndex == players.size() - 1) {
+			this.currentPlayer = players.get(0);
 		} else {
-			this.currentPlayer = game.getPlayers().get(currentPlayerIndex + 1);
+			this.currentPlayer = players.get(currentPlayerIndex + 1);
 		}
 		this.clearSelections();
 		this.conquestsThisTurn = 0;
 		this.canStealCardsFrom = null;
-		this.currentState = TurnState.PLACING_NEW_ARMIES;
+		this.currentTurnState = TurnState.PLACING_NEW_ARMIES;
 	}
 
 	public boolean startAttacking() {
-		if (this.getCurrentState() != TurnState.PLACING_NEW_ARMIES) {
+		if (this.getCurrentTurnState() != TurnState.PLACING_NEW_ARMIES) {
 			System.out.println("Should place all reinforcements first");
 			return false;
 		}
 		this.clearSelections();
-		this.currentState = TurnState.ATTACKING;
+		this.currentTurnState = TurnState.ATTACKING;
 		return true;
 	}
 
 	public boolean startMovingArmies() {
-		if (!this.currentState.equals(TurnState.ATTACKING)) {
+		if (!this.currentTurnState.equals(TurnState.ATTACKING)) {
 			System.out.println("Must be attacking before moving");
 			return false;
 		}
 		this.clearSelections();
-		this.currentState = TurnState.MOVING_ARMIES;
+		this.currentTurnState = TurnState.MOVING_ARMIES;
 		return true;
 
 	}
@@ -117,8 +132,8 @@ public class WarState {
 		return this.cardExchangeArmyCount;
 	}
 	
-	public void incrementCardExchangeArmyCount() {
-		this.cardExchangeArmyCount += 2;
+	public void setCardExchangeArmyCount(int count) {
+		this.cardExchangeArmyCount = count;
 	}
 
 	public void setCanStealCardsFrom(Player p) {
