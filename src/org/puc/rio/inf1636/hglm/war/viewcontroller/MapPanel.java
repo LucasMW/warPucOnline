@@ -8,6 +8,8 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
@@ -232,10 +234,10 @@ public class MapPanel extends JPanel implements Observer {
 								/ WarGame.getInstance().getWarFrame()
 										.getMapPanel().coordinatesMultiplierY)) {
 					WarGame.getInstance().selectTerritory(t);
-					/*  Cannot select twice */
+					/* Cannot select twice */
 					return;
 				} else {
-					WarGame.getInstance().focusPopupIfExists();					
+					WarGame.getInstance().focusPopupIfExists();
 				}
 			}
 		}
@@ -259,7 +261,7 @@ public class MapPanel extends JPanel implements Observer {
 	}
 
 	@Override
-	public void update() {
+	public void update(Observable obs, Object obj) {
 		this.update(false);		
 	}
 }

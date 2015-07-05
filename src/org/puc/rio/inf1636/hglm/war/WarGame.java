@@ -54,8 +54,8 @@ public class WarGame {
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						this.getCurrentPlayer()));
 		this.getWarFrame().init();
-		this.getState().attach(this.getWarFrame().getMapPanel());
-		this.getState().attach(this.getWarFrame().getUIPanel());
+		this.getState().addObserver(this.getWarFrame().getMapPanel());
+		this.getState().addObserver(this.getWarFrame().getUIPanel());
 	}
 
 	/* Wargame is a facade, no-one should be able to access the state */
@@ -195,7 +195,7 @@ public class WarGame {
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.showCards(true);
 		}
-		this.getState().notifyAllObservers();
+		this.getState().notifyObservers();
 	}
 
 	public void actionPerformed() {
@@ -225,7 +225,7 @@ public class WarGame {
 		default:
 			break;
 		}
-		this.getState().notifyAllObservers();
+		this.getState().notifyObservers();
 	}
 
 	public void selectTerritory(Territory t) {
@@ -236,10 +236,11 @@ public class WarGame {
 		}
 		switch (this.getTurnState()) {
 		case ATTACKING:
-			/* Select territory to attack from */
-			if (this.getSelectedTerritory() == null
-					&& t.getOwner().equals(this.getCurrentPlayer())) {
-				this.warState.selectTerritory(t);
+			if (this.getSelectedTerritory() == null) {
+				/* Select territory to attack from */
+				if (t.getOwner().equals(this.getCurrentPlayer())) {
+					this.warState.selectTerritory(t);
+				}
 			} else {
 				/* Select another territory */
 				if (t.getOwner().equals(this.getCurrentPlayer())) {
@@ -290,7 +291,7 @@ public class WarGame {
 		default:
 			break;
 		}
-		this.getState().notifyAllObservers();
+		this.getState().notifyObservers();
 	}
 
 	public void selectNumber(int number) {
@@ -337,7 +338,7 @@ public class WarGame {
 		default:
 			break;
 		}
-		this.getState().notifyAllObservers();
+		this.getState().notifyObservers();
 	}
 
 	public void attackResult(int[] losses) {
@@ -368,7 +369,7 @@ public class WarGame {
 								.getTargetedTerritory().getName()));
 			}
 		}
-		this.getState().notifyAllObservers();
+		this.getState().notifyObservers();
 	}
 
 	public void showObjective() {

@@ -13,6 +13,8 @@ import java.awt.event.MouseListener;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
@@ -366,7 +368,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 	}
 
 	@Override
-	public void update() {
-		this.update(false);
+	public void update(Observable obs, Object obj) {
+		this.update(false);		
 	}
 }
