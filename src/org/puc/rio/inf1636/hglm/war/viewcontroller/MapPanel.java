@@ -21,7 +21,7 @@ import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 @SuppressWarnings("serial")
-public class MapPanel extends JPanel {
+public class MapPanel extends JPanel implements Observer {
 
 	private Image backgroundImage;
 	private final double MULTIPLIER_X = 1.0;
@@ -256,5 +256,10 @@ public class MapPanel extends JPanel {
 		public void mouseReleased(MouseEvent me) {
 		}
 
+	}
+
+	@Override
+	public void update() {
+		this.update(false);		
 	}
 }

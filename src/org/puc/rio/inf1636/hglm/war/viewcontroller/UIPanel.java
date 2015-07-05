@@ -28,7 +28,7 @@ import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 
 @SuppressWarnings("serial")
-public class UIPanel extends JPanel implements MouseListener {
+public class UIPanel extends JPanel implements MouseListener, Observer {
 
 	private CardLayout layout;
 
@@ -363,5 +363,10 @@ public class UIPanel extends JPanel implements MouseListener {
 	public void mouseReleased(MouseEvent arg0) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public void update() {
+		this.update(false);
 	}
 }

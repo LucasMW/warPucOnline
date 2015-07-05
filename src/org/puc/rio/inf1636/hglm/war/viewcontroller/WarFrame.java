@@ -8,7 +8,7 @@ import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
 @SuppressWarnings("serial")
-public class WarFrame extends JFrame implements Observer {
+public class WarFrame extends JFrame {
 
 	private UIPanel uiPanel;
 	private MapPanel mapPanel;
@@ -45,10 +45,6 @@ public class WarFrame extends JFrame implements Observer {
 
 	public void init() {
 		this.update(true);
-	}
-
-	public void update() {
-		this.update(false);
 	}
 
 	public void update(boolean first) {

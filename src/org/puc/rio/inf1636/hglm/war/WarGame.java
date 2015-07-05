@@ -43,7 +43,6 @@ public class WarGame {
 		/* Randomize player order */
 		Collections.shuffle(players);
 		this.warState = new WarState(players, new Map(), new Deck());
-		this.getState().attach(this.getWarFrame());
 		Util.loadTerritories(this.getState().getMap(), this.getState()
 				.getDeck());
 		this.getState().getDeck().addJoker(2);
@@ -55,6 +54,8 @@ public class WarGame {
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						this.getCurrentPlayer()));
 		this.getWarFrame().init();
+		this.getState().attach(this.getWarFrame().getMapPanel());
+		this.getState().attach(this.getWarFrame().getUIPanel());
 	}
 
 	/* Wargame is a facade, no-one should be able to access the state */
