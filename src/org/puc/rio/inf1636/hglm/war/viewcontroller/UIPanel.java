@@ -134,7 +134,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				WarGame.getInstance().startGame(saveFileName.getText());
+				WarGame.getInstance().loadGame(saveFileName.getText());
 			}});
 
 		this.loadGamePanel.add(saveFileName);
@@ -208,7 +208,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 				sb.append(c.getType().toString());
 				sb.append(" ");
 			}
-			playerLabel.setText(String.format("%s (%d territories in total)",
+			playerLabel.setText(String.format("%s (%d territories)",
 					p.getName(), WarGame.getInstance().getMap().getTerritoriesByOwner(p).size()));
 			if (WarGame.getInstance().getCurrentPlayer().equals(p)) {
 				playerLabel.setFont(playerLabel.getFont().deriveFont(

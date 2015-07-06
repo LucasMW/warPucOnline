@@ -100,8 +100,8 @@ public class WarDeserializer implements JsonDeserializer<WarState> {
 					.getAsInt();
 			int numberOfTerritoriesToConquer = jo.get(
 					"numberOfTerritoriesToConquer").getAsInt();
-			return new ConquerTerritoriesObjective(numberOfArmiesInEach,
-					numberOfTerritoriesToConquer);
+			return new ConquerTerritoriesObjective(
+					numberOfTerritoriesToConquer, numberOfArmiesInEach);
 		} else if (className.equals(DestroyPlayerObjective.class.getName())) {
 			return new DestroyPlayerObjective(jo.get("targetPlayerName")
 					.getAsString());

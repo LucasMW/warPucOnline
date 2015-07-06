@@ -117,7 +117,6 @@ public class Map extends Object {
 				return t;
 			}
 		}
-		System.out.println(name + " notFound");
 		return null;
 
 	}

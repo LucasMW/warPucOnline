@@ -10,7 +10,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
-*.warsave
+save_*
 
 # Eclipse Core
 .project

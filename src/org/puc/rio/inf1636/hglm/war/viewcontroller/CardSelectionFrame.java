@@ -80,7 +80,6 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 			} else {
 				imagePath = "resources/cards/war_carta_coringa.png";
 			}
-			System.out.println(imagePath);
 			ImageIcon cardImage = new ImageIcon(imagePath);
 			Image resizedImage = cardImage.getImage().getScaledInstance(
 					cardLabel.getWidth(), cardLabel.getHeight(),
@@ -90,9 +89,14 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 			this.cards.put(cardLabel, c);
 			this.cardDisplayPanel.add(cardLabel);
 		}
-
-		this.exchangeCardsButton = new JButton(String.format(
-				"Exchange cards for %d armies", WarGame.getInstance().getCardExchangeArmyCount()));
+		String exchangeCardsButtonText = String.format(
+				"Exchange cards for %d armies", WarGame.getInstance()
+						.getCardExchangeArmyCount());
+		if (WarGame.getInstance().isAttacking()) {
+			exchangeCardsButtonText = String.format("Take these cards from %s",
+					p.getName());
+		}
+		this.exchangeCardsButton = new JButton(exchangeCardsButtonText);
 		ActionListener exchangeCardsListener = new ActionListener() {
 
 			@Override
@@ -127,7 +131,9 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 		if ((this.player.hasValidCardExchange(this.selectedCards) && WarGame
 				.getInstance().isPlacing())
 				|| (WarGame.getInstance().isAttacking() && this.selectedCards
-						.size() < this.maxNumberOfCards)) {
+						.size() < this.maxNumberOfCards)
+				&& !player.getName().equals(
+						WarGame.getInstance().getCurrentPlayer().getName())) {
 			this.exchangeCardsButton.setEnabled(true);
 		} else {
 			this.exchangeCardsButton.setEnabled(false);
