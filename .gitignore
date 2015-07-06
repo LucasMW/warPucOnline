@@ -1,4 +1,4 @@
-*.pydevproject
+*.pydevproject
 .metadata
 .gradle
 bin/
@@ -10,6 +10,7 @@ tmp/
 local.properties
 .settings/
 .loadpath
+*.warsave
 
 # Eclipse Core
 .project
