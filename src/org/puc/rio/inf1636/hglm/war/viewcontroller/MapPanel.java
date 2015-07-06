@@ -169,8 +169,6 @@ public class MapPanel extends JPanel implements Observer {
 				break;
 			case PLACING_NEW_ARMIES:
 				break;
-			case RECEIVING_LETTER:
-				break;
 			default:
 				break;
 			}

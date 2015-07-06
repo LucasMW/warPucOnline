@@ -23,7 +23,7 @@ public class WarState extends Observable {
 	private Deck deck;
 
 	public enum TurnState {
-		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES, RECEIVING_LETTER;
+		PLACING_NEW_ARMIES, ATTACKING, MOVING_ARMIES;
 	}
 
 	public WarState(List<Player> players, Map map, Deck deck) {
@@ -79,7 +79,11 @@ public class WarState extends Observable {
 	public Player getCanStealCardsFrom() {
 		return this.canStealCardsFrom;
 	}
-
+	
+	public int getCurrentPlayerIndex() {
+		return this.getPlayers().indexOf(this.getCurrentPlayer());
+	}
+	
 	public void nextTurn() {
 		int currentPlayerIndex = players.indexOf(this.currentPlayer);
 		if (currentPlayerIndex == players.size() - 1) {

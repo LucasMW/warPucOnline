@@ -14,7 +14,6 @@ public class DestroyPlayerObjective extends WarObjective {
 
 	@Override
 	public boolean checkVictory(Map m, Player p) {
-
 		if (this.targetPlayer.getNumberOfTerritories() == 0) {
 			return true;
 		}

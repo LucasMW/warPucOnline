@@ -325,8 +325,6 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 			/* must always place all armies */
 			this.endTurnButton.setEnabled(false);
 			break;
-		case RECEIVING_LETTER:
-			break;
 		default:
 			break;
 		}

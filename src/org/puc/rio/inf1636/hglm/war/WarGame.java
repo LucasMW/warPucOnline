@@ -17,11 +17,11 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.WarState;
 import org.puc.rio.inf1636.hglm.war.model.WarState.TurnState;
-import org.puc.rio.inf1636.hglm.war.model.serialize.WarSerializer;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerContinentsObjective;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerTerritoriesObjective;
 import org.puc.rio.inf1636.hglm.war.objective.DestroyPlayerObjective;
 import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
+import org.puc.rio.inf1636.hglm.war.serialize.WarSerializer;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 public class WarGame {
@@ -83,7 +83,7 @@ public class WarGame {
 	}
 
 	public int getCurrentPlayerIndex() {
-		return this.getPlayers().indexOf(this.getState().getCurrentPlayer());
+		return this.getState().getCurrentPlayerIndex();
 	}
 
 	public TurnState getTurnState() {
@@ -200,7 +200,7 @@ public class WarGame {
 		}
 		this.getState().notifyObservers();
 		try {
-			this.saveWar(String.format("%s_%d", "save",this.hashCode()));
+			this.saveWar(String.format("%s_%d", "save", this.hashCode()));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -228,9 +228,6 @@ public class WarGame {
 								this.getSelectedTerritory().getName()));
 			}
 			break;
-		case RECEIVING_LETTER:
-
-			break;
 		default:
 			break;
 		}
@@ -254,7 +251,7 @@ public class WarGame {
 				/* Select another territory */
 				if (t.getOwner().equals(this.getCurrentPlayer())) {
 					this.warState.selectTerritory(t);
-				/* Select territory to attack */
+					/* Select territory to attack */
 				} else if (this.getSelectedTerritory().canAttack(t)) {
 					this.getState().targetTerritory(t);
 					this.getWarFrame()
@@ -293,9 +290,6 @@ public class WarGame {
 			if (t.getOwner().equals(this.getCurrentPlayer())) {
 				this.getState().selectTerritory(t);
 			}
-			break;
-		case RECEIVING_LETTER:
-
 			break;
 		default:
 			break;
@@ -341,8 +335,6 @@ public class WarGame {
 			if (this.getCurrentPlayer().getUnplacedArmies() <= 0) {
 				this.warState.startAttacking();
 			}
-			break;
-		case RECEIVING_LETTER:
 			break;
 		default:
 			break;
@@ -447,22 +439,21 @@ public class WarGame {
 			this.incrementCardExchangeArmyCount();
 		}
 	}
+
 	public void saveWar(String filePath) throws IOException {
 		WarSerializer s = new WarSerializer();
-		  FileWriter file = new FileWriter(String.format("%s.json",filePath));
-	        try {
-	            file.write(s.serialize(this.getState(), null, null).toString());
-	            System.out.println("Successfully Copied JSON Object to File...");
-	           
-	 
-	        } catch (IOException e) {
-	            e.printStackTrace();
-	 
-	        } finally {
-	            file.flush();
-	            file.close();
-	        }
-		
-		
+		FileWriter file = new FileWriter(String.format("%s.warsave", filePath));
+		try {
+			file.write(s.serialize(this.getState(), null, null).toString());
+			System.out.println("Successfully Copied JSON Object to File...");
+
+		} catch (IOException e) {
+			e.printStackTrace();
+
+		} finally {
+			file.flush();
+			file.close();
+		}
+
 	}
 }

@@ -7,6 +7,7 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 public class ConquerTerritoriesObjective extends WarObjective {
 
 	int numberOfTerritoriesToConquer;
+
 	int numberOfArmiesInEach;
 
 	public ConquerTerritoriesObjective(int numberOfTerritoriesToConquer,
@@ -23,11 +24,20 @@ public class ConquerTerritoriesObjective extends WarObjective {
 	public boolean checkVictory(Map m, Player p) {
 		int numberOfTerritoriesOwnedWithCondition = 0;
 		for (Territory t : m.getTerritories()) {
-			if (t.getOwner().equals(p) && t.getArmyCount() >= this.numberOfArmiesInEach) {
+			if (t.getOwner().equals(p)
+					&& t.getArmyCount() >= this.numberOfArmiesInEach) {
 				numberOfTerritoriesOwnedWithCondition++;
 			}
 		}
 		return numberOfTerritoriesOwnedWithCondition >= this.numberOfTerritoriesToConquer;
+	}
+
+	public int getNumberOfArmiesInEach() {
+		return this.numberOfArmiesInEach;
+	}
+
+	public int getNumberOfTerritoriesToConquer() {
+		return numberOfTerritoriesToConquer;
 	}
 
 }

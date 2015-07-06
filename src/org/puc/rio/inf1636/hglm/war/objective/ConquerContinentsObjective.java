@@ -29,4 +29,16 @@ public class ConquerContinentsObjective extends WarObjective {
 				&& (continentsOwned.size() >= 3 || !hasToConquerAThirdContinent);
 	}
 
+	public Continent getTargetContinent1() {
+		return targetContinent1;
+	}
+
+	public Continent getTargetContinent2() {
+		return targetContinent2;
+	}
+
+	public boolean hasToConquerAThirdContinent() {
+		return hasToConquerAThirdContinent;
+	}
+
 }
