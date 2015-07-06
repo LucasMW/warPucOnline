@@ -1,5 +1,7 @@
 package org.puc.rio.inf1636.hglm.war;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -15,6 +17,7 @@ import org.puc.rio.inf1636.hglm.war.model.Territory;
 import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
 import org.puc.rio.inf1636.hglm.war.model.WarState;
 import org.puc.rio.inf1636.hglm.war.model.WarState.TurnState;
+import org.puc.rio.inf1636.hglm.war.model.serialize.WarSerializer;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerContinentsObjective;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerTerritoriesObjective;
 import org.puc.rio.inf1636.hglm.war.objective.DestroyPlayerObjective;
@@ -196,6 +199,12 @@ public class WarGame {
 			this.showCards(true);
 		}
 		this.getState().notifyObservers();
+		try {
+			this.saveWar(String.format("%s_%d", "save",this.hashCode()));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void actionPerformed() {
@@ -437,5 +446,23 @@ public class WarGame {
 					this.getState().getCardExchangeArmyCount());
 			this.incrementCardExchangeArmyCount();
 		}
+	}
+	public void saveWar(String filePath) throws IOException {
+		WarSerializer s = new WarSerializer();
+		  FileWriter file = new FileWriter(String.format("%s.json",filePath));
+	        try {
+	            file.write(s.serialize(this.getState(), null, null).toString());
+	            System.out.println("Successfully Copied JSON Object to File...");
+	           
+	 
+	        } catch (IOException e) {
+	            e.printStackTrace();
+	 
+	        } finally {
+	            file.flush();
+	            file.close();
+	        }
+		
+		
 	}
 }
