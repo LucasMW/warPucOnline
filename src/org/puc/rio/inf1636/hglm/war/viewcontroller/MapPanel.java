@@ -72,12 +72,14 @@ public class MapPanel extends JPanel implements Observer {
 		// Territory targetedTerritory = WarGame.getInstance()
 		// .getTargetedTerritory();
 		for (Territory t : WarGame.getInstance().getMap().getTerritories()) {
+			Player owner = WarGame.getInstance().getPlayerByName(
+					t.getOwnerName());
 			/* defaults */
 			JLabel centerLabel;
 			Color borderColor = Color.BLACK;
 			int width = 130;
 			int zOrder = 2;
-			Color backgroundColor = t.getOwner().getColor();
+			Color backgroundColor = owner.getColor();
 			String text = String.format("(%d) %s", t.getArmyCount(),
 					t.getName());
 
@@ -134,8 +136,7 @@ public class MapPanel extends JPanel implements Observer {
 				// borderColor = Color.BLUE;
 
 				/* owned by current player */
-			} else if (t.getOwner().equals(
-					WarGame.getInstance().getCurrentPlayer())) {
+			} else if (owner.equals(WarGame.getInstance().getCurrentPlayer())) {
 				zOrder = 1;
 				backgroundColor = backgroundColor.darker();
 				borderColor = Color.WHITE;
@@ -187,7 +188,7 @@ public class MapPanel extends JPanel implements Observer {
 							(int) (t.getCenter().y * WarGame.getInstance()
 									.getWarFrame().getMapPanel().coordinatesMultiplierY),
 							width, 20);
-			centerLabel.setForeground(Player.getForegroundColor(t.getOwner()
+			centerLabel.setForeground(Player.getForegroundColor(owner
 					.getColor()));
 			centerLabel.setText(text);
 			centerLabel.setBorder(BorderFactory.createLineBorder(borderColor,
@@ -260,6 +261,6 @@ public class MapPanel extends JPanel implements Observer {
 
 	@Override
 	public void update(Observable obs, Object obj) {
-		this.update(false);		
+		this.update(false);
 	}
 }

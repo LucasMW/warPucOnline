@@ -12,15 +12,14 @@ public class Player {
 
 	private String name;
 	private Color color;
-	private int numberOfTerritories = 0;
 	private List<Card> cards = new ArrayList<Card>();
 	private WarObjective objective;
-	private static final Color BLUE = new Color(0, 0, 128);
-	private static final Color GREEN = new Color(0, 128, 0);
-	private static final Color RED = new Color(128, 0, 0);
-	private static final Color LIGHT_BLUE = new Color(0, 128, 128);
-	private static final Color PURPLE = new Color(128, 0, 128);
-	private static final Color BROWN = new Color(128, 128, 0);
+	private static final Color BLUE = new Color(0, 0, 128, 255);
+	private static final Color GREEN = new Color(0, 128, 0, 255);
+	private static final Color RED = new Color(128, 0, 0, 255);
+	private static final Color LIGHT_BLUE = new Color(0, 128, 128, 255);
+	private static final Color PURPLE = new Color(128, 0, 128, 255);
+	private static final Color BROWN = new Color(128, 128, 0, 255);
 	public final static Color[] playerColors = { GREEN, RED, BLUE, LIGHT_BLUE,
 			PURPLE, BROWN };
 	private int unplacedArmies = 0;
@@ -38,20 +37,8 @@ public class Player {
 		return this.color;
 	}
 
-	public int addTerritory() {
-		return ++this.numberOfTerritories;
-	}
-
-	public int removeTerritory() {
-		return --this.numberOfTerritories;
-	}
-
-	public int getNumberOfTerritories() {
-		return this.numberOfTerritories;
-	}
-
 	public static Color getForegroundColor(Color c) {
-		if (c == BLUE || c == PURPLE || c == RED) {
+		if (c.equals(BLUE) || c.equals(PURPLE) || c.equals(RED)) {
 			return Color.WHITE;
 		} else {
 			return Color.BLACK;

@@ -34,7 +34,7 @@ public class Map extends Object {
 		for (Territory t : this.getTerritories()) {
 			totalTerritoriesInContinentCount.put(t.getContinent(),
 					totalTerritoriesInContinentCount.get(t.getContinent()) + 1);
-			if (t.getOwner().equals(p)) {
+			if (t.getOwnerName().equals(p.getName())) {
 				territoriesOwnedInContinentCount
 						.put(t.getContinent(), territoriesOwnedInContinentCount
 								.get(t.getContinent()) + 1);
@@ -133,7 +133,7 @@ public class Map extends Object {
 
 	/* returns maximum amount of armies to move straight after conquest */
 	public int conquerTerritory(Territory from, Territory to) {
-		to.setOwner(from.getOwner());
+		to.setOwnerName(from.getOwnerName());
 		/* always move at least one */
 		this.moveArmies(from, to, 1, true);
 
@@ -146,7 +146,7 @@ public class Map extends Object {
 
 	public boolean moveArmies(Territory from, Territory to, int amount,
 			boolean movable) {
-		if (!from.getOwner().equals(to.getOwner())) {
+		if (!from.getOwnerName().equals(to.getOwnerName())) {
 			return false;
 		}
 		if (from.getArmyCount() - 1 < amount) {
@@ -169,8 +169,10 @@ public class Map extends Object {
 
 	public List<Territory> getTerritoriesByOwner(Player owner) {
 		List<Territory> territoriesOwned = new LinkedList<Territory>();
-		for (Territory t: this.getTerritories()) {
-			territoriesOwned.add(t);
+		for (Territory t : this.getTerritories()) {
+			if (t.getOwnerName().equals(owner.getName())) {
+				territoriesOwned.add(t);
+			}
 		}
 		return territoriesOwned;
 	}

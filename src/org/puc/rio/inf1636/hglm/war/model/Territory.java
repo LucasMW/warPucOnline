@@ -13,7 +13,7 @@ public class Territory extends Object {
 	private String name;
 	private GeneralPath polygon;
 	private Point2D.Double center = new Point2D.Double(0., 0.);
-	private Player owner = null;
+	private String ownerName = null;
 	private int armyCount = 1;
 	private Set<Territory> neighbors = new HashSet<Territory>();
 	private Continent continent;
@@ -25,21 +25,18 @@ public class Territory extends Object {
 		this.createPolygon(points);
 	}
 
-	public void setOwner(Player p) {
-		if(this.owner !=null) 
-			this.owner.removeTerritory();
-		p.addTerritory();
-		this.owner = p;
+	public void setOwnerName(String name) {
+		this.ownerName = name;
 	}
 
-	public Player getOwner() {
-		return this.owner;
+	public String getOwnerName() {
+		return this.ownerName;
 	}
 
 	public Continent getContinent() {
 		return this.continent;
 	}
-	
+
 	public GeneralPath getPolygon() {
 		return this.polygon;
 	}
@@ -86,7 +83,7 @@ public class Territory extends Object {
 		if (this.getArmyCount() <= 1) {
 			return false;
 		}
-		if (t.getOwner().equals(this.getOwner())) {
+		if (t.getOwnerName().equals(this.getOwnerName())) {
 			return false;
 		}
 		if (!this.isNeighbor(t)) {
@@ -99,7 +96,7 @@ public class Territory extends Object {
 		if (this.getMoveableArmyCount() < 1) {
 			return false;
 		}
-		if (!t.getOwner().equals(this.getOwner())) {
+		if (!t.getOwnerName().equals(this.getOwnerName())) {
 			return false;
 		}
 		if (!this.isNeighbor(t)) {
@@ -151,8 +148,16 @@ public class Territory extends Object {
 		this.unmovableArmiesCount += amount;
 		this.addArmies(amount);
 	}
-	
+
 	public void resetUnmovableArmiesCount() {
 		this.unmovableArmiesCount = 0;
+	}
+
+	public void setUnmovableArmies(int unmovableArmiesCount) {
+		this.unmovableArmiesCount = unmovableArmiesCount;
+	}
+
+	public int getUnmovableArmyCount() {
+		return this.unmovableArmiesCount;
 	}
 }

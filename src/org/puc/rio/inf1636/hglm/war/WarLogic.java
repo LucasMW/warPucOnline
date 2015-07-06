@@ -14,7 +14,7 @@ public class WarLogic {
 	public final static int CARD_EXCHANGE_ARMY_INCREMENT= 2;
 
 	public static int calculateArmiesToGain(Map m, Player p) {
-		int countFromTotalTerritories = p.getNumberOfTerritories() / 2;
+		int countFromTotalTerritories = m.getTerritoriesByOwner(p).size() / 2;
 		int countFromContinentsOwned = 0;
 
 		for (Continent c : m.getContinentsOwnedByPlayer(p)) {

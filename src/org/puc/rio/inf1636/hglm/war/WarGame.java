@@ -2,11 +2,14 @@ package org.puc.rio.inf1636.hglm.war;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+
+import javax.xml.ws.Response;
 
 import org.puc.rio.inf1636.hglm.war.model.Card;
 import org.puc.rio.inf1636.hglm.war.model.Continent;
@@ -21,8 +24,13 @@ import org.puc.rio.inf1636.hglm.war.objective.ConquerContinentsObjective;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerTerritoriesObjective;
 import org.puc.rio.inf1636.hglm.war.objective.DestroyPlayerObjective;
 import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
+import org.puc.rio.inf1636.hglm.war.serialize.WarDeserializer;
 import org.puc.rio.inf1636.hglm.war.serialize.WarSerializer;
 import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
+
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonElement;
 
 public class WarGame {
 
@@ -30,6 +38,7 @@ public class WarGame {
 
 	private WarFrame warFrame;
 	private WarState warState = null;
+	private int saveName = Math.abs((new Random()).nextInt());
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
@@ -42,6 +51,27 @@ public class WarGame {
 		return WarGame.instance;
 	}
 
+	public void startGame(String saveFile) {
+		String jsonContent;
+		try {
+			jsonContent = Util.readFile(saveFile,
+					StandardCharsets.UTF_8);
+		} catch (IOException e) {
+			e.printStackTrace();
+			return;
+		}
+		GsonBuilder gsonBuilder = new GsonBuilder();
+		gsonBuilder.registerTypeAdapter(WarState.class, new WarDeserializer());
+		Gson gson = gsonBuilder.create();
+		this.warState = gson.fromJson(jsonContent, WarState.class);
+		this.getState().getDeck().addJoker(2);
+		this.getState().getDeck().shuffle();
+		this.getMap().calculateNeighbors();
+		this.getWarFrame().startGame();
+		this.getState().addObserver(this.getWarFrame().getMapPanel());
+		this.getState().addObserver(this.getWarFrame().getUIPanel());
+	}
+	
 	public void startGame(List<Player> players) {
 		/* Randomize player order */
 		Collections.shuffle(players);
@@ -56,7 +86,7 @@ public class WarGame {
 		this.getCurrentPlayer().giveArmies(
 				WarLogic.calculateArmiesToGain(this.getMap(),
 						this.getCurrentPlayer()));
-		this.getWarFrame().init();
+		this.getWarFrame().startGame();
 		this.getState().addObserver(this.getWarFrame().getMapPanel());
 		this.getState().addObserver(this.getWarFrame().getUIPanel());
 	}
@@ -68,6 +98,15 @@ public class WarGame {
 
 	public List<Player> getPlayers() {
 		return this.getState().getPlayers();
+	}
+
+	public Player getPlayerByName(String name) {
+		for (Player p : this.getPlayers()) {
+			if (p.getName().equals(name)) {
+				return p;
+			}
+		}
+		return null;
 	}
 
 	public Map getMap() {
@@ -135,8 +174,7 @@ public class WarGame {
 			}
 			Player p = pi.next();
 			Territory t = this.getMap().getTerritories().get(i);
-			t.setOwner(p);
-
+			t.setOwnerName(p.getName());
 		}
 	}
 
@@ -158,7 +196,7 @@ public class WarGame {
 				Continent.OCEANIA, false));
 
 		for (Player p : this.getPlayers()) {
-			objectives.add(new DestroyPlayerObjective(p));
+			objectives.add(new DestroyPlayerObjective(p.getName()));
 		}
 
 		Random r = new Random();
@@ -170,8 +208,8 @@ public class WarGame {
 				objective = objectives.get(index);
 				/* Disallow player having to destroy himself */
 			} while (objective instanceof DestroyPlayerObjective
-					&& ((DestroyPlayerObjective) objective).getTargetPlayer()
-							.equals(p));
+					&& ((DestroyPlayerObjective) objective)
+							.getTargetPlayerName().equals(p.getName()));
 			p.setObjective(objective);
 			/* Disallow duplicate objectives */
 			objectives.remove(index);
@@ -185,7 +223,7 @@ public class WarGame {
 			this.getWarFrame().focusPopup();
 			return;
 		}
-		if (this.getState().getConquestsThisTurn() > 0) {
+		if (this.getState().conqueredThisTurn()) {
 			this.giveCardToPlayer(this.getCurrentPlayer());
 		}
 		this.getMap().resetMovableArmiesCount();
@@ -200,7 +238,7 @@ public class WarGame {
 		}
 		this.getState().notifyObservers();
 		try {
-			this.saveWar(String.format("%s_%d", "save", this.hashCode()));
+			this.saveWar(String.format("%s_%d", "save", saveName));
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -244,12 +282,12 @@ public class WarGame {
 		case ATTACKING:
 			if (this.getSelectedTerritory() == null) {
 				/* Select territory to attack from */
-				if (t.getOwner().equals(this.getCurrentPlayer())) {
+				if (t.getOwnerName().equals(this.getCurrentPlayer().getName())) {
 					this.warState.selectTerritory(t);
 				}
 			} else {
 				/* Select another territory */
-				if (t.getOwner().equals(this.getCurrentPlayer())) {
+				if (t.getOwnerName().equals(this.getCurrentPlayer().getName())) {
 					this.warState.selectTerritory(t);
 					/* Select territory to attack */
 				} else if (this.getSelectedTerritory().canAttack(t)) {
@@ -268,7 +306,7 @@ public class WarGame {
 			}
 			break;
 		case MOVING_ARMIES:
-			if (t.getOwner().equals(this.getCurrentPlayer())) {
+			if (t.getOwnerName().equals(this.getCurrentPlayer().getName())) {
 				/* select territory */
 				if (this.getSelectedTerritory() == null) {
 					this.warState.selectTerritory(t);
@@ -287,7 +325,7 @@ public class WarGame {
 			}
 			break;
 		case PLACING_NEW_ARMIES:
-			if (t.getOwner().equals(this.getCurrentPlayer())) {
+			if (t.getOwnerName().equals(this.getCurrentPlayer().getName())) {
 				this.getState().selectTerritory(t);
 			}
 			break;
@@ -301,8 +339,8 @@ public class WarGame {
 		switch (this.getTurnState()) {
 		case ATTACKING:
 			/* already conquered and moving armies */
-			if (this.getSelectedTerritory().getOwner()
-					.equals(this.getTargetedTerritory().getOwner())) {
+			if (this.getSelectedTerritory().getOwnerName().equals(this
+					.getTargetedTerritory().getOwnerName())) {
 				this.getMap().moveArmies(this.getSelectedTerritory(),
 						this.getTargetedTerritory(), number - 1, true);
 				Player winner = this.checkWinner();
@@ -312,8 +350,10 @@ public class WarGame {
 				}
 				if (this.getState().getCanStealCardsFrom() != null) {
 					if (this.getCurrentPlayer().getCards().size() < 5) {
+						Player destroyedPlayer = this.getPlayerByName(this
+								.getState().getCanStealCardsFrom());
 						this.getWarFrame().spawnCardSelectionFrame(
-								this.getState().getCanStealCardsFrom(),
+								destroyedPlayer,
 								5 - this.getCurrentPlayer().getCards().size(),
 								false);
 					}
@@ -350,15 +390,15 @@ public class WarGame {
 			/* attacker conquered */
 			if (this.getTargetedTerritory().getArmyCount() == 0) {
 				/* Is last territory */
-				if (this.getTargetedTerritory().getOwner()
-						.getNumberOfTerritories() == 1) {
-					this.getState().setCanStealCardsFrom(
-							this.getTargetedTerritory().getOwner());
+				Player owner = this.getPlayerByName(this.getTargetedTerritory()
+						.getOwnerName());
+				if (this.getMap().getTerritoriesByOwner(owner).size() == 1) {
+					this.getState().setCanStealCardsFrom(owner.getName());
 				}
 				int maxToMove = this.getMap().conquerTerritory(
 						this.getSelectedTerritory(),
 						this.getTargetedTerritory());
-				this.getState().addConquestThisTurn();
+				this.getState().setConqueredThisTurn();
 				Player winner = this.checkWinner();
 				if (winner != null) {
 					this.endGameSequence(winner);
@@ -442,10 +482,10 @@ public class WarGame {
 
 	public void saveWar(String filePath) throws IOException {
 		WarSerializer s = new WarSerializer();
-		FileWriter file = new FileWriter(String.format("%s.warsave", filePath));
+		FileWriter file = new FileWriter(String.format("%s.warsave", filePath), false);
 		try {
 			file.write(s.serialize(this.getState(), null, null).toString());
-			System.out.println("Successfully Copied JSON Object to File...");
+			System.out.printf("Saved to %s.warsave\n", filePath);
 
 		} catch (IOException e) {
 			e.printStackTrace();

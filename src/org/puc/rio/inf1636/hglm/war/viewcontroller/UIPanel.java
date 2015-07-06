@@ -35,6 +35,8 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 	private CardLayout layout;
 
 	private JPanel startPanel;
+	private JPanel loadGamePanel;
+	private JPanel enterNamesPanel;
 	private JPanel gamePanel;
 	private JPanel optionsPanel;
 	private JPanel namesPanel;
@@ -69,12 +71,15 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 
 	private void addStartUIPanel() {
 		this.startPanel = new JPanel();
-		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.X_AXIS));
+		this.startPanel.setLayout(new BoxLayout(startPanel, BoxLayout.Y_AXIS));
+
+		this.enterNamesPanel = new JPanel();
+		this.enterNamesPanel.setLayout(new BoxLayout(enterNamesPanel, BoxLayout.X_AXIS));
 		final JLabel l1 = new JLabel(
 				"Welcome to War. Enter the name of each player:");
 		l1.setMaximumSize(new Dimension(300, 50));
 		l1.setAlignmentY(Component.TOP_ALIGNMENT);
-		this.startPanel.add(l1);
+		this.enterNamesPanel.add(l1);
 
 		final List<JTextField> playerNameTextFields = new LinkedList<JTextField>();
 		/* 6 textFields for each possible player */
@@ -89,7 +94,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 			playerName.setForeground(Player
 					.getForegroundColor(Player.playerColors[i]));
 			playerName.setAlignmentY(Component.TOP_ALIGNMENT);
-			this.startPanel.add(playerName);
+			this.enterNamesPanel.add(playerName);
 		}
 
 		JButton submitButton = new JButton("Submit");
@@ -119,7 +124,24 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 			}
 		});
 		submitButton.setAlignmentY(Component.TOP_ALIGNMENT);
-		startPanel.add(submitButton);
+		this.enterNamesPanel.add(submitButton);
+		
+		this.loadGamePanel = new JPanel();
+		this.loadGamePanel.setLayout(new BoxLayout(loadGamePanel, BoxLayout.X_AXIS));
+		final JTextField  saveFileName = new JTextField("Enter savefile name");
+		JButton loadGameButton = new JButton("Load game");
+		loadGameButton.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				WarGame.getInstance().startGame(saveFileName.getText());
+			}});
+
+		this.loadGamePanel.add(saveFileName);
+		this.loadGamePanel.add(loadGameButton);
+		
+		this.startPanel.add(enterNamesPanel);
+		this.startPanel.add(loadGamePanel);
 		this.add(startPanel, "Starting UI");
 	}
 
@@ -187,7 +209,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 				sb.append(" ");
 			}
 			playerLabel.setText(String.format("%s (%d territories in total)",
-					p.getName(), p.getNumberOfTerritories()));
+					p.getName(), WarGame.getInstance().getMap().getTerritoriesByOwner(p).size()));
 			if (WarGame.getInstance().getCurrentPlayer().equals(p)) {
 				playerLabel.setFont(playerLabel.getFont().deriveFont(
 						playerLabel.getFont().getStyle() | Font.BOLD));

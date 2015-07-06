@@ -3,13 +3,18 @@ package org.puc.rio.inf1636.hglm.war.serialize;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import org.puc.rio.inf1636.hglm.war.WarGame;
-import org.puc.rio.inf1636.hglm.war.model.*;
+import org.puc.rio.inf1636.hglm.war.model.Card;
+import org.puc.rio.inf1636.hglm.war.model.Map;
+import org.puc.rio.inf1636.hglm.war.model.Player;
+import org.puc.rio.inf1636.hglm.war.model.Territory;
+import org.puc.rio.inf1636.hglm.war.model.TerritoryCard;
+import org.puc.rio.inf1636.hglm.war.model.WarState;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerContinentsObjective;
 import org.puc.rio.inf1636.hglm.war.objective.ConquerTerritoriesObjective;
 import org.puc.rio.inf1636.hglm.war.objective.DestroyPlayerObjective;
 import org.puc.rio.inf1636.hglm.war.objective.WarObjective;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
@@ -22,26 +27,19 @@ public class WarSerializer implements JsonSerializer<WarState> {
 	public JsonElement serialize(final WarState warState, final Type type,
 			final JsonSerializationContext context) {
 		JsonObject result = new JsonObject();
-		result.add("conquestsThisTurn",
-				new JsonPrimitive(warState.getConquestsThisTurn()));
-		result.add("cardExchange",
-				new JsonPrimitive(warState.getCardExchangeArmyCount()));
-		result.add("turnState", new JsonPrimitive(warState
-				.getCurrentTurnState().name()));
+		result.addProperty("conqueredThisTurn", warState.conqueredThisTurn());
+		result.addProperty("cardExchangeArmyCount",
+				warState.getCardExchangeArmyCount());
+		result.addProperty("currentTurnState", warState.getCurrentTurnState()
+				.name());
 		result.addProperty("currentPlayer", warState.getCurrentPlayer()
 				.getName());
-		try {
-			result.add("canStealCardsFrom", this.serializePlayer(
-					warState.getCanStealCardsFrom(), type, context));
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-		}
-		JsonObject listOfPlayers = new JsonObject();
+		result.addProperty("canStealCardsFrom", warState.getCanStealCardsFrom());
+		JsonArray ja = new JsonArray();
 		for (Player p : warState.getPlayers()) {
-			listOfPlayers.add(p.getName(),
-					this.serializePlayer(p, type, context));
+			ja.add(this.serializePlayer(p, type, context));
 		}
-		result.add("players", listOfPlayers);
+		result.add("players", ja);
 		result.add("map", this.serializeMap(warState.getMap(), type, context));
 		// result.add("deck", this.serializeDeck(warState.getDeck()));
 		return result;
@@ -51,15 +49,9 @@ public class WarSerializer implements JsonSerializer<WarState> {
 			final JsonSerializationContext context) {
 		JsonObject result = new JsonObject();
 		result.addProperty("name", p.getName());
-		result.add("numberOfTerritories",
-				new JsonPrimitive(p.getNumberOfTerritories()));
 		result.add("unplacedArmies", new JsonPrimitive(p.getUnplacedArmies()));
-		result.add("color", new JsonPrimitive(p.getColor().toString()));
-		result.add("objective", new JsonPrimitive(p.getObjective()
-				.getDescription()));
-		JsonObject listOfCards = (JsonObject) this.serializeCards(p.getCards());
-
-		result.add("cards", listOfCards);
+		result.addProperty("color", p.getColor().getRGB());
+		result.add("cards", serializeCards(p.getCards()));
 		result.add("objective",
 				this.serializeObjective(p.getObjective(), type, context));
 
@@ -69,38 +61,53 @@ public class WarSerializer implements JsonSerializer<WarState> {
 	public JsonElement serializeObjective(final WarObjective o,
 			final Type type, final JsonSerializationContext context) {
 		JsonObject result = new JsonObject();
-		result.add("class", new JsonPrimitive(o.getClass().toString()));
 		if (o instanceof ConquerContinentsObjective) {
 			ConquerContinentsObjective cco = (ConquerContinentsObjective) o;
-			result.addProperty("targetContinent1", cco.getTargetContinent1().getId());
-			result.addProperty("targetContinent2", cco.getTargetContinent2().getId());
-			result.addProperty("hasToConquerAThirdContinent", cco.hasToConquerAThirdContinent());
+			result.addProperty("class", ConquerContinentsObjective.class.getName());
+			result.addProperty("targetContinent1", cco.getTargetContinent1()
+					.getId());
+			result.addProperty("targetContinent2", cco.getTargetContinent2()
+					.getId());
+			result.addProperty("hasToConquerAThirdContinent",
+					cco.hasToConquerAThirdContinent());
 		} else if (o instanceof ConquerTerritoriesObjective) {
 			ConquerTerritoriesObjective cto = (ConquerTerritoriesObjective) o;
-			result.addProperty("numberOfArmiesInEach", cto.getNumberOfArmiesInEach());
-			result.addProperty("numberOfTerritoriesToConquer", cto.getNumberOfTerritoriesToConquer());
+			result.addProperty("class", ConquerTerritoriesObjective.class.getName());
+			result.addProperty("numberOfArmiesInEach",
+					cto.getNumberOfArmiesInEach());
+			result.addProperty("numberOfTerritoriesToConquer",
+					cto.getNumberOfTerritoriesToConquer());
 		} else if (o instanceof DestroyPlayerObjective) {
 			DestroyPlayerObjective dpo = (DestroyPlayerObjective) o;
-			result.addProperty("targetPlayer", dpo.getTargetPlayer().getName());
+			result.addProperty("class", DestroyPlayerObjective.class.getName());
+			result.addProperty("targetPlayerName", dpo.getTargetPlayerName());
 		}
 		return result;
 	}
 
-	public JsonElement serializeCards(List<Card> l) {
-		JsonObject listOfCards = new JsonObject();
+	public JsonArray serializeCards(List<Card> l) {
+		JsonArray ja = new JsonArray();
 		for (Card c : l) {
-			listOfCards.add(c.toString(),
-					new JsonPrimitive(c.getType().getId()));
+			JsonObject jo = new JsonObject();
+			int type = c.getType().getId();
+			jo.addProperty("type", type);
+			if (type != 1) { // not joker
+				TerritoryCard tc = (TerritoryCard) c;
+				jo.addProperty("territoryName", tc.getTerritory().getName());
+			}
+			ja.add(jo);
 		}
-		return listOfCards;
+		return ja;
 	}
 
 	public JsonElement serializeMap(final Map m, final Type type,
 			final JsonSerializationContext context) {
 		JsonObject result = new JsonObject();
+		JsonArray ja = new JsonArray();
 		for (Territory t : m.getTerritories()) {
-			result.add(t.getName(), this.serializeTerritory(t, type, context));
+			ja.add(this.serializeTerritory(t, type, context));
 		}
+		result.add("territories", ja);
 		return result;
 	}
 
@@ -109,9 +116,8 @@ public class WarSerializer implements JsonSerializer<WarState> {
 		JsonObject result = new JsonObject();
 		result.addProperty("name", t.getName());
 		result.addProperty("armyCount", t.getArmyCount());
-		result.addProperty("continent", t.getContinent().getId());
-		result.addProperty("owner", t.getOwner().getName());
-		result.addProperty("moveableArmyCount", t.getMoveableArmyCount());
+		result.addProperty("ownerName", t.getOwnerName());
+		result.addProperty("unmovableArmyCount", t.getUnmovableArmyCount());
 		return result;
 	}
 

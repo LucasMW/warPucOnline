@@ -43,7 +43,7 @@ public class WarFrame extends JFrame {
 		return this.uiPanel;
 	}
 
-	public void init() {
+	public void startGame() {
 		this.update(true);
 	}
 

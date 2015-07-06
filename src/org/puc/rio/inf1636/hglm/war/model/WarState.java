@@ -8,14 +8,14 @@ public class WarState extends Observable {
 
 	private Player currentPlayer;
 	private List<Player> players = new ArrayList<Player>();
-	private Player canStealCardsFrom = null;
+	private String canStealCardsFrom = null;
 
 	private TurnState currentTurnState;
 
 	private Territory selectedTerritory;
 	private Territory targetedTerritory;
 
-	private int conquestsThisTurn = 0;
+	private boolean conqueredThisTurn = false;
 	private int cardExchangeArmyCount = 4;
 
 	private Map map = null;
@@ -68,15 +68,15 @@ public class WarState extends Observable {
 		return this.targetedTerritory;
 	}
 
-	public int getConquestsThisTurn() {
-		return this.conquestsThisTurn;
+	public boolean conqueredThisTurn() {
+		return this.conqueredThisTurn;
 	}
 
 	public int getCardExchangeArmyCount() {
 		return this.cardExchangeArmyCount;
 	}
 
-	public Player getCanStealCardsFrom() {
+	public String getCanStealCardsFrom() {
 		return this.canStealCardsFrom;
 	}
 	
@@ -92,7 +92,7 @@ public class WarState extends Observable {
 			this.currentPlayer = players.get(currentPlayerIndex + 1);
 		}
 		this.clearSelections();
-		this.conquestsThisTurn = 0;
+		this.conqueredThisTurn = false;
 		this.canStealCardsFrom = null;
 		this.currentTurnState = TurnState.PLACING_NEW_ARMIES;
 		this.setChanged();
@@ -136,8 +136,8 @@ public class WarState extends Observable {
 		this.setChanged();
 	}
 
-	public void addConquestThisTurn() {
-		this.conquestsThisTurn++;
+	public void setConqueredThisTurn() {
+		this.conqueredThisTurn = true;
 		this.setChanged();
 	}
 
@@ -146,9 +146,22 @@ public class WarState extends Observable {
 		this.setChanged();
 	}
 
-	public void setCanStealCardsFrom(Player p) {
-		this.canStealCardsFrom = p;
+	public void setCanStealCardsFrom(String playerName) {
+		this.canStealCardsFrom = playerName;
 		this.setChanged();
 	}
 
+	public void setTurnState(TurnState t) {
+		this.currentTurnState = t;
+		this.setChanged();
+	}
+
+	public void setCurrentPlayerByName(String playerName) {
+		for (Player p :this.getPlayers()) {
+			if (p.getName().equals(playerName)) {
+				this.currentPlayer = p;
+			}
+		}
+		this.setChanged();
+	}
 }
