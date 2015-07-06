@@ -71,6 +71,9 @@ public class WarGame {
 		this.getWarFrame().startGame();
 		this.getState().addObserver(this.getWarFrame().getMapPanel());
 		this.getState().addObserver(this.getWarFrame().getUIPanel());
+		if (this.getCurrentPlayer().getCards().size() >= 5) {
+			this.showCards(true);
+		}
 	}
 
 	public void startGame(List<Player> players) {

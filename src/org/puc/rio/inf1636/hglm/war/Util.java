@@ -158,6 +158,6 @@ public class Util {
 		if(System.getProperty("os.name").toLowerCase().indexOf("mac") >= 0){
 			x.setSize(x.width, (int)(x.height*0.9));
 		}
-		return x ;
+		return x;
 	}
 }
