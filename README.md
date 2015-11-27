@@ -8,5 +8,5 @@ War game made in Java (Swing) for the 2015.1 puc-rio object oriented class
 # inf1013-2015.2-war-multiplayer
 Adding Socket based communication to implement multiplayer in different computers
 
-#Author
+##Author
 * Lucas Menezes
