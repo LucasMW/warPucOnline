@@ -170,6 +170,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 		}
 		this.updateNamesPanel(first);
 		this.updateOptionsPanel(first);
+		
 	}
 
 	public void showGameEndedPanel(Player winner) {
@@ -358,8 +359,25 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 		default:
 			break;
 		}
+		if(WarGame.getInstance().isOnline())
+		{
+			if(WarGame.getInstance().isMyTurn())
+			{
+				this.statusLabel.setText(String.format("(it's your (%s) turn) %s",
+						currentPlayer.getName(), statusString));
+			}
+			else
+			{
+				this.statusLabel.setText(String.format("it`s not your turn (it is %s's turn)/n you are %s",
+						currentPlayer.getName(),WarGame.getInstance().getMyPlayer().getName()));
+			}
+			
+		}
+		else
+		{
 		this.statusLabel.setText(String.format("(%s's turn) %s",
 				currentPlayer.getName(), statusString));
+		}
 		this.statusLabel.setBackground(currentPlayer.getColor());
 		this.statusLabel.setForeground(Player.getForegroundColor(currentPlayer
 				.getColor()));

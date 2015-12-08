@@ -81,6 +81,12 @@ public class Client
 			System.out.println("we have a leader");
 			WarGame.getInstance().startGame(players);
 		}
+		else if( msg.contains("stateJson;"))
+		{
+			String content = msg.substring("stateJson;".length());
+			System.out.println("loading game...");
+			WarGame.getInstance().loadGameFromString(content);
+		}
 		System.out.printf("received msg: %s \n ",msg);
 	}
 	

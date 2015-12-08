@@ -39,6 +39,8 @@ public class WarGame {
 	private WarState warState = null;
 	private int saveName = Math.abs((new Random()).nextInt());
 	private Client client = null;
+	private Player myPlayer = null;
+	private boolean online = false;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
@@ -51,7 +53,25 @@ public class WarGame {
 		return WarGame.instance;
 	}
 
-	public void loadGame(String saveFile) {
+	public Player getMyPlayer()
+	{
+		return this.myPlayer;
+	}
+	public boolean isMyTurn()
+	{
+		Player current = this.getState().getCurrentPlayer();
+		System.out.println(current);
+		System.out.println(myPlayer);
+		if(current.getName().equals(myPlayer.getName()) && current.getColor().equals(myPlayer.getColor()))
+			return true;
+		return  false;
+	}
+	public boolean isOnline()
+	{
+		return this.online;
+	}
+	public void loadGame(String saveFile)
+	{
 		String jsonContent;
 		try {
 			jsonContent = Util.readFile(saveFile, StandardCharsets.UTF_8);
@@ -59,10 +79,14 @@ public class WarGame {
 			e.printStackTrace();
 			return;
 		}
+		this.loadGameFromString(jsonContent);
+	}
+	public void loadGameFromString(String content) {
+		
 		GsonBuilder gsonBuilder = new GsonBuilder();
 		gsonBuilder.registerTypeAdapter(WarState.class, new WarDeserializer());
 		Gson gson = gsonBuilder.create();
-		this.warState = gson.fromJson(jsonContent, WarState.class);
+		this.warState = gson.fromJson(content, WarState.class);
 		for (Player p : this.getState().getPlayers()) {
 			for (Card c : p.getCards()) {
 				this.getState().getDeck().removeCard(c);
@@ -83,10 +107,12 @@ public class WarGame {
 	{
 		System.out.println("enough players");
 		client.sendMessageToServer("give players");
+		this.online = true;
 	}
 	//this is multiplayer mode
 	public void startMultiplayer(Player player)
 	{
+		this.myPlayer = player;
 		this.client = new Client(5507);
 		try {
 			
@@ -118,6 +144,19 @@ public class WarGame {
 		this.getWarFrame().startGame();
 		this.getState().addObserver(this.getWarFrame().getMapPanel());
 		this.getState().addObserver(this.getWarFrame().getUIPanel());
+		
+		try {
+			this.saveWar(String.format("%s_%d", "save", saveName));
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		if(this.online)
+		{
+			System.out.println("starting multiplayer");
+			
+			sendStateToServer();
+		}
 	}
 
 	/* Wargame is a facade, no-one should be able to access the state */
@@ -246,8 +285,15 @@ public class WarGame {
 		}
 	}
 
+	private void sendStateToServer()
+	{
+		String saveContent = this.saveWarToString();
+		this.client.sendMessageToServer("stateJson;" + saveContent);
+	}
 	/* Event handlers */
 	public void nextTurn() {
+		
+		
 		/* Do nothing when a pop up is active */
 		if (this.getWarFrame().hasPopupActive()) {
 			this.getWarFrame().focusPopup();
@@ -271,11 +317,10 @@ public class WarGame {
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.showCards(true);
 		}
-		try {
-			this.saveWar(String.format("%s_%d", "save", saveName));
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		
+		if(this.online)
+		{
+			this.sendStateToServer();
 		}
 		/* if player is out of the game */
 		if (this.getMap().getTerritoriesByOwner(this.getCurrentPlayer()).size() == 0) {
@@ -285,6 +330,12 @@ public class WarGame {
 	}
 
 	public void actionPerformed() {
+		
+		if(this.online == true && (!isMyTurn()))
+		{
+			System.out.printf("It's not your turn/n you are %s, not %s /n",this.myPlayer.toString(),this.getState().getCurrentPlayer().toString());
+			return;
+		}
 		/* Do nothing when a pop up is active */
 		if (this.getWarFrame().hasPopupActive()) {
 			this.getWarFrame().focusPopup();
@@ -550,5 +601,10 @@ public class WarGame {
 			file.close();
 		}
 
+	}
+	public String saveWarToString() 
+	{
+		WarSerializer s = new WarSerializer();
+		return s.serialize(this.getState(), null, null).toString();
 	}
 }
