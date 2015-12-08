@@ -27,7 +27,7 @@ public class MapPanel extends JPanel implements Observer {
 
 	private Image backgroundImage;
 	private final double MULTIPLIER_X = 1.0;
-	private final double MULTIPLIER_Y = 0.8;
+	private final double MULTIPLIER_Y = 0.75;
 	public double coordinatesMultiplierX;
 	public double coordinatesMultiplierY;
 	private Dimension mapSize;

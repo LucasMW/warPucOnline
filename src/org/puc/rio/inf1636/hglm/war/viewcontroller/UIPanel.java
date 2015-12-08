@@ -54,7 +54,7 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 	private Dimension size;
 
 	private final double MULTIPLIER_X = 1.0;
-	private final double MULTIPLIER_Y = 0.2;
+	private final double MULTIPLIER_Y = 0.35;
 
 	public UIPanel() {
 		this.layout = new CardLayout();
@@ -114,7 +114,15 @@ public class UIPanel extends JPanel implements MouseListener, Observer {
 				}
 				if (players.size() >= WarLogic.MIN_PLAYERS) {
 					WarGame.getInstance().startGame(players);
-				} else {
+				} else if (players.size() == 1) { //case for multiplayer
+					
+					WarGame.getInstance().startMultiplayer(players.get(0));
+					System.out.println("called for multiplayer");
+					l1.setText("<html>Welcome to War. Waiting for other players to connect");
+					l1.setOpaque(true);
+					l1.setBackground(Color.RED);
+				}
+				else {
 					players.clear();
 					l1.setText("<html>Welcome to War. Enter the name of each player:<br />Please enter at least 3 players!</html>");
 					l1.setOpaque(true);

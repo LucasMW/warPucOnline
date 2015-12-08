@@ -2,6 +2,7 @@ package org.puc.rio.inf1636.hglm.war;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.UnknownHostException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import org.puc.rio.inf1636.hglm.war.viewcontroller.WarFrame;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.menezesworks.warclient.Client;
 
 public class WarGame {
 
@@ -36,6 +38,7 @@ public class WarGame {
 	private WarFrame warFrame;
 	private WarState warState = null;
 	private int saveName = Math.abs((new Random()).nextInt());
+	private Client client = null;
 
 	private WarGame() {
 		this.warFrame = new WarFrame();
@@ -74,6 +77,28 @@ public class WarGame {
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.showCards(true);
 		}
+	}
+	
+	public void enoughPlayersToStartMultiplayers(int numberOfPlayers)
+	{
+		System.out.println("enough players");
+		client.sendMessageToServer("give players");
+	}
+	//this is multiplayer mode
+	public void startMultiplayer(Player player)
+	{
+		this.client = new Client(5507);
+		try {
+			
+			client.connect(null, player.getName(),player.getColor().hashCode());
+		} catch (UnknownHostException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
 	public void startGame(List<Player> players) {
@@ -187,11 +212,12 @@ public class WarGame {
 		objectives.add(new ConquerTerritoriesObjective(18, 2));
 		objectives.add(new ConquerTerritoriesObjective(24, 1));
 		objectives.add(new ConquerContinentsObjective(Continent.EUROPE,
-				Continent.OCEANIA, false));
+				Continent.OCEANIA, true));
 		objectives.add(new ConquerContinentsObjective(Continent.ASIA,
 				Continent.SOUTH_AMERICA, false));
 		objectives.add(new ConquerContinentsObjective(Continent.EUROPE,
 				Continent.SOUTH_AMERICA, true));
+		
 		objectives.add(new ConquerContinentsObjective(Continent.ASIA,
 				Continent.AFRICA, false));
 		objectives.add(new ConquerContinentsObjective(Continent.NORTH_AMERICA,

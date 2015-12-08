@@ -30,7 +30,9 @@ public class ServerListener implements Runnable
 			{
 				if (inputFromServer.hasNextLine()) 
 				{
-					System.out.println(inputFromServer.nextLine());
+					String msg = inputFromServer.nextLine();
+					System.out.println(msg);
+					this.reference.receivedMessageFromServer(msg);
 					try 
 					{
 						Thread.sleep(50);                 //1000 milliseconds is one second.
