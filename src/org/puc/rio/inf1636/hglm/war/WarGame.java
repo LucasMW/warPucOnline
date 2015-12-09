@@ -101,6 +101,7 @@ public class WarGame {
 		if (this.getCurrentPlayer().getCards().size() >= 5) {
 			this.showCards(true);
 		}
+		this.warFrame.repaint();
 	}
 	
 	public void enoughPlayersToStartMultiplayers(int numberOfPlayers)
@@ -318,15 +319,17 @@ public class WarGame {
 			this.showCards(true);
 		}
 		
-		if(this.online)
-		{
-			this.sendStateToServer();
-		}
+		
 		/* if player is out of the game */
 		if (this.getMap().getTerritoriesByOwner(this.getCurrentPlayer()).size() == 0) {
 			this.nextTurn();
 		}
 		this.getState().notifyObservers();
+		if(this.online )
+		{
+			System.out.println("observers notified. Sending state to server");
+			this.sendStateToServer();
+		}
 	}
 
 	public void actionPerformed() {
