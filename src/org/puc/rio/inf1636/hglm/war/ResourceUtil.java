@@ -1,4 +1,4 @@
-package org.puc.rio.inf1636.hglm.war.viewcontroller;
+package org.puc.rio.inf1636.hglm.war;
 
 import java.net.URL;
 

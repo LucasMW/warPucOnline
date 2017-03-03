@@ -16,6 +16,7 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.puc.rio.inf1636.hglm.war.ResourceUtil;
 import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.WarLogic;
 import org.puc.rio.inf1636.hglm.war.model.Territory;

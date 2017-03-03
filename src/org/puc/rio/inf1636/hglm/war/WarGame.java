@@ -117,7 +117,7 @@ public class WarGame {
 		this.client = new Client(5507);
 		try {
 			
-			client.connect(null, player.getName(),player.getColor().hashCode());
+			client.connect("45.55.91.148", player.getName(),player.getColor().hashCode());
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

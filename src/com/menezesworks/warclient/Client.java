@@ -21,7 +21,7 @@ public class Client
 	public Client(int socketNumber)
 	{
 		this.socketNumber = socketNumber;
-		this.ipLocalhost = "45.55.91.148";
+		this.ipLocalhost = "127.0.0.1";
 	}
 	public void connect(String ip, String identifierName, int colorNum) throws UnknownHostException, IOException 
 	{

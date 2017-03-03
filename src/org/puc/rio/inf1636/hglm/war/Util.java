@@ -5,7 +5,10 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Line2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -77,8 +80,7 @@ public class Util {
 	public static void loadTerritories(Map map, Deck deck) {
 		String jsonContent;
 		try {
-			jsonContent = readFile("resources/territories.json",
-					StandardCharsets.UTF_8);
+			jsonContent = readFileFromUrl(ResourceUtil.getResource("territories.json"));
 		} catch (IOException e) {
 			e.printStackTrace();
 			return;
@@ -145,6 +147,17 @@ public class Util {
 			}
 		}
 		return lineSegments;
+	}
+	public static String readFileFromUrl(URL url) throws IOException {
+		BufferedReader in = new BufferedReader(
+		        new InputStreamReader(url.openStream()));
+
+				String fileString = "";
+		        String inputLine;
+		        while ((inputLine = in.readLine()) != null)
+		            fileString += inputLine;
+		        in.close();
+				return fileString;
 	}
 
 	public static String readFile(String path, Charset encoding)
