@@ -71,16 +71,16 @@ public class CardSelectionFrame extends JFrame implements MouseListener {
 			if (c instanceof TerritoryCard) {
 				TerritoryCard tc = (TerritoryCard) c;
 				imagePath = String.format(
-						"resources/cards/war_carta_%s.png",
+						"cards/war_carta_%s.png",
 						tc.getTerritory().getName().toLowerCase()
 								.replaceAll("\\s+", ""));
 				imagePath = Normalizer
 						.normalize(imagePath, Normalizer.Form.NFD);
 				imagePath = imagePath.replaceAll("[^\\x00-\\x7F]", "");
 			} else {
-				imagePath = "resources/cards/war_carta_coringa.png";
+				imagePath = "cards/war_carta_coringa.png";
 			}
-			ImageIcon cardImage = new ImageIcon(imagePath);
+			ImageIcon cardImage = new ImageIcon(ResourceUtil.getResource(imagePath));
 			Image resizedImage = cardImage.getImage().getScaledInstance(
 					cardLabel.getWidth(), cardLabel.getHeight(),
 					Image.SCALE_SMOOTH);

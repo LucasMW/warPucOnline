@@ -6,6 +6,7 @@ import java.awt.Graphics;
 import java.awt.Image;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Observable;
@@ -22,6 +23,8 @@ import org.puc.rio.inf1636.hglm.war.WarGame;
 import org.puc.rio.inf1636.hglm.war.model.Player;
 import org.puc.rio.inf1636.hglm.war.model.Territory;
 
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.Loader;
+
 @SuppressWarnings("serial")
 public class MapPanel extends JPanel implements Observer {
 
@@ -33,9 +36,11 @@ public class MapPanel extends JPanel implements Observer {
 	private Dimension mapSize;
 	private List<JLabel> armiesLabels = new LinkedList<JLabel>();
 	private boolean labelsHidden = false;
-
+	
+	
 	public MapPanel() {
-		this.setBackgroundImage("resources/maps/war_tabuleiro_completo.png");
+		
+		this.setBackgroundImage(ResourceUtil.getResource("maps/war_tabuleiro_completo.png"));
 		Dimension gameSize = Util.getGameSize();
 		this.mapSize = new Dimension((int) (gameSize.width * MULTIPLIER_X),
 				(int) (gameSize.height * MULTIPLIER_Y));
@@ -200,8 +205,9 @@ public class MapPanel extends JPanel implements Observer {
 		}
 	}
 
-	public void setBackgroundImage(String path) {
+	public void setBackgroundImage(URL path) {
 		try {
+			System.out.println(path.toString());
 			this.backgroundImage = new ImageIcon(path).getImage();
 		} catch (Exception e) {
 			System.out.println(e.getMessage());
@@ -209,12 +215,13 @@ public class MapPanel extends JPanel implements Observer {
 		}
 	}
 
+	
 	public void toggleMapDisplay() {
 		this.labelsHidden = !this.labelsHidden;
 		if (labelsHidden) {
-			this.setBackgroundImage("resources/maps/war_tabuleiro_com_nomes.png");
+			this.setBackgroundImage(ResourceUtil.getResource("maps/war_tabuleiro_com_nomes.png"));
 		} else {
-			this.setBackgroundImage("resources/maps/war_tabuleiro_completo.png");
+			this.setBackgroundImage(ResourceUtil.getResource("maps/war_tabuleiro_completo.png"));
 
 		}
 		this.updateArmyLabels(false);

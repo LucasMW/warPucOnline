@@ -117,8 +117,8 @@ public class AttackFrame extends JFrame {
 
 	private void generateDice() {
 		for (int i = 0; i < WarLogic.MAX_DICE; i++) {
-			ImageIcon iconA = new ImageIcon("resources/dice/dado_ataque_1.png");
-			ImageIcon iconB = new ImageIcon("resources/dice/dado_defesa_1.png");
+			ImageIcon iconA = new ImageIcon(ResourceUtil.getResource("dice/dado_ataque_1.png"));
+			ImageIcon iconB = new ImageIcon(ResourceUtil.getResource("dice/dado_defesa_1.png"));
 			JLabel diceA = new JLabel(iconA);
 			JLabel diceB = new JLabel(iconB);
 			diceA.setVisible(false);
@@ -158,8 +158,8 @@ public class AttackFrame extends JFrame {
 		int i = 0;
 		for (int result : attack ? this.attackResults : this.defenseResults) {
 			ImageIcon imgX;
-			imgX = new ImageIcon(String.format("resources/dice/dado_%s_%d.png",
-					attack ? "ataque" : "defesa", result));
+			imgX = new ImageIcon(ResourceUtil.getResource(String.format("dice/dado_%s_%d.png",
+					attack ? "ataque" : "defesa", result)));
 			JLabel dice = attack ? attackerDice.get(i) : defenderDice.get(i);
 			dice.setIcon(imgX);
 			dice.setVisible(true);
